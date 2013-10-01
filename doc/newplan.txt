@@ -1,0 +1,170 @@
+
+Use the rockstar halo catalogs from many conseulo boxes.
+For study #1, which ignores M33, we could also use esmerelda boxes if we need more volume.
+
+
+1.  Mass of M_MW, M_31, M_LG, checking timing argument, proper motion of M31
+
+  Prior sampling:
+
+    -- Find all Local Group analogs (LGAs), defined by:
+       -- isolation from more massive objects
+       -- 2 central halos with appropriate separation (pairs)
+       -- 1 massive subhalo close to one of the central halos (triplets)
+       
+       See notes-mtb.txt for details!
+       
+    -- Write out 3 output files, one for each object, that contain:
+         ID_MW ID_M31 ID_M33 M200 x y z vx vy vz
+       
+       MW_halos_JJ.txt
+       M31_halos_JJ.txt
+       M33_halos_JJ.txt (much smaller)
+       
+       -- ID is ROCKSTAR ID, and all files have all halo IDs in them. For
+       systems that have MW and M31 but no M33, set ID_M33 to -1
+       -- coordinate system is cosmic consuelo, with comoving distances
+       -- JJ is the consuelo run number (00 to 39)
+
+  Importance weighting:
+
+    -- weight MW-M31 separation by distance to M31:
+       774 +/- 40 kpc (VdM+G 2008) USE THIS
+        [744 +/- 33 kpc (Vilardell 2010)]
+        [785 +/- 25 (McConnachie et al 2005)]
+    -- weight radial_velocity by radial velocity M31:
+       -130 +/- 8 km/s (Van der Marel & Guhathakurtha 2008)
+    -- weight log10 M1 by M_MW from Busha et al paper:
+       12.2 +/- 0.1
+
+  DONE first attempt, looked at masses, sum and ratio. 
+  Constraint on M2 (M31) is weakish, M_LG to 0.3 dex. Need
+  more constraints probably, eg from M33 proper motion.
+
+    -- weight MW-M33 separation by distance to M33: 
+  
+  TO DO:
+
+  a) Check: independence of constraints. V independent of r?
+
+    No - but its only weakly dependent. 
+    VdM+G08 take the observed line of sight systemic velocity and subtract off
+    the Sun's velocity - to do this projection they need the distance to M31, I
+    think. I'll try and figure out the covariance so we can include it with the
+    distance error. PJM!
+
+  b) Include M31 vtan constraint? Also not independent...
+
+    The proper motion of M31 is what VdM+G are all about - and they do it by
+    looking at the satellite kinematics around the system. I think we should
+    rather look to use the M33 proper motion to constrain M31 (like they did),
+    but with a cosmological prior rather than assuming M33 is bound to M31 and in
+    a Gaussian velocity distribution centred on M31's.
+    DONE: we infer this, not assume it.
+
+  c) Comparing with Timing Argument masses:
+  
+    Compute M_TA, the timing argument mass of the local group, and compare
+    with M1+M2. Note that in this context M_TA is merely a function of the
+    model parameters: we have replaced M_TA as an LG mass estimate, but can
+    check its bias in our model. 
+    How does M_TA vary with M1+M2? For which halos is M_TA accurate?
+  
+  d) Individual masses of M31 and M33. What is the probability that M31 is
+     more massive than MW? 
+  
+  e) Predict proper motion of M31: translate M31 v into sky coords. What is
+     the predicted angular speed in arcsec per year? And in which direction?!
+  
+
+------------------------------------------------------------------------------
+
+
+Paper II. Halo shapes of MW and M31, angular momenta of halos
+          compared to stellar disks, masses of LG galaxies.
+
+  Prior sampling, including M33 analogs:
+   
+    -- Take pairs from above.
+    -- Define M33 isolation distance, D_iso^M33 = 2Mpc, from the MW halo.
+    -- Keep sample if there is <= 3 halos within D_iso^M33
+    -- Define M31 radius, R^M31 = 450kpc from the M31 halo.
+    -- Define MW radius, R^MW = 300kpc from the MW halo.
+    -- Keep sample if:
+       -- There is exactly 1 halo within R^M31 and it is closer to M31 than
+          MW. Let this halo be M33.
+       -- Any additional halos (of which there at most 2) are within R^MW and
+          are closer to MW than M31
+    -- Write out sample.
+    
+    -- Write out 1 output file for the M33 object, that contains:
+         ID ID_M31 M200 x y z vx vy vz Lx Ly Lz Cxx Cxy Cxz Cyx Cyy Cyz Czx Czy Czz
+
+       M33_halos_JJ.txt
+       
+       -- ID_M31 is the ROCKSTAR ID of the M31 halo that this M33 lives in.
+          This is to allow cross-matching of the catalogs
+       -- JJ is the consuelo run number (00 to 39)
+     
+   Importance weighting:  
+     
+     -- Weight as above with M31 properties
+
+    -- weight by distance to M33
+     799+/-23 kpc
+     
+    -- weight by angle between M31 and M33
+     14.8 deg, with artifical scatter...Might need wiggle room here.
+    
+    -- weight by radial velocity to M33
+     190 +/- 59 km/s relative to MW (Brunthaler)
+    
+    -- weight by proper motion of M33
+     TB Worked out [PJM] relative to MW
+          
+
+
+Analysis:
+
+    -- Read in to python and compute extra quantities, like separation1_2 separation2_3 separation1_3 radial_velocity1_2 radial_velocity2_3 radial_velocity1_3
+         angle1_2 angle2_3 angle1_3
+
+    -- weight by the things above (ie distance to M31, relative v, mass of MW)
+    
+
+*** look at the following properties with the weights above
+
+-- M_MW
+-- M_31
+
+-- M_MW/M_31
+
+-- M_MW+M_31
+-- comment on timing argument mass
+
+-- v_tan(M31) - predict proper motion
+-- orbit parameters for halos: collision times from future pericenter passage?
+
+-- is the environment of these systems different from the environment of
+systems of M_MW?
+
+-- is the formation history of these systems different from the environment of
+systems of M_MW?
+
+-- is M33 bound?
+-- when did it arrive? in LG? in M31?
+-- M_33
+-- M_MW+M_31+M33
+
+
+New paper?
+
+-- M31 and MW halo shapes: can we detect extension in any direction?
+
+-- predictions of overdensity on sky? For indirect detection? Satellite
+density?
+
+-- dark matter overdensity in a certain direction
+stack on the line of sight to M31.
+look that direction and the opposite direction.
+

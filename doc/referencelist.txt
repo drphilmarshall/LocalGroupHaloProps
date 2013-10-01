@@ -1,0 +1,118 @@
+Evans & Wilkinson 2000
+The mass of the Andromeda galaxy
+http://adsabs.harvard.edu/abs/2000MNRAS.316..929E
+--  12.3+18-6 x 10^11 Msun, 
+
+Li & White 2008
+Masses for the Local Group and the Milky Way
+http://adsabs.harvard.edu/abs/2008MNRAS.384.1459L
+
+Seigar 2011
+The Dark Matter Halo Density Profile, Spiral Arm Morphology, and Supermassive Black Hole Mass of M33
+http://adsabs.harvard.edu/abs/2011ISRAA2011E...4S
+---Mvir = (2.2\pm0.1)\times10^11 Msun.
+---cvir = 4.0\pm1.0
+
+Abdo et al 2011
+Fermi Large Area Telescope observations of Local Group galaxies: detection of M 31 and search for M 33
+http://adsabs.harvard.edu/abs/2010A%26A...523L...2A
+--  flux of M 33 is not far below the current upper limit from the LAT observations.
+
+U et al 2009
+A New Distance to M33 Using Blue Supergiants and the FGLR Method
+http://adsabs.harvard.edu/abs/2009ApJ...704.1120U
+-- distance modulus of 24.93 ± 0.11 mag (968 ± 50 kpc) 
+
+Brunthaler et al 2005
+The Geometric Distance and Proper Motion of the Triangulum Galaxy (M33)
+http://adsabs.harvard.edu/abs/2005Sci...307.1440B
+--  730 +/- 168 kiloparsecs.
+-- 190 +/- 59 kilometers per second relative to the Milky Way.
+alpha_dot = -101 +/- 35 km/s
+delta_dot = 156 +/- 47 kms
+
+Baiesi Pillastrini 2009
+On the Andromeda to Milky Way mass ratio
+http://adsabs.harvard.edu/abs/2009MNRAS.397.1990B
+
+Bonanos et al 2006
+The First DIRECT Distance Determination to a Detached Eclipsing Binary in M33
+http://adsabs.harvard.edu/abs/2006ApJ...652..313B
+-- distance modulus of 24.92+/-0.12 mag (964+/-54 kpc), which is ~0.3 mag longer than the Key Project distance to M33.
+
+Davidge & Puzia 2011
+The Stellar Archeology of the M33 Disk: Recent Star-forming History and Constraints on the Timing of an Interaction with M31
+http://adsabs.harvard.edu/abs/2011ApJ...738..144D
+
+Pellerin & Macri 2011
+The M 33 Synoptic Stellar Survey. I. Cepheid Variables
+-- this is just a sample, not a distance.  Distance forthcoming (Pellerin & Macri in prep)
+paper incudes a discussion of discrepancies in the literature for the M33 distance.
+
+Bresolin et al 2010
+
+
+Vilardell et al 2010
+http://adsabs.harvard.edu/abs/2010A%26A...509A..70V
+The distance to the Andromeda galaxy from eclipsing binaries
+--  (m-M)0 = 24.36 ± 0.08 mag (744 ± 33 kpc)
+
+Scowcroft et al 2009
+The effect of metallicity on Cepheid magnitudes and the distance to M33
+-- M33 24.53 ± 0.11 mag
+
+Macri 2001
+The extragalactic distance scale
+http://adsabs.harvard.edu/abs/2001PhDT.......242M
+--M33 24.65 ± 0.12 mag
+
+Freedman et al 2001 (HST Key Project)
+--M33 24.62 ± 0.08 mag
+
+An, Terndrup & Pinsonneault 2007
+The Distances to Open Clusters from Main-Sequence Fitting. IV. Galactic Cepheids, the LMC, and the Local Distance Scale
+http://adsabs.harvard.edu/abs/2007ApJ...671.1640A
+-- M33 24.55+/-0.28 mag
+
+Galleti et al 2004
+The distance of M 33 and the stellar population in its outskirts
+http://adsabs.harvard.edu/abs/2004A%26A...423..925G
+-- (m-M)0=24.64 ± 0.15, corresponding to a distance D=847 ± 60 kpc. 
+
+Mateo 1998
+-- d_M31 = 770 kpc
+
+Magrini et al 2007
+The building up of the disk galaxy M 33 and the evolution of the metallicity gradient
+-- d = 840 kpc
+
+
+Bekki 2008
+Formation of a giant HI bridge between M31 and M33 from their tidal interaction
+http://adsabs.harvard.edu/abs/2008MNRAS.390L..24B
+
+
+Seigar, Barth & Bullock 2008
+A revised Λ CDM mass model for the Andromeda Galaxy
+http://adsabs.harvard.edu/abs/2008MNRAS.389.1911S
+-- Mvir =  8.2 × 1011Msolar
+
+Peebles, Tully, Shaya 2011
+A Dynamical Model of the Local Group
+http://adsabs.harvard.edu/abs/2011arXiv1105.5596P
+
+van der Marel et al 2008
+M31 Transverse Velocity and Local Group Mass from Satellite Kinematics
+http://adsabs.harvard.edu/abs/2008ApJ...678..187V
+-- galactocentric tangential velocity of M31 is 42 km/s
+
+Watkins, Evans, An 2010
+The masses of the Milky Way and Andromeda galaxies
+http://adsabs.harvard.edu/abs/2010MNRAS.406..264W
+M300_MW = 1.4 +/- 0.3 × 1012Msolar
+M300_M31 = 1.4 +/- 0.4 × 1012Msolar
+
+Forero-Romero et al 2011
+The dark matter assembly of the Local Group in constrained cosmological simulations of a Λ cold dark matter universe
+http://adsabs.harvard.edu/doi/10.1111/j.1365-2966.2011.19358.x
+
