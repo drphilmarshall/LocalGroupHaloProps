@@ -1,7 +1,24 @@
 LocalGroupHaloProps
 ===================
 
-Inferring the mass etc of the local group galaxy halos (MW, M31 and M33)
+Inferring the mass etc of the local group galaxy halos (MW, M31 and M33).
+
+We take the observational constraints on the sky position of, distance to,
+radial velocity and proper motion of M31 and M33, and transform them into
+constraints on the M31-centric distances, radial velocities and tangential
+velocities of M33 and the Milky Way. We do this my drawing samples from the
+posterior PDFs for the observables, transforming them to the M31
+frame, and then approximating the resulting 6-D PDF.
+
+We then compute the value of this PDF at each triplet of Consuelo halos, which
+were pre-selected to be local group-like in their isolation and very
+approximate mass: this likelihood is ised to weight each triplet, as we build
+up a posterior PDF for the halo properties (principally masses and shapes)
+based on the Consuelo-sampled prior.
+
+Our local group mass can be compared with some simple timing argument
+estimates - we do this!
+
 
 ### Getting started
 
