@@ -1,0 +1,1028 @@
+goto MAKEFIGURES
+# ============================================================================
+# 2011-10-20 (Thursday) 12:44 BST
+# 
+# First pairs catalog from Mike:
+
+head -3 lg_dat_file.txt
+
+# #id1, id2, m1, m2, r, vr, x1, y1, z1, vx1, vy1, vz1, x2, y2, z2, vx2, vy2, vz2
+#      6554476     6554479  1.59000e+13  1.80000e+13     0.793544     -219.311      294.885      202.619      52.0731     -594.550     -190.880      5.32000      295.304      202.724      52.7388     -794.490      107.610     -243.390
+#        72990       72978  1.36971e+13  2.19571e+13     0.872780     -362.377      304.544      213.521      118.959     -621.470     -366.110     -153.790      304.331      213.357      118.128     -366.580     -293.330      211.720
+
+# 276472 lines! Cool
+
+# OK, make some corner plots: M1, M2, r, vr
+# and apply some constraints!
+
+set PLOT = ../python/CornerPlotter.py
+
+set datfile = lg_dat_file.txt
+set plotfile = ${datfile:r}.cpt
+
+echo '# importance, -2logL, $\log_{10}{M_1 / {\rm M}_{\odot}}$, $\log_{10}{M_2 / {\rm M}_{\odot}}$, $r / {\rm kpc}$, $v / {\rm km s}^{-1}$, $\log_{10}{M_2 / M_1}$, $\log_{10}{(M_1 + M_2)/ {\rm M}_{\odot}}$' > $plotfile
+echo '# 0,1,   0,1,   10,14,   10,14,   550,950,  -400,400,   -3,3,   10,14' >> $plotfile
+
+tail -n +2 $datfile | awk '{print 1, 1, log($3)/log(10), log($4)/log(10), $5*1000, $6, log($4/$3)/log(10), log($3+$4)/log(10)}' >> $plotfile
+tail -n +2 $datfile | awk '{print 1, 1, log($4)/log(10), log($3)/log(10), $5*1000, $6, log($3/$4)/log(10), log($4+$3)/log(10)}' >> $plotfile
+
+$PLOT -w 1 -L 2 -v $plotfile,black
+mv cornerplot.png ${plotfile:r}.png
+
+# OK good!
+
+# Noted first time through that M2 > M1 always - but we don't know which is
+# which, and can only apply constraints to one! So have to *symmetrise catalogs,
+# doubling up pairs - hence second tail statement.
+
+# Now apply r constraint:
+
+set rplotfile = ${datfile:r}_constrained-r.cpt
+
+echo '# importance, -2logL, $\log_{10}{M_1 / {\rm M}_{\odot}}$, $\log_{10}{M_2 / {\rm M}_{\odot}}$, $r / {\rm kpc}$, $v / {\rm km s}^{-1}$, $\log_{10}{M_2 / M_1}$, $\log_{10}{(M_1 + M_2)/ {\rm M}_{\odot}}$' > $rplotfile
+echo '# 0,1,   0,1,   10,14,   10,14,   550,950,  -400,400,   -3,3,   10,14' >> $rplotfile
+
+set rbar = 744
+set rerr = 33
+
+tail -n +2 $datfile | \
+  awk '{print exp(-($5*1000-'$rbar')^2/(2*'$rerr'^2)), 1, log($3)/log(10), log($4)/log(10), $5*1000, $6, log($4/$3)/log(10), log($3+$4)/log(10)}' >> $rplotfile
+tail -n +2 $datfile | \
+  awk '{print exp(-($5*1000-'$rbar')^2/(2*'$rerr'^2)), 1, log($4)/log(10), log($3)/log(10), $5*1000, $6, log($3/$4)/log(10), log($4+$3)/log(10)}' >> $rplotfile
+
+$PLOT -w 1 -L 2 -v $plotfile,black  $rplotfile,red
+mv cornerplot.png ${rplotfile:r}.png
+
+# Not much help with masses...
+
+# Now apply v constraint:
+
+set vplotfile = ${datfile:r}_constrained-v.cpt
+
+echo '# importance, -2logL, $\log_{10}{M_1 / {\rm M}_{\odot}}$, $\log_{10}{M_2 / {\rm M}_{\odot}}$, $r / {\rm kpc}$, $v / {\rm km s}^{-1}$, $\log_{10}{M_2 / M_1}$, $\log_{10}{(M_1 + M_2)/ {\rm M}_{\odot}}$' > $vplotfile
+echo '# 0,1,   0,1,   10,14,   10,14,   550,950,  -400,400,   -3,3,   10,14' >> $vplotfile
+
+# NB +ve vbar means need + sign in weight formula!
+set vbar = 130
+set verr = 8
+
+tail -n +2 $datfile | \
+  awk '{print exp(-($6+'$vbar')^2/(2*'$verr'^2)), 1, log($3)/log(10), log($4)/log(10), $5*1000, $6, log($4/$3)/log(10), log($3+$4)/log(10)}' >> $vplotfile
+tail -n +2 $datfile | \
+  awk '{print exp(-($6+'$vbar')^2/(2*'$verr'^2)), 1, log($4)/log(10), log($3)/log(10), $5*1000, $6, log($3/$4)/log(10), log($4+$3)/log(10)}' >> $vplotfile
+
+$PLOT -w 1 -L 2 -v $plotfile,black  $vplotfile,dodgerblue
+mv cornerplot.png ${vplotfile:r}.png
+
+# More helpful!
+
+# Now apply both r and v constraints:
+
+set rvplotfile = ${datfile:r}_constrained-r+v.cpt
+
+echo '# importance, -2logL, $\log_{10}{M_1 / {\rm M}_{\odot}}$, $\log_{10}{M_2 / {\rm M}_{\odot}}$, $r / {\rm kpc}$, $v / {\rm km s}^{-1}$, $\log_{10}{M_2 / M_1}$, $\log_{10}{(M_1 + M_2)/ {\rm M}_{\odot}}$' > $rvplotfile
+echo '# 0,1,   0,1,   10,14,   10,14,   550,950,  -400,400,   -3,3,   10,14' >> $rvplotfile
+
+tail -n +2 $datfile | \
+  awk '{print exp(-($5*1000-'$rbar')^2/(2*'$rerr'^2))*exp(-($6+'$vbar')^2/(2*'$verr'^2)), 1, log($3)/log(10), log($4)/log(10), $5*1000, $6, log($4/$3)/log(10), log($3+$4)/log(10)}' >> $rvplotfile
+tail -n +2 $datfile | \
+  awk '{print exp(-($5*1000-'$rbar')^2/(2*'$rerr'^2))*exp(-($6+'$vbar')^2/(2*'$verr'^2)), 1, log($4)/log(10), log($3)/log(10), $5*1000, $6, log($3/$4)/log(10), log($4+$3)/log(10)}' >> $rvplotfile
+
+$PLOT -w 1 -L 2 -v $plotfile,black  $rvplotfile,violet
+mv cornerplot.png ${rvplotfile:r}.png
+
+# Good - interesting structure in masses. Now lets apply our mass constraint!
+
+set M1bar = 12.2
+set M1err = 0.1
+
+set M1rvplotfile = ${datfile:r}_constrained-r+v+M1.cpt
+
+echo '# importance, -2logL, $\log_{10}{M_1 / {\rm M}_{\odot}}$, $\log_{10}{M_2 / {\rm M}_{\odot}}$, $r / {\rm kpc}$, $v / {\rm km s}^{-1}$, $\log_{10}{M_2 / M_1}$, $\log_{10}{(M_1 + M_2)/ {\rm M}_{\odot}}$' > $M1rvplotfile
+echo '# 0,1,   0,1,   10,14,   10,14,   550,950,  -400,400,   -3,3,   10,14' >> $M1rvplotfile
+
+tail -n +2 $datfile | \
+  awk '{print exp(-(log($3)/log(10)-'$M1bar')^2/(2*'$M1err'^2))*exp(-($5*1000-'$rbar')^2/(2*'$rerr'^2))*exp(-($6+'$vbar')^2/(2*'$verr'^2)), 1, log($3)/log(10), log($4)/log(10), $5*1000, $6, log($4/$3)/log(10), log($3+$4)/log(10)}' >> $M1rvplotfile
+tail -n +2 $datfile | \
+  awk '{print exp(-(log($4)/log(10)-'$M1bar')^2/(2*'$M1err'^2))*exp(-($5*1000-'$rbar')^2/(2*'$rerr'^2))*exp(-($6+'$vbar')^2/(2*'$verr'^2)), 1, log($4)/log(10), log($3)/log(10), $5*1000, $6, log($3/$4)/log(10), log($4+$3)/log(10)}' >> $M1rvplotfile
+
+$PLOT -w 1 -L 2 -v  $M1rvplotfile,darkgreen $plotfile,black
+mv cornerplot.png ${M1rvplotfile:r}.png
+
+
+# Next - go back and include mass difference, and mass sum.
+
+# OK - with all constraints, find log M2 = 12.2 +0.4/-0.9, fairly unconstrained, and log M_LG = log (M1+M2) = 12.5+/-0.3, better.
+
+# Clean up, get rid of cpt files and just keep plots...
+
+
+
+# OK, translate awk to python - need to be able to do more sophisticated
+# maths... Keep outputs the same though, to use cornerplotter.
+
+
+# ============================================================================
+# 2011-11-25 (Friday) 10:59 GMT
+
+# New catalog from Mike, in 2011-11-18 subdir in analysis directory.
+# Hack to make it look like what we actually expect (from plan):
+
+#  ID_MW ID_M31 ID_M33 M200 x y z vx vy vz Lx Ly Lz Cxx Cxy Cxz Cyx Cyy Cyz Czx Czy Czz
+
+cols lg_dat_file.txt 
+#  1    idMW    473358400
+#  2   idM31    473358400
+#  3     mMW  3.52571e+13
+#  4    mM31  1.04433e+13
+#  5       r      1.06368
+#  6      vr     -247.675
+#  7     xMW      591.707
+#  8     yMW      505.165
+#  9     zMW      531.810
+# 10    vxMW     -105.460
+# 11    vyMW      67.5300
+# 12    vzMW      52.3100
+# 13    xM31      591.024
+# 14    yM31      505.484
+# 15    zM31      532.561
+# 16   vxM31      78.6900
+# 17   vyM31      117.820
+# 18   vzM31     -257.850
+# 19  noM33s            0
+
+
+
+
+set file = MW_halos_01.txt
+echo "#  ID_MW  ID_M31  ID_M33   M200   x    y    z    vx    vy    vz" > $file
+head -10001 attic/lg_dat_file.txt | grep -v '#' | \
+  awk '{if ($19 < 2) print $1,$1+1,2*$1*$19-1,$3,$7,$8,$9,$10,$11,$12}' >> $file
+cp $file `echo $file | sed s/01/02/g`
+
+set file = M31_halos_01.txt
+echo "#  ID_MW  ID_M31  ID_M33   M200   x    y    z    vx    vy    vz" > $file
+head -10001 attic/lg_dat_file.txt | grep -v '#' | \
+  awk '{if ($19 < 2) print $1,$1+1,2*$1*$19-1,$4,$13,$14,$15,$16,$17,$18}' >> $file
+cp $file `echo $file | sed s/01/02/g`
+
+set file = M33_halos_01.txt
+echo "#  ID_MW  ID_M31  ID_M33   M200   x    y    z    vx    vy    vz" > $file
+head -10001 attic/lg_dat_file.txt | grep -v '#' | \
+  awk '{if ($19 == 1) print $1,$1+1,2*$1*$19-1,$4/10.0,$13+0.1,$14+0.1,$15+0.1,$16,$17,$18}' >> $file
+cp $file `echo $file | sed s/01/02/g`
+
+wc -l M*
+#     9999 M31_halos_01.txt
+#     9999 M31_halos_02.txt
+#       28 M33_halos_01.txt
+#       28 M33_halos_02.txt
+#     9999 MW_halos_01.txt
+#     9999 MW_halos_02.txt
+
+# Note copies for 02 to check run parsing... And that I had to deal with 3000 
+# odd systems that appeared twice, with labelling switched MW <-> M31. This
+# will be fixed when Mike gets the labels right...
+
+LGweights.py -v *.txt
+
+# Reading data from M31_halos_01.txt
+# Reading data from M31_halos_02.txt
+# Reading data from M33_halos_01.txt
+# Reading data from M33_halos_02.txt
+# Reading data from MW_halos_01.txt
+# Reading data from MW_halos_02.txt
+# Read in 9998 MW halos,  9998 M31 halos, and 27 M33 halos
+# Written 9998 lines to fig1_pairs_prior.cpt
+# Written 27 lines to fig1_triplets_prior.cpt
+
+CornerPlotter.py -v -w 1 fig1_pairs_prior.cpt,black | & more
+
+# Plot succeeds, but some distances are corrupted (599 Mpc!) - perhaps a
+# wraparound problem? Alert Mike.
+
+# ============================================================================
+# 2011-11-29 (Tuesday) 22:37 GMT
+
+# New test files from Mike, in 2011-11-29
+
+LGweights.py -v *.txt
+
+# Almost works: had to change mMW,mM31,mM33 -> M200 (which is logical),
+# Ask Mike to go back to M200 parameter name.
+ 
+# Then found M33 numbering error:
+
+# Reading data from M31_halos_02.txt
+# Reading data from M33_halos_02.txt
+# Reading data from MW_halos_02.txt
+# Read in 15828 MW halos,  15828 M31 halos, and 5388 M33 halos
+# Error: numbers of M33s in datafiles are inconsistent:
+#   len(MW.idM33[indexM33]), len(M33.idM33) =  4575 5388
+#   MW.idM33[indexM33] =  [473377185 473376581 473376562 ..., 466798497 466796851 466796079]
+#   M33.idM33 =  [473378339 473378222 473377866 ..., 466798497 466797113 466796079]
+
+# Found that M33 halos are misnumbered:
+
+more MW_halos_02.txt 
+# # idMW idM31 idM33 M200 x y z vx vy vz
+#    471652076   471652048          -1  1.89286e+14      447.339      500.750      502.756     -330.680     -231.360      68.9300
+#    473283402   473283385          -1  1.77857e+14      587.477      523.724      453.531     -101.210      266.170      311.340
+# ...
+#    473306709   473306711   473306711  3.09000e+13      587.618      506.939      434.708     -480.350      357.720     -167.570
+#    472934318   472934324          -1  3.07857e+13      479.115      438.132      599.902      73.2800      66.4500      491.590
+
+more M33_halos_02.txt 
+# # idMW idM31 idM33 M200 x y z vx vy vz
+#    473303086   473303089   473303089  1.00895e+12      559.297      498.454      469.637     -135.350     -2.33000     -34.9500
+#    473357513   473357506   473357506  3.30047e+11      558.724      458.687      569.234     -45.3900     -52.3200      581.210
+# ...
+
+grep 473306711 M33_halos_02.txt
+# Returns no result.
+
+
+# ============================================================================
+# 2011-11-27 (Sunday) 23:24 GMT
+
+# Spotted these photos taken by Science Oxford, with simple home setups:
+# 
+# scienceoxford Science Oxford 
+# And here's another galaxy, M31 in Andromeda, taken tonight, also with 280mm
+# lens. yfrog.com/obr9wij can you see its companions?
+# 
+# scienceoxford Science Oxford 
+# It's a lovely evening, so we are out photographing galaxies. Here is Messier
+# 33. We used a DSLR with a 280mm lens yfrog.com/od8tnnfj
+# 
+# ============================================================================
+# 2011-12-12 (Monday) 16:22 CET Madrid Atocha Station!
+
+# OK, these are supposed to be the final files from Mike, in 2011-12-05
+
+~/Dropbox/LocalGroup/python/LGweights.py -v *.txt
+
+# Had to rename masses to M200 in txt files, and change code to accept x,y,z
+# in kpc.
+
+# Reading data from M31_halos_02.txt
+# Reading data from M33_halos_02.txt
+# Reading data from MW_halos_02.txt
+# Read in 164079 MW halos,  164079 M31 halos, and 3898 M33 halos
+# Written 164079 lines to fig1_pairs_prior.cpt
+# Written 3898 lines to fig1_triplets_prior.cpt
+
+# 164,000 MW-M31 pairs, just 3898 have M33s.
+
+# OK plot!
+# Some pairs still have enormous distances in them - wraparound error?
+# Remove in LGweights... Only 396 lines affected, but enough to skew mean.
+# Have CornerPlotter do a weighted mean to get bins right.
+
+MAKEFIGURES:
+
+FIG1:
+
+CornerPlotter.py -n 2,3,4,5 -w 1 -o fig1a.png \
+  fig1_pairs_prior.cpt,gray,shaded \
+  fig1_triplets_prior.cpt,black,outlines
+
+CornerPlotter.py -n 6,7 -w 1 -o fig1b.png \
+  fig1_pairs_prior.cpt,gray,shaded \
+  fig1_triplets_prior.cpt,black,outlines
+
+goto FIG2a
+
+# Plotting PDFs given in fig1_pairs_prior.cpt as gray shaded
+# Only using data in 2 columns:
+#   Par no. 6 ,   $\log_{10} M_{\rm M31} / M_{\rm MW}$ = $ -0.16^{+0.52}_{-0.59} $
+#   Par no. 7 ,   $\log_{10} M_{\rm LG} / M_{\odot}$ = $ 12.05^{+0.65}_{-0.39} $
+# 
+# Plotting PDFs given in fig1_triplets_prior.cpt as black outlines
+# Only using data in 2 columns:  [5, 6]
+#   Par no. 6 ,   $\log_{10} M_{\rm M31} / M_{\rm MW}$ = $ 0.12^{+0.56}_{-0.49} $
+#   Par no. 7 ,   $\log_{10} M_{\rm LG} / M_{\odot}$ = $ 12.31^{+0.41}_{-0.36} $
+# 
+# Figure saved to file: fig1b.png
+
+# ============================================================================
+# 2012-03-15 (Thursday) 22:34 GMT
+
+# Adding constraints. First crop data files to speed things up!
+
+head -5000 M31_halos_02.txt > M31_halos_02.crp
+head -5000 MW_halos_02.txt > MW_halos_02.crp
+head -1 M33_halos_02.txt > M33_halos_02.crp
+grep -v '#' MW_halos_02.crp | awk '{if ($3 > -1) print $1,$2,$3}' > junk
+set n = `cat junk | wc -l`
+foreach i ( `seq $n` )
+  set x = `tail -n +$i junk | head -1`
+  grep $x[1] M33_halos_02.txt | grep $x[2] | grep $x[3] >> M33_halos_02.crp
+end
+
+~/Dropbox/LocalGroup/python/LGweights.py -v *.crp
+
+# OK, this works and is fast. CornerPlotter is currently broken, needs scipy!
+
+# Now implement constraints file, read in as another ATpy table!
+# Now this is broken though - now missing asciitable FUCK.
+
+# File "/Users/pjm/software/ATpy-0.9.5.3/atpy/asciitables.py", line 14, in _check_asciitable_installed
+#     raise Exception("Cannot read data with asciitable - no version of asciitable is found")
+# Exception: Cannot read data with asciitable - no version of asciitable is found
+
+# ??? This was JUST working! Need python 2.6.1, not 2.7.2 as installed with
+# Dan F-M :-(  I guess I should brew install scipy and asciitable.
+
+# ============================================================================
+# 2012-04-07 (Saturday) 14:23 BST
+
+# Better speed up - save triplets after first run as LG_halos_M[W,31,33].fits 
+# files. Not in FITS format, because atpy is broken.
+
+~/Dropbox/LocalGroup/python/LGweights.py -v M*halos_02.txt
+# Reading data from M31_halos_02.txt
+# Reading data from M33_halos_02.txt
+# Reading data from MW_halos_02.txt
+# Read in 164079 MW halos,  164079 M31 halos, and 3898 M33 halos
+# Found 164079 MW-M31 pairs, and 3898 LG triplets
+# Written 2000 lines to fig1_pairs_prior.cpt
+# Written 2000 lines to fig1_triplets_prior.cpt
+# Written 3898 rows to LG_halos_MW.fits
+# Written 3898 rows to LG_halos_M31.fits
+# Written 3898 rows to LG_halos_M33.fits
+# Probability that M_MW > M_M31 is 0.0 % for pairs,
+#   and 0.0256541816316 % for triplets
+
+# Now, running with no arguments causes these files to be read in by default.
+
+~/Dropbox/LocalGroup/python/LGweights.py -v 
+
+# OK! Now code in constraints as class. Done! That was nice code :-)
+
+LGweights.py -v
+# Working from existing FITS tables of halos in triplets...
+# Calculating likelihoods: galaxy MW, data =  [12.2, 0.1, <function lognormal at 0x101e718c0>]
+# Written 3898 lines to fig2_triplets_MW_M200.cpt
+# Calculating likelihoods: galaxy M31, data =  [0.774, 0.04, <function gaussian at 0x101e51758>]
+# Written 3898 lines to fig2_triplets_M31_D.cpt
+# Calculating likelihoods: galaxy M31, data =  [-130.0, 8.0, <function gaussian at 0x101e51758>]
+# Written 3898 lines to fig2_triplets_M31_vr.cpt
+# Calculating likelihoods: galaxy M33, data =  [0.799, 0.023, <function gaussian at 0x101e51758>]
+# Written 3898 lines to fig2_triplets_M33_D.cpt
+# Calculating likelihoods: galaxy M33, data =  [-190.0, 59.0, <function gaussian at 0x101e51758>]
+# Written 3898 lines to fig2_triplets_M33_vr.cpt
+# Written 3898 lines to fig2_triplets_M33+M31_D+vr.cpt
+
+head -3 fig2_triplets_M33+M31_D+vr.cpt
+# # importance, $\log_{10} M_{\rm MW} / M_{\odot}$,  $\log_{10} M_{\rm M31} / M_{\odot}$,  $\log_{10} M_{\rm M33} / M_{\odot}$,  $D_{\rm M31} / {\rm kpc}$,  $v^{\rm rad}_{\rm M31} / {\rm km s}^{-1}$,  $D_{\rm M33} / {\rm kpc}$,  $v^{\rm rad}_{\rm M33} / {\rm km s}^{-1}$,  $\log_{10} M_{\rm M31} / M_{\rm MW}$,  $\log_{10} \prime{M}_{\rm LG} / M_{\odot}$,  $\log_{10} M_{\rm LG} / M_{\odot}$,  
+# # 0,1,        10.0,14.0,    10.0,14.0,    10.0,14.0,    550,950,      -400,400,     550,950,      -400,400,     -3.0,3.0,     10.0,14.0,    10.0,14.0,    
+# 5.786740758691156581e-104 1.171608351367752832e+01 1.153129621946959560e+01 1.127062294478665549e+01 9.989284258640000189e+02 2.657148331429999999e+01 6.444672218200000771e+02 4.319920246899999938e+01 -1.847872942079332725e-01 1.193447471589655073e+01 1.201970976687990067e+01
+
+
+# Now make some nice figures:
+
+# fig2a: kinemetaic constraints:
+
+FIG2a:
+
+CornerPlotter.py -n 5,6,7,8 -w 1 -o fig2a_M31.png \
+  fig2_triplets_prior.cpt,gray,outlines \
+  fig2_triplets_M31_D.cpt,red,shaded \
+  fig2_triplets_M31_vr.cpt,orange,shaded \
+  fig2_triplets_M31_D+vr.cpt,black,outlines
+ 
+CornerPlotter.py -n 5,6,7,8 -w 1 -o fig2a_M33.png \
+  fig2_triplets_prior.cpt,gray,outlines \
+  fig2_triplets_M33_D.cpt,darkviolet,shaded \
+  fig2_triplets_M33_vr.cpt,blue,shaded \
+  fig2_triplets_M33_D+vr.cpt,black,outlines
+ 
+CornerPlotter.py -n 5,6,7,8 -w 1 -o fig2a_M31+M33.png \
+  fig2_triplets_prior.cpt,gray,outlines \
+  fig2_triplets_M31_D+vr.cpt,red,shaded \
+  fig2_triplets_M33_D+vr.cpt,blue,shaded \
+  fig2_triplets_M33+M31_D+vr.cpt,black,outlines
+ 
+goto FIG2b
+
+# fig2b: inferences of mass:
+
+FIG2b:
+
+CornerPlotter.py -n 2,3,4,11 -w 1 -o fig2b_M31.png \
+  fig2_triplets_prior.cpt,gray,outlines \
+  fig2_triplets_M31_D.cpt,red,shaded \
+  fig2_triplets_M31_vr.cpt,orange,shaded \
+  fig2_triplets_M31_D+vr.cpt,black,outlines
+ 
+CornerPlotter.py -n 2,3,4,11 -w 1 -o fig2b_M33.png \
+  fig2_triplets_prior.cpt,gray,outlines \
+  fig2_triplets_M33_D.cpt,darkviolet,shaded \
+  fig2_triplets_M33_vr.cpt,blue,shaded \
+  fig2_triplets_M33_D+vr.cpt,black,outlines
+ 
+CornerPlotter.py -n 2,3,4,11 -w 1 -o fig2b_M31+M33.png \
+  fig2_triplets_prior.cpt,gray,outlines \
+  fig2_triplets_M31_D+vr.cpt,red,shaded \
+  fig2_triplets_M33_D+vr.cpt,blue,shaded \
+  fig2_triplets_M33+M31_D+vr.cpt,black,outlines
+
+goto FIG2b+ANGSEP 
+
+# Here are the masses from all constraints:
+
+# log10 M_MW:  12.20^{+0.61}_{-0.33} cf 12.2 +/- 0.1 from paper 1
+# log10 M_M31: 12.47^{+0.11}_{-0.58}
+# log10 M_M33: 11.25^{+0.34}_{-0.15}
+# log10 M_LG:  12.69^{+0.28}_{-0.46}
+# [  1.6e+12   3.0e+12   0.2e+12   4.9e+12  ]
+
+# Encouraging start: but need more precision... Proper motions! And 
+# angular separation... First mass of M33?
+
+# M31 vr seems to be most constraining - and helps M_M31 the most. The 
+# timing argument! Is 0.3 dex competitive? Li and White found (IQR, not
+# 1-sigma errors, but close enough) 12.72+0.11-0.14. 95% range was
+# 12.26:13.01, ie 12.72+0.29-0.46, so their 2-sigma result is 
+# very close to our 1-sigma result. So we are right in the right
+# ballpark, just need more precision to "compete".
+
+# Possibly some improvement in distances and speeds of M31 and M33:
+
+# Dr_M31 =  792^{+0}_{-17}  cf input  774 +/- 40
+# vr_M31 = -130^{+9}_{-13}  cf input -130 +/- 8
+# Dr_M33 =  785^{+4}_{-20}  cf input  799 +/- 23
+# vr_M33 = -143^{+37}_{-66} cf input -190 +/- 59
+
+# Improved precision of distance to M31 by factor of 2? Refined estimate
+# of vr_M33...
+
+# ======================================================================
+# 2012-04-08 (Sunday) 10:19 BST
+
+# OK, code in proper motions of both M31 and M33, and angular
+# separation... Point is that proper motion of M31 is constrained
+# *somewhat - M31 is on an almost radial orbit!  BTW, what constraints 
+# on M31 proper motion did L&W use? VG08?
+
+LGweights.py -v
+
+# Make a plot showing masses and angular separation!
+
+FIG2b+ANGSEP:
+
+CornerPlotter.py -n 2,3,4,11,12 -w 1 -o fig2b+angsep_M31+M33.png \
+  fig2_triplets_prior.cpt,gray,outlines \
+  fig2_triplets_M33+M31_D+vr.cpt,black,outlines 
+
+goto FINISH
+
+# ======================================================================
+# 2012-04-09 (Monday) 12:04 BST
+
+# Images of M31 and M33 on sky, to make explanatory diagram:
+
+# M31 (from NED)
+   skycoor -d 00:42:44.3 +41:16:09
+   #  10.68458  41.26917 J2000
+   skycoor -g 00:42:44.3s +41:16:09
+   # 121.17423 -21.57289 galactic
+
+# M33 (also from NED)
+   skycoor -d 01:33:50.9 +30:39:37
+   #  23.46208  30.66028 J2000
+   skycoor -g 01:33:50.9 +30:39:37
+   # 133.61018 -31.33058 galactic
+
+# Halfway inbetween: 16.0 36.0 = 01:04:00.000 +36:00:00.00 J2000
+
+# Google sky is nice but not downloadable. POSS doesnt allow 20 deg
+# image downloads! Back to amateurs. Here's a good image:
+
+# http://stargazerslounge.com/imaging-widefield-special-events-comets/57879-chained-princess.html#post1002539
+
+# Contact PhilM?
+
+# Also this nice color image, but not N-E aligned like PhilM's...
+
+http://www.skyimagelab.com/m31-m33.html
+
+# Downloaded as rbam31.jpg. Register both at Astrometry.net.
+# Done - about 5 mins each.
+
+# FINALAndromedaandTriangulumsmaller.jpg
+http://nova.astrometry.net/status/12772
+http://nova.astrometry.net/user_images/16549#annotated
+
+# rbam31.jpg
+http://nova.astrometry.net/status/12771
+http://nova.astrometry.net/user_images/16548#annotated
+
+
+# Results are in wcs.fits files - plain text FITS headers, to be read
+# in and combined with jpg RGB channels, and displayed in ds9
+# Then draw arrows etc.
+
+# ======================================================================
+
+# Meanwhile, define M31-M33 coord system. M31 at origin, M33 positioned
+# and moving relative to it.  (alphacosdec,dec) is a LH system, what is
+# M33's positions in this coord system, in rad?
+
+set radecM31 = '00:42:44.3 +41:16:09'
+set radecM33 = '01:33:50.9 +30:39:37'
+
+skycoor -a $radecM31  $radecM33
+# -137.872
+# Hmm - sign error? Should be +137.872 I think...
+# In usual x-y system, this is the correct angle though.
+
+# The coord system where M33 is at (x',0) and M31 is at (0,0) is just
+# rotated by this angle relative to the WCS. First find 2 components of
+# tangential position and velocity of M33 relative to M31, then rotate
+# coord system to ra,dec. When to correct for Earth's pos? Check VG08.
+
+skycoor -r $radecM31  $radecM33 | awk '{print $1*3.141592654/(180.0*3600.0)}'
+# 0.258025 rad (=14.7837 deg, OK)
+
+# Observational constraints on proper motions are in world coords on
+# sky. Plan is to have halos predict mu in arcsec/yr, and compare with
+# observation. This is th right way round, since both v and D are needed
+# from halo catalog. Tricky part is that there is an uncertain
+# correction to be applied as well, for the rotation of M33. Marginalise
+# this out analytically before computing importance on mu. 
+
+# Quick shortcut: combine obs errors on mu, vrot and D to get rough
+# error on v to compare with prediction from sim. Then need to predict 
+# v_W and v_N from catalog. Rotate from v_x' and v_y' in M31-M33 system.
+# All of this is still galactocentric but helio correction will be
+# small.
+
+# ======================================================================
+# 2012-04-10 (Tuesday) 08:18 BST
+
+# New catalogs from Mike! Needed to rename M200 to Mvir in code:
+
+mkdirf ${WORK_DIR}/cdm/LocalGroup/analysis/2012-04-10
+
+# Read in 1642836 MW halos,  1642836 M31 halos, and 37612 M33 halos
+# Found 1642836 MW-M31 pairs, and 37612 LG triplets
+# Written 2000 lines to fig1_pairs_prior.cpt
+# Written 2000 lines to fig1_triplets_prior.cpt
+# Written 37612 rows to LG_halos_MW.fits
+# Written 37612 rows to LG_halos_M31.fits
+# Written 37612 rows to LG_halos_M33.fits
+# Working from existing FITS tables of halos in triplets...
+# /Users/pjm/Dropbox/LocalGroup/python/LGweights.py:466: RuntimeWarning: invalid value encountered in arccos
+#   angsep = numpy.arccos(cos_angsep)*rad2deg
+
+# Hmm - wonder what that is?
+
+# Remake plots as above... Source notes!
+
+set notes = $LOCALGROUP_DIR/../doc/notes-pjm.txt
+source $notes
+
+# Look at numbers again:
+# 
+# Plotting PDFs given in fig2_triplets_M33+M31_D+vr.cpt as black outlines
+# Only using data in 4 columns ( [4, 5, 6, 7] ): 
+#   Par no. 5 ,   $D_{\rm M31} / {\rm kpc}$ = $ 769^{+38}_{-13} $
+#   Par no. 6 ,   $v^{\rm rad}_{\rm M31} / {\rm km s}^{-1}$ = $ -132.0^{+10.1}_{-5.1} $
+#   Par no. 7 ,   $D_{\rm M33} / {\rm kpc}$ = $ 800^{+13}_{-25} $
+#   Par no. 8 ,   $v^{\rm rad}_{\rm M33} / {\rm km s}^{-1}$ = $ -173^{+37}_{-55} $
+# Figure saved to file: fig2a_M31+M33.png
+# 
+# Plotting PDFs given in fig2_triplets_M33+M31_D+vr.cpt as black outlines
+# Only using data in 4 columns ( [1, 2, 3, 10] ): 
+#   Par no. 2 ,  $\log_{10} M_{\rm MW} / M_{\odot}$ = $ 12.34^{+0.35}_{-0.46} $
+#   Par no. 3 ,   $\log_{10} M_{\rm M31} / M_{\odot}$ = $ 12.52^{+0.19}_{-0.48} $
+#   Par no. 4 ,   $\log_{10} M_{\rm M33} / M_{\odot}$ = $ 11.44^{+0.39}_{-0.24} $
+#   Par no. 11 ,   $\log_{10} M_{\rm LG} / M_{\odot}$ = $ 12.849^{+0.067}_{-0.101} $
+# Figure saved to file: fig2b_M31+M33.png
+
+# M_LG from Li & White was 12.72 +0.29/-0.46 (95%)
+# We get                   12.85 +0.14/-0.20 (roughly 95%, doubling errs)
+#  ie consistent, twice as precise!
+# cf VG08 who find 12.75 +0.11/-0.13 (95%) Still consistent. This is M_LG
+# though, all three halos! What is M_pair? More like 12.74!
+
+
+# Distance to M31 and M33:
+#   M31: 769 +38/-13 cf input 774 +40/-40
+#   M33: 800 +13/-25 cf input 799 +23/-23
+# Small, one-sided improvement in precision. Not much to see here.
+
+# Plots are still pretty ratty. Compute Neff better...
+
+CornerPlotter.py -n 2,3,4,11,12 -w 1 -o test.png fig2_triplets_M33+M31_D+vr.cpt,black,outlines
+# Plotting PDFs given in fig2_triplets_M33+M31_D+vr.cpt as black outlines
+# Only using data in 5 columns ( [1, 2, 3, 10, 11] ): 
+# Effective number of samples: Neff,N95,N = 7.79823399369 58 37612
+
+# OK, this makes sense given plots...
+
+
+# Angsep problem comes form 1 system where M31 = M33!
+# 
+# Working from existing FITS tables of halos in triplets...
+# DD (array([], dtype=int64),)
+# cos_angsep [ 0.9982071   0.98207566  0.97492011 ...,  0.96388993  0.72935202
+#   0.99988353]
+# cos_angsep [28310] [ 1.]
+# [ (606199009, 605037772, 605037772, 1178480000000.0, 0.737, -599.698171, 0.168, -83.21, -42128.22197, 42.23, 40, 599.6986474, 42128.0980727, 0.0)]
+# [ (606199009, 605037772, 605037772, 1178480000000.0, 0.737, -599.698171, 0.168, -83.21, -42128.22197, 42.23, 40, 599.6986474, 42128.0980727, 0.0)]
+# 
+# Go back and remove identical twins... OK.
+
+# ======================================================================
+# 2012-04-16 (Monday) 17:42 BST
+
+# Work arising from skypecon: 
+# 
+# - convert masses to M200c like Li & White
+#
+# - look at constraints from pairs, triplets, in M2 = M_MW + M_M31
+# 
+# - code up timing mass to redo "calibration" of Li & White
+# 
+# - start bootstrapping to assess sampling noise
+# 
+# - compare pairs results with Millennium, and also Consuelo box at higher
+# redshift to compare
+# 
+# - include proper motion constraints from M33 (Brunthaler radio obs).
+#   Predict M31 propoer motion, compare to VG08 with different assumptions
+
+# ======================================================================
+# 2012-04-19 (Thursday) 22:17 BST
+
+# Got simple timing argument mass going, for pairs and triplets.
+# Compare with Li & White, and VG08, so look at M'_LG = M_MW + M_M31
+
+# Also computed logA200, the log ratio of M_TA to M'_LG
+
+FIG3:
+
+# First, compare 2 mass estimates, plus ratio and vt, prior vs posterior.
+
+CornerPlotter.py -n 7,8,9,5,10 -w 1 -o fig3a_mass_comparison.png \
+  LG_pairs_prior.cpt,gray,outlines \
+  LG_pairs_M31_D+vr.cpt,black,outlines 
+
+goto FINISH
+
+# Plots pretty boxy - how many systems didn't solve?!
+
+grep -v '#' LG_pairs_prior.cpt | awk '{print $9}' | wc -l
+#   163454
+grep -v '#' LG_pairs_prior.cpt | awk '{if ($8 < 1) print $9}' | wc -l
+#    86123
+
+# Wow - about half. Why is this? Need to do solving more carefully? 
+# Check Li & White's selection... Maybe small vt was a constraint?
+
+# Need to compute vt anyway - add to LGweights.
+
+# Solution: its the +ve vrad systems. L&W used preselection in vrad of
+# [-65:-195]. This would cut down our prior space quite a bit! 
+
+# Decided to keep in +ve vr halos in prior, but when constraints are applied,
+# only write out samples carrying 99.9% of the weight. Needs testing. 
+# Hid +ve vr systems' M_TA values off plot, don't trust stats on this from 
+# CornerPlotter.
+
+# ======================================================================
+# 2012-04-26 (Thursday) 10:39 BST
+
+# Got M200 conversions in, remake plots/values. Likely < 10% difference in 
+# masses. Still no real concentrations. 
+
+# Do all halos, remake triplets:
+LGweights.py -v M*_halos_*.txt
+# Remake with Bolshoi MW mass constraint as well...
+
+
+# Local Group etc mass estimates:
+
+# Pairs:
+set plotfile = fig2c_pairs_masses.png
+CornerPlotter.py -n 2,3,7,6 -w 1 -o $plotfile \
+  LG_pairs_prior.cpt,gray,shaded \
+  LG_pairs_M31_D+vr.cpt,red,outlines \
+  LG_pairs_M31_D+vr_MW-Mvir.cpt,black,outlines > $plotfile:r.log &
+
+# Triplets:
+set plotfile = fig2c_triplets_masses.png
+CornerPlotter.py -n 2,3,10,9 -w 1 -o $plotfile \
+  LG_triplets_prior.cpt,gray,shaded \
+  LG_triplets_M31_D+vr.cpt,red,outlines \
+  LG_triplets_M33+M31_D+vr.cpt,darkviolet,outlines \
+  LG_triplets_M33+M31_D+vr_MW-Mvir.cpt,black,outlines > $plotfile:r.log &
+
+# M33 mass:
+
+set plotfile = fig2d_triplets_masses.png
+CornerPlotter.py -n 2,3,4,10 -w 1 -o $plotfile \
+  LG_triplets_prior.cpt,gray,shaded \
+  LG_triplets_M31_D+vr.cpt,red,outlines \
+  LG_triplets_M33+M31_D+vr.cpt,darkviolet,outlines \
+  LG_triplets_M33+M31_D+vr_MW-Mvir.cpt,black,outlines > $plotfile:r.log &
+
+
+# Timing Mass estimates:
+
+# Pairs:
+set plotfile = fig3a_pairs_mass_comparison.png
+CornerPlotter.py -n 7,8,9,5,10 -w 1 -o $plotfile \
+  LG_pairs_prior.cpt,gray,shaded \
+  LG_pairs_M31_D+vr.cpt,red,outlines \
+  LG_pairs_M31_D+vr_MW-Mvir.cpt,black,outlines > $plotfile:r.log &
+
+# Triplets:
+set plotfile = fig3a_triplets_mass_comparison.png
+CornerPlotter.py -n 10,13,14,6,15 -w 1 -o $plotfile \
+  LG_triplets_prior.cpt,gray,shaded \
+  LG_triplets_M31_D+vr.cpt,red,outlines \
+  LG_triplets_M33+M31_D+vr.cpt,darkviolet,outlines \
+  LG_triplets_M33+M31_D+vr_MW-Mvir.cpt,black,outlines > $plotfile:r.log &
+set plotfile = fig3a_triplets_mass_comparison.png
+CornerPlotter.py -n 10,13,14,6,15 -w 1 -o $plotfile \
+  LG_triplets_prior.cpt,gray,shaded \
+  LG_triplets_M31_D+vr.cpt,red,outlines \
+  LG_triplets_M33+M31_D+vr.cpt,darkviolet,outlines \
+  LG_triplets_M33+M31_D+vr_MW-Mvir.cpt,black,outlines > $plotfile:r.log &
+
+
+foreach cptfile ( LG_triplets_prior.cpt LG_triplets_M31_D+vr.cpt \
+                  LG_triplets_M33+M31_D+vr.cpt LG_triplets_M33+M31_D+vr_MW-Mvir.cpt )
+  set newfile = ${cptfile:r}_incoming.cpt
+  grep # $cptfile > $newfile
+  grep -v '#' $cptfile | awk '{if ($6 < 0.0) print $0}' >> $newfile
+  wc -l $cptfile $newfile
+end  
+
+set plotfile = fig3a_triplets_mass_comparison_incoming.png
+CornerPlotter.py -n 10,13,14,6 -w 1 -o $plotfile \
+  LG_triplets_prior_incoming.cpt,gray,shaded \
+  LG_triplets_M31_D+vr_incoming.cpt,red,outlines \
+  LG_triplets_M33+M31_D+vr_incoming.cpt,darkviolet,outlines \
+  LG_triplets_M33+M31_D+vr_MW-Mvir_incoming.cpt,black,outlines > $plotfile:r.log &
+
+
+# Predictions for angsep and M31 vtan?
+
+set plotfile = fig4_triplets_propermotions.png
+CornerPlotter.py -n 3,4,12,15 -w 1 -o $plotfile \
+  LG_triplets_prior.cpt,gray,shaded \
+  LG_triplets_M33+M31_D+vr_MW-Mvir.cpt,black,outlines > $plotfile:r.log &
+
+
+# OK, make a latex table of all this lot:
+#  Columns: M_LG, M_MW, M_M31, M_M33, A200, M_M31/M_MW 
+#  Rows:    
+#    isolated pairs
+#    + M31 D and vr
+#    + MW mass
+#    -----------------
+#    isolated triplets
+#    + M31 D and vr
+#    + M33 D and vr
+#    + MW mass
+
+# DO this with separate shell script mass_table.csh, which calls 
+# PointEstimator.py to return numerical estimates.
+
+# UNFINISHED...
+
+set plotfile = fig3a_triplets_mass_comparison_simple.png
+CornerPlotter.py -n 10,13,14,6,15 -w 1 -o $plotfile \
+  LG_triplets_prior.cpt,gray,shaded \
+  LG_triplets_M33+M31_D+vr.cpt,black,outlines > $plotfile:r.log &
+
+# ======================================================================
+# 2012-08-21 (Tuesday) 18:28 MST
+
+# OK, starting work on new (final) files, from Michael! New filename parsing,
+# plus adapting for new M31-centric approach. Still do M200 conversions
+# though, for now. Leave out Bolshoi MW mass - MW is now a target.
+
+# Archived all code to python/attic/2012-04-10. Continue developing in main
+# python dir!
+
+cd ~/work/cdm/LocalGroup/analysis/2012-06-01
+ls M*_halos_40??_z0p0??_vir_bgc2.txt
+
+# Do all halos in two box at two redshifts, remake triplets etc:
+
+LGweights.py -v M*_halos_4019_z0p0??_vir_bgc2.txt M*_halos_4037_z0p0??_vir_bgc2.txt
+
+wc -l M*_halos_4019_z0p0??_vir_bgc2.txt M*_halos_4037_z0p0??_vir_bgc2.txt
+#   147197 M31_halos_4019_z0p000_vir_bgc2.txt
+#   150515 M31_halos_4019_z0p054_vir_bgc2.txt
+#     2572 M33_halos_4019_z0p000_vir_bgc2.txt
+#     2531 M33_halos_4019_z0p054_vir_bgc2.txt
+#   147197 MW_halos_4019_z0p000_vir_bgc2.txt
+#   150515 MW_halos_4019_z0p054_vir_bgc2.txt
+#   148123 M31_halos_4037_z0p000_vir_bgc2.txt
+#   151469 M31_halos_4037_z0p054_vir_bgc2.txt
+#     2584 M33_halos_4037_z0p000_vir_bgc2.txt
+#     2617 M33_halos_4037_z0p054_vir_bgc2.txt
+#   148123 MW_halos_4037_z0p000_vir_bgc2.txt
+#   151469 MW_halos_4037_z0p054_vir_bgc2.txt
+
+# OK good - about 2500 triplets per box, per epoch. We have 50 boxes, so
+# thats 2500*2*50 = 250,000 triplets total.
+
+# Weights code reads in fine! Output:
+
+# Read in 597300 MW halos,  597300 M31 halos, and 10300 M33 halos
+# Found 597300 MW-M31 pairs, and 10300 LG triplets
+
+# For testing, run on one box at one epoch:
+
+LGweights.py -v M*_halos_4037_z0p000_vir_bgc2.txt
+
+# Bug:
+# 
+# Written 2583 lines to LG_triplets_MW-Mvir.cpt
+# ERROR: KeyError: 'D' [LGconstraints]
+# Traceback (most recent call last):
+#   File "/Users/pjm/Dropbox/LocalGroup/python/LGweights.py", line 790, in <module>
+#     
+#   File "/Users/pjm/Dropbox/LocalGroup/python/LGweights.py", line 364, in LGweights
+#     filename = 'LG_triplets_M31_D.cpt'
+#   File "/Users/pjm/Dropbox/LocalGroup/python/LGconstraints.py", line 69, in likelihood
+#     d = self.data[thisgalaxy][parameter]
+# KeyError: 'D'
+
+# Hmm. -t option to only do triplets calcs:
+
+ LGweights.py -v -t
+
+# Failing on the matrix multiply. Easy fix.
+# 
+#  ERROR: ValueError: operands could not be broadcast together with shapes (2583,3) (3,3)  [LGconstraints]
+# Traceback (most recent call last):
+#   File "/Users/pjm/Dropbox/LocalGroup/python/LGweights.py", line 741, in <module>
+#     LGweights(sys.argv)
+#   File "/Users/pjm/Dropbox/LocalGroup/python/LGweights.py", line 397, in LGweights
+#     wt4 = wt0*obs.Nd_likelihood([MWt],['D','vr','vt'])
+#   File "/Users/pjm/Dropbox/LocalGroup/python/LGconstraints.py", line 114, in Nd_likelihood
+#     L = multivariategaussian(d,dp,Cinv)
+#   File "/Users/pjm/Dropbox/LocalGroup/python/LGconstraints.py", line 146, in multivariategaussian
+#     chisq = (x-x0)*Cinv*(x-x0)
+# ValueError: operands could not be broadcast together with shapes (2583,3) (3,3) 
+ 
+# ======================================================================
+# 2012-11-05 (Monday) 16:42 GMT
+
+# Getting best local groups for Risa... Need to write out 
+# samples in order so I can paste IDs back in...
+# Go back to old code:
+
+cd Dropbox/LocalGroup/python/
+mv LGweights.py DEV.LGweights.py
+mv LGconstraints.py DEV.LGconstraints.py
+cp attic/2012-04-10/LG* .
+
+cd work/cdm/LocalGroup/analysis/2012-06-01
+
+# Small selection:
+set tag = 4030-4039
+set boxes = ( 30 31 32 33 34 35 36 37 38 39 )
+
+# These are the runs with full merger histories:
+set tag = full-mh
+set boxes = ( 01 02 03 04 20 26 27 28 29 30 31 32 33 34 35 36 37 38 39 40 )
+set halofiles = ()
+
+# Either way:
+foreach box ( $boxes )
+  set halofiles = ( $halofiles M*_halos_40${box}_z0p000_vir_bgc2.txt )
+end
+
+LGweights.py -v $halofiles
+
+# 403? - got 3 files with Ids, and then masses, for 25707 triplet systems:
+
+# Full MH - got 3 files with Ids, and then masses, for 51403 triplet systems:
+
+# LG_triplets_MW.fits
+# LG_triplets_M31.fits
+# LG_triplets_M33.fits
+
+# And associated cpt files:
+
+# LG_triplets_M33+M31_D+vr.cpt
+# LG_triplets_prior.cpt
+
+mkdir -p risa
+cp LG* risa
+cd risa
+
+# mv LG_triplets_MW.fits LG_triplets_4030-4039_z0p000_MW.fits
+# mv LG_triplets_M31.fits LG_triplets_4030-4039_z0p000_M31.fits
+# mv LG_triplets_M33.fits LG_triplets_4030-4039_z0p000_M31.fits
+# mv LG_triplets_M33+M31_D+vr.cpt LG_triplets_4030-4039_z0p000_M33+M31_D+vr.cpt
+# mv LG_triplets_prior.cpt LG_triplets_4030-4039_z0p000_prior.cpt
+
+mv LG_triplets_MW.fits          LG_triplets_${tag}_z0p000_MW.fits
+mv LG_triplets_M31.fits         LG_triplets_${tag}_z0p000_M31.fits
+mv LG_triplets_M33.fits         LG_triplets_${tag}_z0p000_M33.fits
+mv LG_triplets_M33+M31_D+vr.cpt LG_triplets_${tag}_z0p000_M33+M31_D+vr.cpt
+mv LG_triplets_prior.cpt        LG_triplets_${tag}_z0p000_prior.cpt
+
+# Quick plots:
+
+set plotfile = LG_triplets_${tag}_z0p000_masses.png
+CornerPlotter.py -n 2,3,4,10 -w 1 -o $plotfile \
+  LG_triplets_${tag}_z0p000_prior.cpt,gray,shaded \
+  LG_triplets_${tag}_z0p000_M33+M31_D+vr.cpt,black,outlines > $plotfile:r.log &
+
+set plotfile = LG_triplets_${tag}_z0p000_timingargument.png
+CornerPlotter.py -n 10,13,14,6 -w 1 -o $plotfile \
+  LG_triplets_${tag}_z0p000_prior.cpt,gray,shaded \
+  LG_triplets_${tag}_z0p000_M33+M31_D+vr.cpt,black,outlines > $plotfile:r.log &
+
+# Risa just wants IDs of best systems. Paste them together, and sort by
+# weight. 
+
+# First check alignment:
+
+# tail -n +2 LG_triplets_${tag}_z0p000_MW.fits | awk '{print $1,$2,$3,$11,$12,$13}' | head
+# 4696514 6589980 6589981 4037 z0p000 612712223254.0
+# 6586098 6586100 6586097 4037 z0p000 703405690224.0
+# 6583865 6583867 6583868 4037 z0p000 847930166357.0
+# 6581720 6581723 6581722 4037 z0p000 234544042862.0
+# 6580451 6580450 6580449 4037 z0p000 428703232342.0
+# 6578285 6578286 6578287 4037 z0p000 671545950231.0
+# 6576302 6576301 6576297 4037 z0p000 7.1185152951e+12
+# 6573098 6573097 6573099 4037 z0p000 394324790283.0
+# 6568526 6568527 6568525 4037 z0p000 450798810246.0
+# 6559073 6559074 6559075 4037 z0p000 352564338990.0
+# 
+# tail -n +3 LG_triplets_${tag}_z0p000_M33+M31_D+vr.cpt | awk '{print exp($2*log(10))}' | head
+# 6.12712e+11
+# 7.03406e+11
+# 8.4793e+11
+# 2.34544e+11
+# 4.28703e+11
+# 6.71546e+11
+# 7.11852e+12
+# 3.94325e+11
+# 4.50799e+11
+# 3.52564e+11
+
+# OK! Now get teh right columns:
+
+# 1  importance, 
+# 2  $\log_{10} M_{\rm MW} / M_{\odot}$,  
+# 3  $\log_{10} M_{\rm M31} / M_{\odot}$,  
+# 4  $\log_{10} M_{\rm M33} / M_{\odot}$,  
+# 5  $D_{\rm M31} / {\rm kpc}$,  
+# 6  $v^{\rm rad}_{\rm M31} / {\rm km s}^{-1}$,  
+# 7  $D_{\rm M33} / {\rm kpc}$,  
+# 8  $v^{\rm rad}_{\rm M33} / {\rm km s}^{-1}$,  
+# 9  $\log_{10} M_{\rm M31} / M_{\rm MW}$,  
+# 10 $\log_{10} M\prime_{\rm LG} / M_{\odot}$,  
+# 11 $\log_{10} M_{\rm LG} / M_{\odot}$,  
+# 12 $\Delta\theta / {\rm deg}$,  
+# 13 $\log_{10} M_{\rm TA} / M_{\odot}$,  
+# 14 $\log_{10} A_{200}$,
+
+# Paste!
+
+tail -n +2 LG_triplets_${tag}_z0p000_MW.fits | awk '{print $1,$2,$3,$11,$12}' > junk1
+tail -n +3 LG_triplets_${tag}_z0p000_M33+M31_D+vr.cpt | awk '{printf "%f  %f  %f  %f  %f\n", $1,$2,$3,$4,$10}' > junk2
+
+set outfile = LG_triplets_${tag}_z0p000_all.txt
+echo "# idMW  idM31  idM33  box  epoch  weight  M200_MW  M200_M31  M200_M33  M_LG" > $outfile
+paste junk1 junk2 >> $outfile
+
+set bestfile = LG_triplets_${tag}_z0p000_best.txt
+echo "# idMW  idM31  idM33  box  epoch  weight  M200_MW  M200_M31  M200_M33  M_LG" > $bestfile
+grep -v "#" $outfile | sort -nrk 6 | head -200 >> $bestfile
+
+\rm junk*
+
+# Great - put in dropbox for risa!
+
+mv LG_triplets*.* ~/Dropbox/LocalGroup/results/risa-2012-11-05/
+
+# I see a few from box 02:
+
+# #  idMW   idM31   idM33  box  epoch       weight    M200_MW   M200_M31   M200_M33  M_LG
+# 5195786 5195787 5195788 4002 z0p000     0.052046  12.197047  12.426803  11.400997  12.627975
+# 6371154 6371156 6371157 4002 z0p000     0.030549  12.193665  12.187509  11.969030  12.491628
+# 1964713 1964711 1964710 4002 z0p000     0.012848  12.533637  12.192985  11.683682  12.696918
+#  573811  573805  573806 4002 z0p000     0.005936  12.823007  12.487317  12.297062  12.987850
+# 5903167 5903165 5903164 4002 z0p000     0.005566  12.798912  11.562112  11.199240  12.823385
+# 3884611 3884615 3884614 4002 z0p000     0.003260  12.055642  12.570386  11.567922  12.686220
+# 3254580 3254581 3254582 4002 z0p000     0.002564  12.268896  12.364271  11.853216  12.620226
+# 4787245 4787248 4787247 4002 z0p000     0.000749  11.905175  11.611787  11.295836  12.083828
+# 2190171 2190178 2190176 4002 z0p000     0.000637  12.113295  13.183408  11.839574  13.218875
+
+# ======================================================================
+FINISH:

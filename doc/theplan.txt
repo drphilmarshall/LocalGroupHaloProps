@@ -1,0 +1,214 @@
+
+Studying the Local Group with Consuelo
+--------------------------------------
+
+Use the rockstar halo catalogs from many Conseulo boxes.
+
+Prior sampling:
+
+    -- Find all central halos: each one is an MW candidate.
+    -- Define M31 isolation distance, D_iso^M31 = 3Mpc, from this halo.
+    -- Keep sample if there is <= 1 halo with M > M_MW within D_iso^M31
+    -- Let M31 be the most massive halo within D_iso^M31 from MW
+    -- Write out sample if D_M31 = [574,974] (eg 774 +/- 5sigma)
+    
+    Now include M33 analogs:
+   
+    -- Take pairs from above.
+    -- Define M33 isolation distance, D_iso^M33 = 2Mpc, from the MW halo.
+    -- Keep sample if there is <= 3 halos within D_iso^M33
+    -- Define M31 radius, R^M31 = 450kpc from the M31 halo.
+    -- Define MW radius, R^MW = 300kpc from the MW halo.
+    -- Keep sample if:
+       -- There is exactly 1 halo within R^M31 and it is closer to M31 than
+          MW. Let this halo be M33.
+       -- Any additional halos (of which there at most 2) are within R^MW and
+          are closer to MW than M31
+    -- Write out sample.
+    
+    Sample files:
+    
+    -- Write out 3 output files, one for each object, that contain:
+         ID_MW ID_M31 ID_M33 M200 x y z vx vy vz Lx Ly Lz Cxx Cxy Cxz Cyx Cyy Cyz Czx Czy Czz
+       
+       MW_halos_JJ.txt
+       M31_halos_JJ.txt
+       M33_halos_JJ.txt (much smaller)
+       
+    -- ID is ROCKSTAR ID, and all files have all halo IDs in them. For
+       systems that have MW and M31 but no M33, set ID_M33 to -1
+    -- NB. N_pairs >> N_triplets
+    -- coordinate system is cosmic consuelo
+    -- JJ is the consuelo run number (00 to 39)
+
+
+--------------------------------------------------------------------------------
+
+Paper I.  The Dark Mass and Dynamics of the Local Group
+
+Questions:
+
+  What is the mass of the Local Group? How precisely do the kinematics of M31
+  constrain it?
+  
+  How much difference does having an M33 make? How precisely to its kinematics
+  constrain the mass of M31?
+
+  How is (M1+M2) different from the Timing Argument mass? What is A200?
+  For which types of halos would M_TA be an accurate estimator? 
+
+  What are the masses of the MW, M31 and M33 halos, individually? 
+  How do these estimates compare with previous measurements? 
+  Is M31 more massive than the MW? 
+
+
+For discussion:
+
+  Interpretation of A200 result.
+  
+  Tension in MW halo mass estimate?
+
+  [What are the predicted numbers of subhalos more massive than X for MW and M31?]
+  [Ratios of predicted numbers of satellites at some mass scale?]
+    (Choose X based on MBK claims of massive Fornax problem).
+  
+  
+  
+  
+Importance weighting:
+NEED TO UPDATE TO VdM++2012
+
+    -- weight by distance to M31:
+        D = 774 +/- 40 kpc (Van der Marel & Guhathakurtha 2008) USE THIS
+        [744 +/- 33 kpc (Vilardell 2010)]
+        [785 +/- 25 (McConnachie et al 2005)]
+    -- weight by Galactocentric tangential and radial velocity of M31:
+        Vr = -130 +/- 8 km/s (VG08)
+        Vt = xx +/- xx km/s (VG08)
+    -- weight by log10 M_MW from Busha et al paper:
+        M200_MW = 12.2 +/- 0.1
+
+  DONE first attempt, looked at masses, sum and ratio. 
+  Constraint on M2 (M31) is weakish, M_LG to 0.3 dex. Need
+  more constraints probably, eg from M31 and M33 proper motion.
+  
+    -- weight by distance to M33:
+       799 +/- 23 kpc (VG08) USE THIS
+    -- weight by radial velocity of M33:
+       -190 +/- 59 km/s (Brunthaler, check, cf VG08)
+    -- weight by tangential velocity of M33:
+       xxx +/- xx km/s (VG08, approximately)
+ 
+    -- weight by angle between M31 and M33
+       14.8 deg, with artifical scatter... Might need wiggle room here.
+  
+
+TO DO:
+
+  * Compute vr, vt, d for MW and M33 relative to M31. Vectors. Direction of
+     M33 motion? How to propagate errors? Monte Carlo... Constraints
+     from VdM12 and VG08, and citations therein.
+     Check: independence of constraints. vr, vt independent of r?
+
+     Notes: VG08 take the observed line of
+     sight systemic velocity and subtract off the Sun's velocity - to do this
+     projection they need the distance to M31 - but this is a small 
+     covariance [citation needed]. More of an issue will be transforming to
+     M33's motion relative to M31... VdM++12 have done some of this.
+          
+     TODO: PJM
+
+  * The mass of the Local Group from the kinematics of M31: comparing with the
+    Timing Argument:
+  
+     PDF for M_LG = M_MW + M_M31, given M31 kinematics. Precision on M_LG,
+     comparison with literature.
+     
+     Compute M_TA, the timing argument mass of the local group, and compare
+     with M_MW+M_M31. Note that in this context M_TA is merely a function of the
+     model parameters: we have replaced M_TA as an LG mass estimate, but can
+     check its bias in our model. What is A200? 
+     How does M_TA vary with M_LG? For which halos is M_TA accurate?
+     
+     TODO: PJM
+  
+  * The mass of M31, from the kinematics of M33:
+  
+     PDF for M_M31, given M33 kinematics. Precision, comparison with
+     literature.
+     
+     Compute M_TA, the timing argument mass of this pair, and compare
+     with M_M31+M_M33. How accurate is M_TA in this situation? 
+     
+     TODO: PJM
+  
+  * Individual masses of M31, M33 and MW, given combination of kinematic
+    constraints.
+     
+     PDF for M_MW, given M31 and M33 kinematics.
+     What is the probability that M31 is more massive than MW? 
+     Is the MW mass consistent with other estimates?
+     
+     TODO: PJM
+  
+
+------------------------------------------------------------------------------
+
+
+Paper II. The Shape and Angular Momentum of the Dark Matter Halos of 
+          MW and M31
+
+     
+Questions:
+
+What are the  M31 and MW halo shapes: can we detect extension in any
+direction?
+
+Do we predictions any overdensities on the sky? Do we see a dark matter
+overdensity in the opposite direction to the line of sight to M31? Is this
+useful for indirect detection by Fermi? Satellite density as seen by LSST?
+
+Can we measure the MW and M31 halo angular momentum? How does this compare
+with the two stellar disks? What happens to the halo shape constraints if the
+halo ang mtm is assumed to follow that of the disk?
+
+
+Importance weighting:  
+     
+     -- Weight as above with M31 and M33 properties.
+
+        
+TO DO:
+
+   
+------------------------------------------------------------------------------
+
+
+Paper III. The Past and Future History of the Local Group
+
+     
+Questions:
+
+  Is M33 bound to M31? When did it arrive in the Local Group?
+
+  All three galaxies' halos have been growing by merging and accretion of
+  subhalos. How fast have they been growing? When did they accumulate most of
+  their mass?
+
+  When will M31 collide with the MW? Will M33 merge with M31, or with the
+  pot-merger MW+M31 system?
+
+
+Importance weighting:  
+     
+     -- Weight as above with M31 and M33 properties.
+
+        
+------------------------------------------------------------------------------
+
+Analysis methods:
+
+    -- Read in to python and compute any extra quantities, and
+    -- weight by the likelihoods described above (eg distance to M31 etc)
+    
+

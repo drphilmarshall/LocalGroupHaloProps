@@ -1,0 +1,42 @@
+Second (Current) Catalog:
+
+Priors:
+1.  The MW is a central galaxy.
+2.  MW, M31, and M33 all have vmax > 80 km/s (driven in part by the simulation
+     resolution)
+3.  The ratio M_{rat} = M_{MW}/M{M31} >= 0.25
+4.  Isolation requirement: the MW has exactly one object with 
+     mass > 0.25M_{MW} with a distance r_{iso} < 2*744 = 1488kpc. This object
+     is M31. 
+5.  M33 is within 400 kpc from the center of M31
+
+Algorithm:
+1.  Cut the catalog at vmax = 80.
+2.  Loop over centrals, treating each object as a candidate MW
+3.  Identify MW-M31 pairs according to the criteria:
+     -Count number of objects within r_{iso} bigger than 
+      M_{rat}*M_{candidate MW}
+     -Only keep systems that have exactly 1 such neighbor
+4.  Loop over M33 candidates and identify all objects with vmax < 80 km/s 
+     within 400 kpc
+5.  Write out properties of all these objects
+
+catalogs:
+/nfs/slac/g/ki/ki04/mbusha/projects/LasDamas/Simulations/Consuelo/02/analysis/LG_project/lg_dat_file.txt
+/nfs/slac/g/ki/ki04/mbusha/projects/LasDamas/Simulations/Consuelo/02/analysis/LG_project/M33_dat_file.txt
+
+The first has the MW and M31 properties, the second has the M33 information.  Still need to calculate the inertial tensors of all objects.  
+
+
+*************************************
+First Catalog (now written over)
+
+Prior selection description:
+  
+-Loop over central objects -> measure mass Mc
+-Find closest central more massive than Mc, -> measure separation, r
+-Isolation requirement: exclude pair if there is a second object (central or satellite) more massive than Mc closer than 2*r_MW
+-Keep pair if r is within 5 sigma of 744 +/- 33
+
+Properties to write out:
+ID, Mass, positions, velocities, [angular momenta, intertial tenrosrs]
