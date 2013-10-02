@@ -21,7 +21,6 @@ class bundle:
 # The actual observational data, for named parameters: 
    def assignment(self):
 
-
       # Version 1, radial velocity + distance relative to MW:
       
       # Milky Way:
@@ -35,30 +34,6 @@ class bundle:
       self.data['M33']['D']  = [0.799,0.023,gaussian] # VG08, Mpc
       self.data['M33']['vr'] = [-190.0,59.0,gaussian] # Brunthaler, km/s
       
-      # self.data['M33']['angsep'] = [14,8,0.1,gaussian] # ? Angular separation
-      
-      
-#       # Version 2, radial velocity + distance, relative to M31:
-# 
-#       # MW, relative to M31:
-#       # NEED TO UPDATE TO VdM++2012!
-#       self.data['MW']['D']  = [0.774,0.040,gaussian]  # VG08, Mpc
-#       self.data['MW']['vr'] = [-130.0,8.0,gaussian]   # VG08, km/s
-#       # self.data['MW']['vt'] = [0.0,4.0,halfgaussian]  # VG12, km/s
-# 
-#       # M33, relative to M31:
-#       # NEED TO COMPUTE FROM VdM++2012!
-#       self.data['M33']['D']  = [0.799,0.023,gaussian] # VG08, Mpc
-#       self.data['M33']['vr'] = [-190.0,59.0,gaussian] # Brunthaler, km/s
-#       # self.data['M33']['vt'] = [0.0,4.0,halfgaussian]  # To be calculated!!
-# 
-#       # Optional extras - component masses:
-# 
-#       # Milky Way mass:
-#       self.data['MW']['Mvir'] = [12.2,0.1,lognormal] # Busha++2011
-#       
-#       # M31 mass:
-#       self.data['M31']['Mvir'] = [12.4,0.1,lognormal] # ???
 
       return
 
@@ -88,3 +63,27 @@ def lognormal(x,x0,sigma):
    return gaussian(y,x0,sigma)   
 
 # ======================================================================
+      # self.data['M33']['angsep'] = [14,8,0.1,gaussian] # ? Angular separation
+      
+      
+#       # Version 2, radial velocity + distance, relative to M31:
+# 
+#       # MW, relative to M31:
+#       # NEED TO UPDATE TO VdM++2012!
+#       self.data['MW']['D']  = [0.774,0.040,gaussian]  # VG08, Mpc
+#       self.data['MW']['vr'] = [-130.0,8.0,gaussian]   # VG08, km/s
+#       # self.data['MW']['vt'] = [0.0,4.0,halfgaussian]  # VG12, km/s
+# 
+#       # M33, relative to M31:
+#       # NEED TO COMPUTE FROM VdM++2012!
+#       self.data['M33']['D']  = [0.799,0.023,gaussian] # VG08, Mpc
+#       self.data['M33']['vr'] = [-190.0,59.0,gaussian] # Brunthaler, km/s
+#       # self.data['M33']['vt'] = [0.0,4.0,halfgaussian]  # To be calculated!!
+# 
+#       # Optional extras - component masses:
+# 
+#       # Milky Way mass:
+#       self.data['MW']['Mvir'] = [12.2,0.1,lognormal] # Busha++2011
+#       
+#       # M31 mass:
+#       self.data['M31']['Mvir'] = [12.4,0.1,lognormal] # ???

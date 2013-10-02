@@ -355,7 +355,7 @@ def LGHPinfer(argv):
   # Read in constraints as an instance of the constraints class, which 
   # contains the relevant observational data:
     
-  obs = LGconstraints.bundle()
+  obs = localgroup.bundle()
   
   # Calculate importances based on input MW and M31 constraints.
   
