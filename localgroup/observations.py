@@ -46,7 +46,7 @@ class Observations(object):
  
     def assignment(self):
       
-        # Milky Way:
+        # Milky Way (In heliocentric galactic cartesian):
         self.data['MW']['x'] = [0.00829,0.00016,'Gaussian'] # vdM12, Mpc
         self.data['MW']['y'] = [0.0,0.0,'Delta'] 
         self.data['MW']['z'] = [0.0,0.0,'Delta']

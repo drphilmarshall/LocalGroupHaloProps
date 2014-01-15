@@ -4,9 +4,6 @@ import localgroup
 
 import numpy
 
-deg2rad = numpy.pi/180.0
-muaspyrMpc2kmps = 4.7404
-
 # ======================================================================
 
 class Halo(object):
@@ -90,23 +87,24 @@ class Halo(object):
             self.vy              = localgroup.draw(obs['vy'],Nsamples)
             self.vz              = localgroup.draw(obs['vz'],Nsamples)
                        
-        else:
+        else:   #Called for M31 and M33
          
             # Get observed quantities and transform:
             self.RA              = localgroup.draw(obs['RA'],Nsamples)
             self.DEC             = localgroup.draw(obs['DEC'],Nsamples)
-            self.l               = localgroup.draw(obs['l'],Nsamples)
+            self.l               = localgroup.draw(obs['l'],Nsamples) #Maybe we should calculate these in the code instead of reading from the table
             self.b               = localgroup.draw(obs['b'],Nsamples)
             self.D               = localgroup.draw(obs['D'],Nsamples)
             self.mu_west         = localgroup.draw(obs['mu_west'],Nsamples)
-            self.deltavrot_west  = localgroup.draw(obs['deltavrot_west'],Nsamples)
+            self.deltavrot_west  = localgroup.draw(obs['deltavrot_west'],Nsamples) #We think this accounts for the rotation of the object -- reread Vand Der Marel to figure out.  
             self.mu_north        = localgroup.draw(obs['mu_north'],Nsamples)
             self.deltavrot_north = localgroup.draw(obs['deltavrot_north'],Nsamples)
             self.v_r             = localgroup.draw(obs['v_r'],Nsamples)
 
+            # BUG!  Transformation here may be redundant with functions defined in coordinates.py!  Eliminate redundancies!
             # Equatorial tangential motions in km/s:
-            self.v_west  = muaspyrMpc2kmps*self.D*self.mu_west - self.deltavrot_west
-            self.v_north = muaspyrMpc2kmps*self.D*self.mu_north - self.deltavrot_north
+            self.v_west  = localgroup.muaspyrMpc2kmps*self.D*self.mu_west - self.deltavrot_west
+            self.v_north = localgroup.muaspyrMpc2kmps*self.D*self.mu_north - self.deltavrot_north
 
             # Convert proper motions to galactic coordinates:
             self.v_l,self.v_b = localgroup.equatorial_to_galactic_proper_motion(self.v_west,self.v_north,self.RA,self.DEC)
