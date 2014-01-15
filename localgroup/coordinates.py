@@ -3,6 +3,8 @@
 from numpy import sin,cos,arcsin,arccos,arctan2,pi,abs,sqrt,sign
 
 deg2rad = pi/180.0
+arcsec2rad = deg2rad/3600.0
+muaspyrMpc2kmps = 4.7404
 
 # North Galactic pole:
 alphaG = 192.85948 * deg2rad
@@ -36,8 +38,10 @@ def equatorial_to_galactic(RA,DEC):
 # Rotate proper motions from equatorial to galactic coordinates.
 # From Poleski 2013.
 
-def equatorial_to_galactic_proper_motion(vW,vN,RA,DEC):
+def equatorial_to_galactic_proper_motion(mu_w, mu_n,RA,DEC):
     
+    mu_alpha = -1*mu_w
+    mu_delta = mu_n
     alpha = RA*deg2rad
     delta = DEC*deg2rad
     
@@ -45,16 +49,20 @@ def equatorial_to_galactic_proper_motion(vW,vN,RA,DEC):
     C2 = cos(deltaG)*sin(alpha-alphaG)
     cosb = sqrt(C1*C1+C2*C2)
     
-    vl = (C1*vW + C2*vN)/cosb
-    vb = (C1*vN - C2*vW)/cosb
+    mu_l = (C1*mu_alpha + C2*mu_delta)/cosb
+    mu_b = (C1*mu_delta - C2*mu_alpha)/cosb
 
-    return vl,vb
+
+    return mu_l,mu_b
     
 # ----------------------------------------------------------------------
 # Generic transformation between spherical and cartesian coordinates.
 # For galactic coords, use l,b instead of RA,DEC, and so on.
+# UNITS:  RA, DEC should be in degrees.  D is in Mpc.  
+# mu_[west|north] in mas/yr, v_r in km/s
+# x,y,z in Mpc.  vx, vy, vz, in km/s
 
-def spherical_to_cartesian(RA,DEC,D,v_west,v_north,v_r):
+def spherical_to_cartesian(RA,DEC,D,mu_west,mu_north,v_r):
 
     # Heliocentric Cartesian positions (Mpc):
     delta = DEC*deg2rad
@@ -63,10 +71,44 @@ def spherical_to_cartesian(RA,DEC,D,v_west,v_north,v_r):
     y = D*cos(delta)*sin(alpha)
     z = D*sin(delta)
      
+    # Convert mu to v
+    v_west = mu_west*muaspyrMpc2kmps*D
+    v_north = mu_north*muaspyrMpc2kmps*D
+
     # Heliocentric Cartesian velocities (km/s):
     vx = (x/D)*v_r - (z/D)*v_north*cos(alpha) - v_west*sin(alpha) 
     vy = (y/D)*v_r - (z/D)*v_north*sin(alpha) + v_west*cos(alpha) 
     vz = (z/D)*v_r + cos(delta)*v_north
+
+    return x,y,z,vx,vy,vz
+
+# ----------------------------------------------------------------------
+# Transformation from Heliocentric Galactic Cartesian system to Galactocentric Cartesian.
+# NOTE: The different definitions of the axis directions. 
+
+def heliocentric_galactic_cartesian_to_galactocentric_cartesian(xh,yh,zh,vxh,vyh,vzh,R0=0.0085,V0=-220):
+
+    xg = xh - R0
+    yg = yh
+    zg = zh
+    vxg = vxh
+    vyg = vyh - V0
+    vzg = vzh
+
+    return xg,yg,zg,vxg,vyg,vzg
+
+# ----------------------------------------------------------------------
+# Transforms from Heliocentric equatorial spherical coordinates (ra, dec, etc...) to 
+# galactocentric cartesian coordinates (x,y,z, etc).  
+
+def heliocentric_equatorial_spherical_to_galactocentric_cartesian(ra, dec, d, mu_w, mu_n, v_r):
+
+    l,b = equatorial_to_galactic(ra,dec)
+    print "l,b = ", l, b
+    mu_l,mu_b = equatorial_to_galactic_proper_motion(mu_w,mu_n,ra,dec)
+    print "mu_l, mu_b = ", mu_l, mu_b
+    xh,yh,zh,vxh,vyh,vzh = spherical_to_cartesian(l, b, d, mu_l, mu_b, v_r)
+    x,y,z,vx,vy,vz = heliocentric_galactic_cartesian_to_galactocentric_cartesian(xh, yh, zh, vxh, vyh, vzh)
 
     return x,y,z,vx,vy,vz
 
@@ -114,6 +156,20 @@ if __name__ == '__main__':
     print "  cf XHIP values: 4.2, -1.0, -20.8"
     print "vx,vy,vz = ",vx,vy,vz
     print "  cf XHIP values: -24.3, 3.1, 16.5"
+
+    print "OK FINE"
+
+    print "Now check galactic center (l,b) = 0,0:"
+    xh,yh,zh,vxh,vyh,vzh = spherical_to_cartesian(0,0,0.0085, -220.,0.,0.)
+    print "Heliocentric Galactic Cartesian location of G.C.: ", xh,yh,zh,vxh,vyh,vzh
+
+    x,y,z,vx,vy,vz = heliocentric_galactic_cartesian_to_galactocentric_cartesian(xh, yh, zh, vxh, vyh, vzh)
+    print "Galactocentric cartesian coordinates of G.C. (should be all zero): ",x,y,z,vx,vy,vz
+
+    x,y,z,vx,vy,vz = heliocentric_equatorial_spherical_to_galactocentric_cartesian((17.0/24.+45.0/(24.0*60.0)+40./(24.*3600.))*360., -29+28.0/3600, 0.0085, 2.7e3, -5.6e3, 0.0)
+    print "Galactocentric cartesian coordinates of G.C. (should be all zero): ",x,y,z,vx,vy,vz
+
+    print ""
 
 # l,b =  347.157307577 -78.3386152875
 #   cf XHIP values:  347.15730758 -78.33861529
