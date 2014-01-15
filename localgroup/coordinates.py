@@ -104,9 +104,7 @@ def heliocentric_galactic_cartesian_to_galactocentric_cartesian(xh,yh,zh,vxh,vyh
 def heliocentric_equatorial_spherical_to_galactocentric_cartesian(ra, dec, d, mu_w, mu_n, v_r):
 
     l,b = equatorial_to_galactic(ra,dec)
-    print "l,b = ", l, b
     mu_l,mu_b = equatorial_to_galactic_proper_motion(mu_w,mu_n,ra,dec)
-    print "mu_l, mu_b = ", mu_l, mu_b
     xh,yh,zh,vxh,vyh,vzh = spherical_to_cartesian(l, b, d, mu_l, mu_b, v_r)
     x,y,z,vx,vy,vz = heliocentric_galactic_cartesian_to_galactocentric_cartesian(xh, yh, zh, vxh, vyh, vzh)
 
@@ -166,7 +164,7 @@ if __name__ == '__main__':
     x,y,z,vx,vy,vz = heliocentric_galactic_cartesian_to_galactocentric_cartesian(xh, yh, zh, vxh, vyh, vzh)
     print "Galactocentric cartesian coordinates of G.C. (should be all zero): ",x,y,z,vx,vy,vz
 
-    x,y,z,vx,vy,vz = heliocentric_equatorial_spherical_to_galactocentric_cartesian((17.0/24.+45.0/(24.0*60.0)+40./(24.*3600.))*360., -29+28.0/3600, 0.0085, 2.7e3, -5.6e3, 0.0)
+    x,y,z,vx,vy,vz = heliocentric_equatorial_spherical_to_galactocentric_cartesian((17.0/24.+42./(24.0*60.0)+29.319/(24.*3600.))*360., -28-59./60-18.54/3600., 0.0085, 2.7e3, -5.6e3, 0.0)
     print "Galactocentric cartesian coordinates of G.C. (should be all zero): ",x,y,z,vx,vy,vz
 
     print ""
