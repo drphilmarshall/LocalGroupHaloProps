@@ -30,7 +30,7 @@ def equatorial_to_galactic(RA,DEC):
     cosdl = (sin(delta)*cos(deltaG) - cos(delta)*sin(deltaG)*cos(alpha-alphaG))/cos(b)
     dl = arctan2(cosdl,sindl)
     l = lOmega + dl
-    if l < 0.0: l += 2.0*pi
+    l[l < 0.0] += 2.0*pi
     
     return l/deg2rad,b/deg2rad
     
@@ -100,13 +100,14 @@ def heliocentric_galactic_cartesian_to_galactocentric_cartesian(xh,yh,zh,vxh,vyh
 # ----------------------------------------------------------------------
 # Transforms from Heliocentric equatorial spherical coordinates (ra, dec, etc...) to 
 # galactocentric cartesian coordinates (x,y,z, etc).  
+# NOTE:  Add optional argument to take care of internal rotation.  
 
-def heliocentric_equatorial_spherical_to_galactocentric_cartesian(ra, dec, d, mu_w, mu_n, v_r):
+def heliocentric_equatorial_spherical_to_galactocentric_cartesian(ra, dec, d, mu_w, mu_n, v_r, R0=0.0085, V0=-220):
 
     l,b = equatorial_to_galactic(ra,dec)
     mu_l,mu_b = equatorial_to_galactic_proper_motion(mu_w,mu_n,ra,dec)
     xh,yh,zh,vxh,vyh,vzh = spherical_to_cartesian(l, b, d, mu_l, mu_b, v_r)
-    x,y,z,vx,vy,vz = heliocentric_galactic_cartesian_to_galactocentric_cartesian(xh, yh, zh, vxh, vyh, vzh)
+    x,y,z,vx,vy,vz = heliocentric_galactic_cartesian_to_galactocentric_cartesian(xh, yh, zh, vxh, vyh, vzh, R0=R0, V0=V0)
 
     return x,y,z,vx,vy,vz
 

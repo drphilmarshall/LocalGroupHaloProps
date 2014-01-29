@@ -74,9 +74,11 @@ class Halo(object):
 # Draw from sampling distributions associated with measurements, mostly
 # in equatorial coordinates (for external galaxies) and convert to 
 # heliocentric galactic cartesian coordinates.
+# BUG:  We are removing the conversion step from this method because
+# some conversion need all halos.  
 
     def sample_from(self,obs,Nsamples):
-                
+
         if self.name == 'MW':
             
             # Sample from Cartesian coordinates directly:
@@ -101,17 +103,18 @@ class Halo(object):
             self.deltavrot_north = localgroup.draw(obs['deltavrot_north'],Nsamples)
             self.v_r             = localgroup.draw(obs['v_r'],Nsamples)
 
+
             # BUG!  Transformation here may be redundant with functions defined in coordinates.py!  Eliminate redundancies!
             # Equatorial tangential motions in km/s:
-            self.v_west  = localgroup.muaspyrMpc2kmps*self.D*self.mu_west - self.deltavrot_west
-            self.v_north = localgroup.muaspyrMpc2kmps*self.D*self.mu_north - self.deltavrot_north
+#            self.v_west  = localgroup.muaspyrMpc2kmps*self.D*self.mu_west - self.deltavrot_west
+#            self.v_north = localgroup.muaspyrMpc2kmps*self.D*self.mu_north - self.deltavrot_north
 
             # Convert proper motions to galactic coordinates:
-            self.v_l,self.v_b = localgroup.equatorial_to_galactic_proper_motion(self.v_west,self.v_north,self.RA,self.DEC)
+#            self.v_l,self.v_b = localgroup.equatorial_to_galactic_proper_motion(self.v_west,self.v_north,self.RA,self.DEC)
 
             # Convert from spherical to cartesian coordinates:
-            self.x,self.y,self.z,self.vx,self.vy,self.vz = \
-                localgroup.spherical_to_cartesian(self.l,self.b,self.D,self.v_l,self.v_b,self.v_r)
+#            self.x,self.y,self.z,self.vx,self.vy,self.vz = \
+#                localgroup.spherical_to_cartesian(self.l,self.b,self.D,self.v_l,self.v_b,self.v_r)
                 
         return
         
@@ -122,11 +125,16 @@ class Halo(object):
         self.x -= other.x
         self.y -= other.y
         self.z -= other.z
+        self.D = numpy.sqrt(self.x*self.x + self.y*self.y + self.z*self.z)
         self.vx -= other.vx
         self.vy -= other.vy
         self.vz -= other.vz
-        self.frame = other.name
+        self.v_r = (self.x*self.vx + self.y*self.vy + self.z*self.vz)/self.D
+        self.v = numpy.sqrt(self.vx*self.vx + self.vy*self.vy + self.vz*self.vz)
+        self.v_t = numpy.sqrt(self.v*self.v - self.v_r*self.v_r)
         
+        self.frame = other.name
+
         return
                 
 # ======================================================================
