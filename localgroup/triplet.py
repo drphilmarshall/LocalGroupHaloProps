@@ -45,7 +45,7 @@ class Triplet(object):
 
     def __init__(self):
 
-        self.Nsamples = 1000000
+        self.Nsamples = 100000
     
         return
         
