@@ -3,6 +3,7 @@
 import localgroup
 
 import numpy
+from sklearn import mixture
 
 # ======================================================================
 
@@ -43,7 +44,8 @@ class Likelihood(object):
     def __init__(self):
         
         self.T = localgroup.Triplet()
-    
+        self.PDF = -1
+
         return
         
 # ----------------------------------------------------------------------------
@@ -56,3 +58,16 @@ class Likelihood(object):
         return
         
 # ----------------------------------------------------------------------------
+
+    def approximate(self, mode="GMM"):
+        
+        self.generate()
+        self.T.transform_to_M31()
+        combined_MW_M31_data = np.transpose(np.array((self.T.MW.D, self.T.MW.v_r, self.T.MW.v_t, self.T.M31.D, self.T.M31.v_r, self.T.M31.v_t)))
+        if (mode == "GMM"):
+            self.PDF = mixture.GMM()
+            self.PDF.fit(combined_MW_M31_data)
+        return
+
+
+
