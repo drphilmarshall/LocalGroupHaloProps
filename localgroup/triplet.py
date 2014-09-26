@@ -122,6 +122,15 @@ class Triplet(object):
     def get_properties(self):
         
         return
+
+# ----------------------------------------------------------------------------
+
+    def set_Nsamples(self, Nsamples):
+
+        self.Nsamples = Nsamples
+
+        return
+
         
 # ======================================================================
 
