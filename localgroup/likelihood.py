@@ -6,7 +6,7 @@ import numpy
 
 # ======================================================================
 
-class ApproximateLikelihood(object):
+class Likelihood(object):
     """
     NAME
         Likelihood
@@ -41,6 +41,8 @@ class ApproximateLikelihood(object):
 # ======================================================================
 
     def __init__(self):
+        
+        self.T = localgroup.Triplet()
     
         return
         
@@ -48,7 +50,8 @@ class ApproximateLikelihood(object):
 
     def generate(self,mode="observational"):
 
-
+        self.T.observe_halos()
+        
                 
         return
         
