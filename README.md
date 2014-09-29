@@ -36,10 +36,11 @@ and also `astropy`...
 
 * Phil Marshall (KIPAC)
 * Michael Busha (KIPAC)
+* Marc Williamson (KIPAC)
 
 
 ### License, Citation etc
 
 This code is available for re-use under GPL v2. However, if you make use of it
-in your research we would ask you to cite our forthcoming paper or acknowledge
-this code repository, as appropriate. 
+in your research we ask you to cite our forthcoming paper and acknowledge
+this code repository, please. The paper reference is "Williamson et al, in preparation" - the work dosumented here will form Marc Williamson's undergrad thesis project.
