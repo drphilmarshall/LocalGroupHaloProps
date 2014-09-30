@@ -50,9 +50,9 @@ class Likelihood(object):
         
 # ----------------------------------------------------------------------------
 
-    def generate(self,mode="observational"):
+    def generate(self,mode="observational",Nsamples=10000):
 
-        self.T.observe_halos(Nsamples=10000)
+        self.T.observe_halos(Nsamples=Nsamples)
         self.T.transform_to_M31()
         self.samples = np.transpose(np.array(self.T.get_kinematics()))
 
