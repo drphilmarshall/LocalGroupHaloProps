@@ -1,15 +1,15 @@
 # ======================================================================
 
-import numpy
+import numpy as np
 
 # ======================================================================
 
 def draw(x,N):
     
-    values = numpy.zeros(N)
+    values = np.zeros(N)
     
     if x[2] == 'Gaussian':
-        values += x[0] + x[1]*numpy.random.randn(N)
+        values += x[0] + x[1]*np.random.randn(N)
     elif x[2] == 'Delta':
         values += x[0]
     else:

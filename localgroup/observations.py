@@ -2,7 +2,7 @@
 
 import localgroup
 
-import numpy
+import numpy as np
 
 # ======================================================================
 
@@ -53,7 +53,7 @@ class Observations(object):
         
         # BUG: need to treat v_rot and v_sun more carefully. See M+C05...
         self.data['MW']['vx'] = [-11.1,1.23,'Gaussian'] # vdM++12 based on Sohn++12 and McMillan12
-        self.data['MW']['vy'] = [(-239.0 - 12.24),numpy.sqrt(5.0**2+2.05**2),'Gaussian'] # vdM++12 based on S++12 and McMillan12
+        self.data['MW']['vy'] = [(-239.0 - 12.24),np.sqrt(5.0**2+2.05**2),'Gaussian'] # vdM++12 based on S++12 and McMillan12
         self.data['MW']['vz'] = [-7.25,0.62,'Gaussian'] # vdM++12 based on S++12 and McMillan12
 
         # M31:

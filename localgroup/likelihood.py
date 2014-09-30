@@ -2,7 +2,7 @@
 
 import localgroup
 
-import numpy
+import numpy as np
 from sklearn import mixture
 
 # ======================================================================
@@ -52,22 +52,33 @@ class Likelihood(object):
 
     def generate(self,mode="observational"):
 
-        self.T.observe_halos()
+        self.T.observe_halos(Nsamples=10000)
+        self.T.transform_to_M31()
+        self.samples = np.transpose(np.array(self.T.get_kinematics()))
+
+        # PJM: Might be better to have Triplet.get_kinematics do this 
+        # packaging, perhaps... Also, might be better to leave the samples
+        # in the Triplet object, and feed them to the GMM...
         
-                
         return
         
 # ----------------------------------------------------------------------------
 
-    def approximate(self, mode="GMM"):
+    def approximate(self, mode="GMM"):        
         
-        self.generate()
-        self.T.transform_to_M31()
-        combined_MW_M31_data = numpy.transpose(numpy.array((self.T.MW.D, self.T.MW.v_r, self.T.MW.v_t, self.T.M31.D, self.T.M31.v_r, self.T.M31.v_t)))
         if (mode == "GMM"):
             self.PDF = mixture.GMM()
-            self.PDF.fit(combined_MW_M31_data)
+            self.PDF.fit(self.data)
+
+        else:
+            raise ValueError("Unrecognised approximation mode %s" % mode)
+
         return
 
+# ======================================================================
 
+if __name__ == '__main__':
 
+    Lhood = Likelihood()
+    Lhood.generate()
+    print "Sample kinematic parameters: ",Lhood.samples

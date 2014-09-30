@@ -2,7 +2,7 @@
 
 import localgroup
 
-import numpy
+import numpy as np
 
 # ======================================================================
 
@@ -125,13 +125,13 @@ class Halo(object):
         self.x -= other.x
         self.y -= other.y
         self.z -= other.z
-        self.D = numpy.sqrt(self.x*self.x + self.y*self.y + self.z*self.z)
+        self.D = np.sqrt(self.x*self.x + self.y*self.y + self.z*self.z)
         self.vx -= other.vx
         self.vy -= other.vy
         self.vz -= other.vz
         self.v_r = (self.x*self.vx + self.y*self.vy + self.z*self.vz)/self.D
-        self.v = numpy.sqrt(self.vx*self.vx + self.vy*self.vy + self.vz*self.vz)
-        self.v_t = numpy.sqrt(self.v*self.v - self.v_r*self.v_r)
+        self.v = np.sqrt(self.vx*self.vx + self.vy*self.vy + self.vz*self.vz)
+        self.v_t = np.sqrt(self.v*self.v - self.v_r*self.v_r)
         
         self.frame = other.name
 
