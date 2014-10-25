@@ -68,7 +68,7 @@ class Likelihood(object):
         
         if (mode == "GMM"):
             self.PDF = mixture.GMM()
-            self.PDF.fit(self.data)
+            self.PDF.fit(self.samples)
 
         else:
             raise ValueError("Unrecognised approximation mode %s" % mode)
