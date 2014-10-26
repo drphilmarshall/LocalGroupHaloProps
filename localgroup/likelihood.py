@@ -54,8 +54,15 @@ class Likelihood(object):
 
         self.T.observe_halos(Nsamples=Nsamples)
         self.T.transform_to_M31()
-        self.samples = np.transpose(np.array(self.T.get_kinematics()))
-
+        dt = np.dtype([('MW_D', 'f8'), ('MW_vr', 'f8'), ('MW_vt', 'f8'), ('M33_D', 'f8'), ('M33_vr', 'f8'), ('M33_vt', 'f8')])
+        temp = np.transpose(np.array(self.T.get_kinematics()))
+        self.samples = np.ndarray(temp.shape[0], dtype=dt)
+        self.samples['MW_D']=temp[:,0]
+        self.samples['MW_vr']=temp[:,1]
+        self.samples['MW_vt']=temp[:,2]
+        self.samples['M33_D']=temp[:,3]
+        self.samples['M33_vr']=temp[:,4]
+        self.samples['M33_vt']=temp[:,5]
         # PJM: Might be better to have Triplet.get_kinematics do this 
         # packaging, perhaps... Also, might be better to leave the samples
         # in the Triplet object, and feed them to the GMM...
