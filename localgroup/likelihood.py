@@ -4,7 +4,9 @@ import localgroup
 
 import numpy as np
 from sklearn import mixture
-
+from scipy import linalg
+import matplotlib as mpl
+import triangle
 # ======================================================================
 
 class Likelihood(object):
@@ -25,7 +27,8 @@ class Likelihood(object):
         generate         - draw sample vector from observations' distribuions
         approximate      - compute KNN/GMM/etc estimate of PDF
         evaluate         - compute value of PDF at given vector
-        
+        plot_samples     - make triangle plot for observed data in M31 ref frame
+ 
         NB. "vector" refes to a position in 6D MW-M31 D,vr,vt space
 
     BUGS
@@ -79,6 +82,55 @@ class Likelihood(object):
         return
 
 # ======================================================================
+
+    def plot_samples(self, overlay=False):
+        try:
+            figure = triangle.corner(self.samples, labels=["MW_D", "MW_vr", "MW_vt", "M33_D", "M33_vr", "M33_vt"], quantiles=[0.16,0.5,0.84], show_titles=True, title_args={"fontsize": 12})
+        except AttributeError:
+            raise AttributeError("L.generate has not been run.")
+        figure.gca().annotate("MW and M33 Observational Data Distributions (M31 centric)", xy=(0.5, 1.0), xycoords="figure fraction", xytext=(0, -5), textcoords="offset points", ha="center", va="top")
+        
+        if overlay:
+            self.gaussianOverlay(figure)
+        figure.savefig("L_samples_tri.png")
+        return
+
+
+# ======================================================================
+
+
+    def gaussianOverlay(self, figure):
+        n_gaussians = 2
+        colors = ['g', 'r', 'y']
+        transparency = 0.5
+        model = mixture.GMM(n_gaussians, covariance_type='full')
+        axes = np.reshape(figure.axes, (6,6))
+        for i in range(6):
+            for j in range(6):
+                if j < i:
+                    data = [[self.samples[k,j], self.samples[k,i]] for k in range(len(self.samples[:,0]))]
+                    model.fit(data)
+                    subplot = axes[i,j]
+                    for gauss_num in range(n_gaussians):
+                        mean = [model.means_[gauss_num][0], model.means_[gauss_num][1]]
+                        covar = model.covars_[gauss_num]
+                        color = colors[gauss_num]
+                        v, w = linalg.eigh(covar)
+                        u = w[0]/linalg.norm(w[0])
+                        angle = np.arctan(u[1]/u[0])
+                        angle = 180 * angle / np.pi
+                        ell = mpl.patches.Ellipse(mean, 2*np.sqrt(v[0]), 2*np.sqrt(v[1]), 180 + angle, color=color)
+                        ell.set_clip_box(subplot.bbox)
+                        ell.set_alpha(transparency)
+                        subplot.add_artist(ell)
+
+        return
+
+
+
+
+# ======================================================================
+
 
 if __name__ == '__main__':
 
