@@ -28,7 +28,8 @@ class Likelihood(object):
         approximate      - compute KNN/GMM/etc estimate of PDF
         evaluate         - compute value of PDF at given vector
         plot_samples     - make triangle plot for observed data in M31 ref frame
- 
+        set_PDF          - set the L.PDF field
+
         NB. "vector" refes to a position in 6D MW-M31 D,vr,vt space
 
     BUGS
@@ -47,7 +48,7 @@ class Likelihood(object):
     def __init__(self):
         
         self.T = localgroup.Triplet()
-        self.PDF = -1
+        self.PDF = None
 
         return
         
@@ -93,8 +94,13 @@ class Likelihood(object):
         if overlay:
             self.gaussianOverlay(figure)
         figure.savefig("L_samples_tri.png")
-        return
+        return figure
 
+# ======================================================================
+
+    def set_PDF(self, pdf):
+        L.PDF = pdf
+        return
 
 # ======================================================================
 
@@ -108,12 +114,14 @@ class Likelihood(object):
         for i in range(6):
             for j in range(6):
                 if j < i:
-                    data = [[self.samples[k,j], self.samples[k,i]] for k in range(len(self.samples[:,0]))]
-                    model.fit(data)
+                    #data = [[self.samples[k,j], self.samples[k,i]] for k in range(len(self.samples[:,0]))]
+                    #model.fit(data)
+                    model.fit(self.samples)
                     subplot = axes[i,j]
                     for gauss_num in range(n_gaussians):
-                        mean = [model.means_[gauss_num][0], model.means_[gauss_num][1]]
+                        mean = [model.means_[gauss_num][j], model.means_[gauss_num][i]]
                         covar = model.covars_[gauss_num]
+                        covar = [[covar[j,j], covar[j,i]], [covar[i,j], covar[i,i]]]
                         color = colors[gauss_num]
                         v, w = linalg.eigh(covar)
                         u = w[0]/linalg.norm(w[0])
