@@ -74,7 +74,6 @@ class Likelihood(object):
     def approximate(self, mode="GMM"):        
         
         if (mode == "GMM"):
-            self.PDF = mixture.GMM()
             self.PDF.fit(self.samples)
 
         else:
@@ -99,7 +98,7 @@ class Likelihood(object):
 # ======================================================================
 
     def set_PDF(self, pdf):
-        L.PDF = pdf
+        self.PDF = pdf
         return
 
 # ======================================================================
@@ -114,8 +113,6 @@ class Likelihood(object):
         for i in range(6):
             for j in range(6):
                 if j < i:
-                    #data = [[self.samples[k,j], self.samples[k,i]] for k in range(len(self.samples[:,0]))]
-                    #model.fit(data)
                     model.fit(self.samples)
                     subplot = axes[i,j]
                     for gauss_num in range(n_gaussians):
