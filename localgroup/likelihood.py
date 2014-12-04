@@ -103,7 +103,22 @@ class Likelihood(object):
 
 # ======================================================================
 
+    def test_GaussMM(self, maxMM=10):
+        aic_scores = []
+        bic_scores = []
+        train_num = np.rint(0.7*self.samples.shape[0])
+        train_data = self.samples[:train_num]
+        test_data = self.samples[train_num:]
+        for i in range(1,11):
+            pdf = mixture.GMM(i)
+            pdf.fit(train_data)
+            aic_scores.append(pdf.aic(test_data))
+            bic_scores.append(pdf.bic(test_data))
+        return aic_scores, bic_scores
 
+
+
+# ======================================================================
     def gaussianOverlay(self, figure):
         n_gaussians = 2
         colors = ['g', 'r', 'y']
