@@ -3,7 +3,11 @@ LocalGroupHaloProps
 
 Inferring the mass etc of the local group galaxy halos (MW, M31 and M33).
 
+The Demo shows the most polished, up to date results of the project. It is meant to organize the plots that will eventually be used in the paper. The Notes go into more detail on bug fixes and code exploration. It includes experimenting with sk-learn methods, figuring out the triangle.py package, etc.
+
 Demo [here](http://nbviewer.ipython.org/github/drphilmarshall/LocalGroupHaloProps/blob/master/demo.ipynb)
+
+Notes [here](http://nbviewer.ipython.org/github/drphilmarshall/LocalGroupHaloProps/blob/master/notes.ipynb)
 
 ### Program
 
