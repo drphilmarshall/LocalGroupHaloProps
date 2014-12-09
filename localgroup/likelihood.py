@@ -24,11 +24,13 @@ class Likelihood(object):
 
     
     METHODS
-        generate         - draw sample vector from observations' distribuions
-        approximate      - compute KNN/GMM/etc estimate of PDF
-        evaluate         - compute value of PDF at given vector
-        plot_samples     - make triangle plot for observed data in M31 ref frame
-        set_PDF          - set the L.PDF field
+        generate           - draw sample vector from observations' distribuions
+        approximate        - compute KNN/GMM/etc estimate of PDF
+        evaluate           - compute value of PDF at given vector
+        plot_samples       - make triangle plot for observed data in M31 ref frame
+        set_PDF            - set the L.PDF field
+        test_gauss         - plots and calculates score vs ngauss components
+        preprocess_samples - zero the mean of the samples and scale by standard deviation
 
         NB. "vector" refes to a position in 6D MW-M31 D,vr,vt space
 
@@ -60,7 +62,10 @@ class Likelihood(object):
         self.T.transform_to_M31()
         #dt = np.dtype([('MW_D', 'f8'), ('MW_vr', 'f8'), ('MW_vt', 'f8'), ('M33_D', 'f8'), ('M33_vr', 'f8'), ('M33_vt', 'f8')])
         self.samples = np.transpose(np.array(self.T.get_kinematics()))
-        
+        self.samples_means = np.array([np.mean(self.samples[:,i]) for i in range(self.samples.shape[1])])
+        self.samples_stds = np.array([np.std(self.samples[:,i]) for i in range(self.samples.shape[1])])
+
+
 
 
         # PJM: Might be better to have Triplet.get_kinematics do this 
@@ -125,7 +130,13 @@ class Likelihood(object):
             bic_scores.append(pdf.bic(test_data))
         return aic_scores, bic_scores
 
+# ======================================================================
 
+    def preprocess_samples(self):
+
+        self.samples = (self.samples - self.samples_means)/self.samples_stds
+
+        return
 
 # ======================================================================
     def gaussianOverlay(self, figure):
