@@ -80,6 +80,15 @@ class Likelihood(object):
             raise ValueError("Unrecognised approximation mode %s" % mode)
 
         return
+# ======================================================================
+
+    def evaluate(self, points, mode="GMM"):
+        if (mode == "GMM"):
+            logprobs, resps = self.PDF.score_samples(points)
+        else:
+            raise ValueError("Unrecognised approximation mode %s" % mode )
+
+        return logprobs
 
 # ======================================================================
 
@@ -109,8 +118,8 @@ class Likelihood(object):
         train_num = np.rint(0.7*self.samples.shape[0])
         train_data = self.samples[:train_num]
         test_data = self.samples[train_num:]
-        for i in range(1,11):
-            pdf = mixture.GMM(i)
+        for i in range(1,maxMM+1):
+            pdf = mixture.GMM(i, covariance_type='full')
             pdf.fit(train_data)
             aic_scores.append(pdf.aic(test_data))
             bic_scores.append(pdf.bic(test_data))
@@ -120,8 +129,8 @@ class Likelihood(object):
 
 # ======================================================================
     def gaussianOverlay(self, figure):
-        n_gaussians = 2
-        colors = ['g', 'r', 'y']
+        n_gaussians = 5
+        colors = ['g', 'r', 'y', 'b', 'c']
         transparency = 0.5
         model = mixture.GMM(n_gaussians, covariance_type='full')
         axes = np.reshape(figure.axes, (6,6))
