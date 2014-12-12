@@ -15,7 +15,7 @@ We take the observational constraints on the sky position of, distance to, radia
 
 We then compute the value of this PDF at each triplet of Consuelo halos, which were pre-selected to be local group-like in their isolation and very approximate mass: this likelihood is ised to weight each triplet, as we build up a posterior PDF for the halo properties (principally masses and shapes) based on the Consuelo-sampled prior.
 
-We also compare our local group mass with some simple timing argument estimates. This work builds on [our (Busha et al's) earlier work on the Milky Way halo](http://adsabs.harvard.edu/abs/2011ApJ...743...40B), and on [Rodriguez and Kravtsov's initial investigation of the Local Group system](http://adsabs.harvard.edu/abs/2014ApJ...793...91G).
+We also compare our local group mass with some simple timing argument estimates. This work builds on [our (Busha et al's) earlier work on the Milky Way halo](http://adsabs.harvard.edu/abs/2011ApJ...743...40B), and on [Rodriguez,  Kravtsov and Gnedin's initial investigation of the Local Group system](http://adsabs.harvard.edu/abs/2014ApJ...793...91G).
 
 ### Getting started
 
