@@ -1,7 +1,7 @@
 LocalGroupHaloProps
 ===================
 
-Inferring the mass etc of the local group galaxy halos (MW, M31 and M33).
+Inferring the total mass, and other properties, of the halos of the most massive local group galaxies, MW, M31 and M33.
 
 The Demo shows the most polished, up to date results of the project. It is meant to organize the plots that will eventually be used in the paper. The Notes go into more detail on bug fixes and code exploration. It includes experimenting with sk-learn methods, figuring out the triangle.py package, etc.
 
@@ -15,7 +15,7 @@ We take the observational constraints on the sky position of, distance to, radia
 
 We then compute the value of this PDF at each triplet of Consuelo halos, which were pre-selected to be local group-like in their isolation and very approximate mass: this likelihood is ised to weight each triplet, as we build up a posterior PDF for the halo properties (principally masses and shapes) based on the Consuelo-sampled prior.
 
-We also compare our local group mass with some simple timing argument estimates.
+We also compare our local group mass with some simple timing argument estimates. This work builds on [our (Busha et al's) earlier work on the Milky Way halo](http://adsabs.harvard.edu/abs/2011ApJ...743...40B), and on [Rodriguez and Kravtsov's initial investigation of the Local Group system](http://adsabs.harvard.edu/abs/2014ApJ...793...91G).
 
 ### Getting started
 
@@ -32,6 +32,7 @@ and also `astropy`...
 * Phil Marshall (KIPAC)
 * Michael Busha (KIPAC)
 * Marc Williamson (KIPAC)
+* Risa Wechsler (KIPAC)
 
 
 ### License, Citation etc
