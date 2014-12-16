@@ -97,7 +97,7 @@ class Likelihood(object):
 
 # ======================================================================
 
-    def plot_samples(self, overlay=False):
+    def plot_samples(self, ngauss, overlay=False):
         try:
             figure = triangle.corner(self.samples, labels=["MW_D", "MW_vr", "MW_vt", "M33_D", "M33_vr", "M33_vt"], quantiles=[0.16,0.5,0.84], show_titles=True, title_args={"fontsize": 12})
         except AttributeError:
@@ -105,7 +105,7 @@ class Likelihood(object):
         figure.gca().annotate("MW and M33 Observational Data Distributions (M31 centric)", xy=(0.5, 1.0), xycoords="figure fraction", xytext=(0, -5), textcoords="offset points", ha="center", va="top")
         
         if overlay:
-            self.gaussianOverlay(figure)
+            self.gaussianOverlay(figure, ngauss)
         figure.savefig("L_samples_tri.png")
         return figure
 
@@ -139,8 +139,11 @@ class Likelihood(object):
         return
 
 # ======================================================================
-    def gaussianOverlay(self, figure):
-        n_gaussians = 5
+
+
+    def gaussianOverlay(self, figure, ngauss):
+        n_gaussians = ngauss
+        if ngauss > 5: raise AttributeError("Only 5 colors can be shown.")
         colors = ['g', 'r', 'y', 'b', 'c']
         transparency = 0.5
         model = mixture.GMM(n_gaussians, covariance_type='full')
