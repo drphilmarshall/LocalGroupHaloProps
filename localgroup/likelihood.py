@@ -79,8 +79,13 @@ class Likelihood(object):
     def approximate(self, mode="GMM"):        
         
         if (mode == "GMM"):
+            aic, bic = self.test_GaussMM(15)
+            min_bic = np.min(bic)
+            min_bic_components = 1+np.array([i for i, x in enumerate(bic) if x == min_bic])
+            print "Minimum BIC: ", min_bic
+            print "Minimum BIC number of components: ", min_bic_components
+            self.set_PDF(mixture.GMM(min_bic_components[0], covariance_type='full'))
             self.PDF.fit(self.samples)
-
         else:
             raise ValueError("Unrecognised approximation mode %s" % mode)
 
@@ -93,7 +98,7 @@ class Likelihood(object):
         else:
             raise ValueError("Unrecognised approximation mode %s" % mode )
 
-        return logprobs
+        return logprobs, resps
 
 # ======================================================================
 
