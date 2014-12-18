@@ -65,7 +65,7 @@ class Likelihood(object):
         self.samples_means = np.array([np.mean(self.samples[:,i]) for i in range(self.samples.shape[1])])
         self.samples_stds = np.array([np.std(self.samples[:,i]) for i in range(self.samples.shape[1])])
 
-
+        self.preprocess_samples()
 
 
         # PJM: Might be better to have Triplet.get_kinematics do this 
