@@ -80,7 +80,10 @@ class Likelihood(object):
     def approximate(self, mode="GMM"):        
         
         if (mode == "GMM"):
-            aic, bic = self.test_GaussMM(15)
+            def bic_scorefn(GMM, X): return GMM.bic(X)
+            score_dict = self.test_GaussMM(num_folds=10, score_fns=[bic_scorefn], maxMM=15)
+            bic = score_dict['bic_scorefn']
+
             min_bic = np.min(bic)
             min_bic_components = 1+np.array([i for i, x in enumerate(bic) if x == min_bic])
             print "Minimum BIC: ", min_bic
