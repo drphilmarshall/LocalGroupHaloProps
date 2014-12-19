@@ -4,6 +4,7 @@ import localgroup
 
 import numpy as np
 from sklearn import mixture
+from sklearn.grid_search import GridSearchCV
 from scipy import linalg
 import matplotlib as mpl
 import triangle
@@ -122,18 +123,18 @@ class Likelihood(object):
 
 # ======================================================================
 
-    def test_GaussMM(self, maxMM=10):
+    def test_GaussMM(self, num_folds, score_fns, maxMM=10):
         aic_scores = []
         bic_scores = []
-        train_num = np.rint(0.7*self.samples.shape[0])
-        train_data = self.samples[:train_num]
-        test_data = self.samples[train_num:]
-        for i in range(1,maxMM+1):
-            pdf = mixture.GMM(i, covariance_type='full')
-            pdf.fit(train_data)
-            aic_scores.append(pdf.aic(test_data))
-            bic_scores.append(pdf.bic(test_data))
-        return aic_scores, bic_scores
+        scores_dict = {}
+        params = {'n_components':np.arange(1,maxMM+1), 'covariance_type':['full']}
+        gmm = mixture.GMM()
+        for score_fn in score_fns:
+            grid = GridSearchCV(estimator=gmm, param_grid=params, cv=num_folds, scoring=score_fn)
+            grid.fit(self.samples)
+            scores_dict[score_fn.func_name] = np.array(grid.grid_scores_)[:,1]
+
+        return scores_dict
 
 # ======================================================================
 
