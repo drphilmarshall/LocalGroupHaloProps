@@ -148,7 +148,14 @@ if __name__ == '__main__':
     print np.median(D_M33), np.median(vr_M33), np.median(vt_M33)
 
 
+
+
+
+
+
+
     """
+    
     print "Checking MW:"
     # Check speed:
     w = np.sqrt(t.MW.vx[0]*t.MW.vx[0] + t.MW.vy[0]*t.MW.vy[0] + t.MW.vz[0]*t.MW.vz[0])
@@ -171,6 +178,8 @@ if __name__ == '__main__':
     print "M33 speeds: ",u,w
 
     print " "
+    """
+
     
     print "Before taking out solar motion, M31 velocity: ",np.mean(t.M31.vx),'+/-',np.std(t.M31.vx),', ', \
                            np.mean(t.M31.vy),'+/-',np.std(t.M31.vy),', ', \
@@ -190,10 +199,10 @@ if __name__ == '__main__':
     print "M31 position: ",np.mean(t.M31.x),np.mean(t.M31.y),np.mean(t.M31.z)
     print "  cf vdM++12: (-0.379, 0.613, -0.283)"
     
-    print "M31 proper motion: ",np.mean(t.M31.v_west),'+/-',np.std(t.M31.v_west),', ', \
-                                np.mean(t.M31.v_north),'+/-',np.std(t.M31.v_north)
-    print "  cf vdM++12: (-125+/-31, -74+/-28) km/s"
-    print "This is a little off because of our deltavrot hackery..."
+ #   print "M31 proper motion: ",np.mean(t.M31.v_west),'+/-',np.std(t.M31.v_west),', ', \
+  #                              np.mean(t.M31.v_north),'+/-',np.std(t.M31.v_north)
+   # print "  cf vdM++12: (-125+/-31, -74+/-28) km/s"
+   # print "This is a little off because of our deltavrot hackery..."
    
     print " "
     
@@ -207,4 +216,4 @@ if __name__ == '__main__':
     print "  cf vdM++12: (110.6 +/- 7.8) km/s"
 
     print "Looks like there's a bug in the Galactocentric velocity transformation..."
-    """
+  
