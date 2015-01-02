@@ -1,0 +1,585 @@
+\documentclass{emulateapj}
+
+\usepackage{apjfonts}
+\usepackage{epsfig}
+\usepackage{natbib}
+
+\newlength{\colwidth}\setlength{\colwidth}{3.5in}
+
+\addtolength\voffset{0.8cm}
+
+\newcommand{\ds}{\displaystyle}
+\newcommand{\be}{\begin{equation}}
+\newcommand{\ee}{\end{equation}}
+\newcommand{\bee}{\begin{eqnarray}}
+\newcommand{\eee}{\end{eqnarray}}
+
+\newcommand{\ov}{ \Omega_{\rm \Lambda} }
+\newcommand{\om}{ \Omega_{\rm m} }
+\newcommand{\mob}{ M_{\rm obj} }
+\newcommand{\mstar}{ M_{*}(a) }
+\newcommand{\msol}{\hbox{${\rm M}_\odot$}}
+
+\newcommand{\rvir}{\hbox{$r_{\rm 200}$}}
+\newcommand{\mvir}{\hbox{$M_{\rm vir}$}}
+\newcommand{\Mvir}{\hbox{$M_{\rm vir}$}}
+\newcommand{\vvir}{\hbox{$v_{\rm 200}$}}
+\newcommand{\tvir}{T_{\rm vir}}
+\newcommand{\mthresh}{M_{\rm t}}
+\newcommand{\nsats}{n_{\rm sats}}
+\newcommand{\vmax}{{\rm v}_{\rm max}}
+\newcommand{\zreion}{z_{\rm reion}}
+\newcommand{\LCDM}{$\Lambda$CDM }
+\newcommand{\sigate}{ \sigma_{8}}
+\newcommand{\actoy}{a_{c,{\rm toy}}}
+\newcommand{\K}{{\rm K}}
+
+\newcommand{\DME}{D_{\rm M31}}
+\newcommand{\vMEI}{v_{\rm M31}}
+\newcommand{\MMEI}{M_{\rm M31}}
+\newcommand{\DMEE}{D_{\rm M33}}
+\newcommand{\vMEE}{v_{\rm M33}}
+\newcommand{\MMEE}{M_{\rm M33}}
+\newcommand{\MMW}{{\rm M}_{\rm MW}}
+\newcommand{\Nsubs}{N_{\rm subs}}
+
+\def\rx{X}
+\def\ry{Y}
+\def\rz{Z}
+\def\vx{v_X}
+\def\vy{v_Y}
+\def\vz{v_Z}
+\def\distance{D}
+\def\vrad{v_{\rm rad}}
+\def\vtan{v_{\rm tan}}
+
+\def\pr{{\rm Pr}}
+\def\pars{\mathbf{x}}
+\def\parsi{x_i}
+\def\data{\mathbf{d}}
+\def\datai{d_i}
+\def\datap{\mathbf{d}^{\rm p}(\pars)}
+\def\datapi{d^{\rm p}_{i}(\pars)}
+
+\newcommand{\Msun}{{\rm M}_\odot}
+\newcommand{\hinv}{h^{-1}}
+\newcommand{\Mpc}{{\rm Mpc}}
+\newcommand{\hmpc}{\hinv\Mpc}
+\newcommand{\kpc}{{\rm kpc}}
+\newcommand{\kms}{{\rm km s}^{-1}}
+
+\newcommand{\rhobar}{\langle \rho \rangle}
+\newcommand{\sig}{ \langle \sigma v \rangle }
+\newcommand{\sigwig}{ {\widetilde \sigma} }
+\newcommand{\rbh}{ r_{\rm bh} }
+\newcommand{\rmax}{ r_{\rm max} }
+\newcommand{\kmsmpc}{\, \rm{km}\,  \rm{s}^{-1}\, \rm{Mpc}^{-1}}
+\newcommand{\lsim}{\lower.5ex\hbox{\ltsima}}
+\newcommand{\gsim}{\lower.5ex\hbox{\gtsima}}
+\newcommand{\ltsima}{$\; \buildrel < \over \sim \;$}
+\newcommand{\gtsima}{$\; \buildrel > \over \sim \;$}
+\def \etal      {\hbox{et al.} }
+
+\newcommand{\bolshoi}{{\sc Bolshoi }}
+\newcommand{\consuelo}{{\sc Consuelo }}
+\newcommand{\subfind}{\texttt{\footnotesize SUBFIND }}
+\newcommand{\CMBFAST}{\texttt{\footnotesize CMBFAST }}
+
+\def\Sref#1{Section~\ref{#1}}
+\def\Fref#1{Figure~\ref{#1}}
+\def\Tref#1{Table~\ref{#1}}
+\def\Eref#1{Equation~\ref{#1}}
+\def\Aref#1{Appendix~\ref{#1}}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% RESULTS:
+
+\def\MLG{M_{\rm LG}}
+\def\MMW{M_{\rm MW}}
+\def\MEI{M_{\rm M31}}
+\def\MEE{M_{\rm M33}}
+
+% Local group mass: MW+M31 from M31 kinematics:
+\def\MPAIRestimate{XX}
+\def\MPAIRerrorplus{xx}
+\def\MPAIRerrorminus{xx}
+
+% Local group timing argument quantities:
+\def\ATA{A_{200}}
+\def\MTA{M_{LG,TA}}
+
+% Mass of M31+M33 system, from M33 kinematics:
+\def\MbAestimate{XX}
+\def\MbAerrorplus{xx}
+\def\MbAerrorminus{xx}
+
+% Mass of local group, MW+M31, from both M31 and M33 kinematics:
+\def\MTRIPLETestimate{XX}
+\def\MTRIPLETerrorplus{xx}
+\def\MTRIPLETerrorminus{xxx}
+
+% Individual galaxyhalo mass estimates from both M31 and M33 kinematics:
+\def\MEIestimate{XX}
+\def\MEIerrorplus{xx}
+\def\MEIerrorminus{xx}
+
+\def\MEEestimate{XX}
+\def\MEEerrorplus{xx}
+\def\MEEerrorminus{xx}
+
+\def\MMWestimate{XX}
+\def\MMWerrorplus{xx}
+\def\MMWerrorminus{xx}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\usepackage[usenames]{color}
+\newcommand{\risa}[1]{\textcolor{red}{\bf #1}}
+\newcommand{\phil}[1]{\textcolor{ForestGreen}{\bf #1}}
+\newcommand{\mike}[1]{\textcolor{Violet}{\bf #1}}
+\newcommand{\question}[1]{\textcolor{blue}{\bf #1}}
+\newcommand{\todo}[2]{{\bf To do (#1): #2}}
+\newcommand{\new}[1]{{\bf #1}}
+
+\newenvironment{inlinefigure}{\def\@captype{figure}
+
+\noindent\begin{minipage}{0.999\linewidth}\begin{center}}
+{\end{center}\end{minipage}\smallskip}
+
+\citestyle{aa}
+\shortauthors{Marshall et al.}
+\shorttitle{The Mass of the Local Group}
+
+% ----------------------------------------------------------------------------
+
+\begin{document}
+
+\title{The Dark Matter Distribution of the Local Group inferred from
+Cosmological Simulations: I. The Halo Masses of M31, M33 and the Milky Way}
+
+\author{Philip J. Marshall\altaffilmark{1}}
+\author{Marc Williamson\altaffilmark{1}}
+\author{Michael T. Busha\altaffilmark{2}} 
+\author{Risa H. Wechsler\altaffilmark{1}}
+\author{XX\altaffilmark{3}}
+\author{YY\altaffilmark{4}}
+\altaffiltext{1}{Kavli Institute for Particle Astrophysics and Cosmology, Stanford, CA, 94305, USA
+{\tt pjm@slac.stanford.edu, rwechsler@stanford.edu}}
+\altaffiltext{2}{???}
+\altaffiltext{3}{XX}
+\altaffiltext{4}{YY}
+
+% ----------------------------------------------------------------------------
+
+\begin{abstract} 
+
+We study the local group of galaxies in its cosmological context, by matching
+dark matter halos in the \consuelo N-body simulation with kinematic
+observations of M31 and M33. Treating the \consuelo halo  catalog as a list of
+samples drawn from the cosmological prior PDF for the local group properties,
+we select local group analogs whose isolation matches our own, and then
+compute importances for the samples as combined likelihoods for the
+observations. 
+%
+From the ``observed'' galactocentric distance, radial velocity and tangential 
+velocity of M31 alone, we infer the mass of the local group to be $\MLG =
+(\MMW + \MEI) = (\MPAIRestimate^{+\MPAIRerrorplus}_{-\MPAIRerrorminus}) \times
+10^{12} \Msun$. This is ... than the mass that has been estimated from the
+timing argument: we show that for our matched analogs the timing argument mass
+systematically ... the local group mass. 
+%
+Transforming the ``observed'' galactocentric distance, radial velocity and
+tangential  velocity of M33 into the M31 rest-frame, and accounting for
+covariance between these measurements, we also infer the mass of the M31--M33
+system to be  $(\MEI + \MEE) =
+(\MbAestimate^{+\MbAerrorplus}_{-\MbAerrorminus}) \times 10^{12} \Msun$.
+%
+Combining the kinematic constraints from both M31 and M33,  we infer a local
+group mass of $\MLG = (\MMW + \MEI) =
+(\MTRIPLETestimate^{+\MTRIPLETerrorplus}_{-\MTRIPLETerrorminus}) \times
+10^{12} \Msun$, and are able to estimate the halo masses of the three galaxies
+individually, finding these to be $\MEI =
+(\MEIestimate^{+\MEIerrorplus}_{-\MEIerrorminus}) \times 10^{12} \Msun$, $\MEE
+= (\MEEestimate^{+\MEEerrorplus}_{-\MEEerrorminus}) \times 10^{12} \Msun$, 
+and $\MMW = (\MMWestimate^{+\MMWerrorplus}_{-\MMWerrorminus}) \times 10^{12}
+\Msun$. 
+%
+This Milky Way halo mass estimate is in xxxagreement with previous estimates
+from stellar and dwarf satellite kinematics.
+
+\end{abstract}
+
+\keywords{%
+Galaxy: halo, fundamental parameters -- 
+galaxies: haloes, fundamental parameters -- 
+galaxies: Local Group -- 
+galaxies: individual: M31, M33 --
+cosmology: dark matter}
+
+% ----------------------------------------------------------------------------
+
+\section{Introduction}
+\label{sec:intro}
+
+The Local Group (LG) of galaxies consists of two large spiral galaxies,
+Andromeda (M31) and the Milky Way (MW), and a population of smaller
+satellite galaxies, the biggest of which is Triangulum (M33). We know
+relatively little about the distribution of dark matter throughout the Local
+Group volume, beyond simple estimates of the total mass of the group
+estimated from its members kinematics \citep[e.g.\ ][hereafter VG08]{vdM+G08}.
+Our knowledge of the dark matter halos of the group member galaxies is
+similarly sparse: virial masses have been estimated from extrapolations of
+simple models fitted to stellar or gas kinematics \citep[e.g.\
+][]{Xue+08,M31rotcurve} or to the observed positions and 
+velocities of satellite galaxies \citep[e.g.\ ][]{EvansEtc}. 
+
+Our goal is to map out the dark matter distribution in the Local Group
+by combining observational data on the  positions and velocities of the
+three largest LG members with our understanding of structure formation
+in $\Lambda$CDM universes, as detailed in halo catalogs extracted from
+cosmological N-body simulations. We treat halo catalogs as containing
+samples drawn from a very informative, highly correlated prior PDF for
+halo properties, and then  importance sample them with likelihood
+functions based on the observed kinematics of the particular system
+under study. In \citet[][hereafter B11]{Bus++11} we presented a new
+measurement of the Milky Way halo mass, made in this way using the
+\bolshoi simulation of \citet{Bolshoi} and the distances to and speeds
+of the Magellanic Clouds. In this work, we use the lower resolution but
+higher volume \consuelo simulations, and constrain them with the radial
+velocities, proper motions and distances of M31 and M33, as well as our
+previous MW mass estimate.
+
+The dynamics of the Local Group system, captured by the constrained
+\consuelo halos, are the same as feature in the Timing Argument of
+\citet{K+W59}; the difference is that instead of a point mass on a
+radial orbit, our model for the motion of M31 is only that it was
+generated in a $\Lambda$CDM universe. We can, however, follow
+\citet{L+W08} and ``calibrate'' the Timing Argument, effectively asking
+what observers in MW-like systems would infer about their LG-like group
+mass based on the Timing Argument.  Meanwhile, the masses of the LG and
+each of its three most massive constituents are accessible directly once
+we have assumed the \consuelo catalogue to contain a representative
+sample of the dark matter halos found in our universe. In a subsequent
+paper we will explore other properties of these halos.
+
+In short, we seek answers to the following questions:
+\begin{itemize}
+\item What is the mass of dark matter in the Local Group?
+\item How accurate is the Timing Argument for the Local Group mass?
+\item What are the masses of the dark matter halos of M31, M33 and the Milky
+Way?
+\end{itemize}
+
+This paper is structured as follows. In \Sref{sec:method} we review the
+halo inference methodology, and introduce the \consuelo N-body
+simulation suite we use. Then in \Sref{sec:data} we summarise the
+observational constraints we place on our model halo population during
+the importance sampling process: this includes the isolation criteria we
+use in the initial halo selection step. In \Sref{Sec:results} we present
+our results on the mass of the Local Group and its members, and then
+discuss those results in the context of previous work in
+\Sref{sec:discuss}. We conclude in \Sref{sec:conclude}.
+
+Throughout this work we assume a \LCDM cosmology, with $\Omega_{\rm m} =
+0.3$, $\Omega_{\rm \Lambda} = 0.7$, and $H_0 = 70 \kms \Mpc^{-1}$. Where
+a point estimate of a parameter is given, its value is the median of the
+one-dimensional marginalised posterior probabilty distribution, and its
+quoted uncertainty describes the 68\% credible region.
+We define a halo's mass by its $M_{200,\rm c}$, the mass enclosed within a
+sphere that is over-dense by a factor of 200 relative to the critical density
+at the redshift under consideration.
+
+
+% ----------------------------------------------------------------------------
+
+\section{Methodology}
+\label{sec:method}
+
+In this section we review the halo inference introduced in B11, and describe
+the \consuelo cosmological N-body simulations that we use in this work.
+
+% - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
+
+\subsection{Halo catalogs: samples from the halo prior PDF}
+\label{sec:sampling}
+
+\todo{Phil}{Write this section!}
+
+Basic concept. Multivariate PDF fof halo properties.
+
+Importance sampling by likelihood of observed properties.
+
+Protection against over-constraint: measures of effective sample number,
+bootstrapping.
+
+% - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
+
+\subsection{The \consuelo Simulation}
+\label{sec:sampling}
+
+\todo{Mike}{Write this section!}
+
+Description: size, resolution. Number of halos. Mvir and cvir converted to M200
+and c200?
+
+
+% - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
+
+\subsection{The Local Group prior}
+\label{sec:sampling}
+
+\todo{Mike}{Write this section!}
+
+Justification of hard-edged prior. Isolation criteria. Comparison to work of
+CLUES (constrained sims), Li \& White (timing arg), and Karenchentsev (local
+void). 
+
+Definition of pair, triplet (subset of pairs). Resulting numbers. 
+
+Figure showing MW, M31, M33, MLG mass prior for pairs and triplets. Comment:
+triplets have more mass than pairs, how big an effect?
+
+% - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
+
+\subsection{Observational Constraints}
+\label{sec:data}
+
+\todo{Phil}{Write this section!}
+
+We now turn to the observational data that we use to constrain our two and
+three-halo cosmological models of the Local Group. Separate out
+the constraints by galaxy, M31 and M33.  Explain approach of shifting to M31
+frame. Orbit phase not interesting; M33 motion relative to MW not very
+interesting.
+
+Figure: M31/MW Pr(D, vr, vt) with and without constraints on all these. Show
+impact of having an M33.
+
+Figure: M33 Pr(D, vr, vt) with and without constraints on all these. All M33-M31
+systems have an MW.
+
+Comment on number of samples remaining in both pairs and triplets cases. Which
+observed properties are unusual, if any? 
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\def\arraystretch{1.4}
+\begin{deluxetable}{cccc}[ht!]
+\tabletypesize{\footnotesize}
+\tablecaption{\label{table:properties}
+Observed kinematic properties of M31 and M33.}
+\startdata
+\hline
+\hline
+                      & M31               & M33               & Reference          \\
+\hline
+$\rx$ / kpc           & $-378.9 \pm 30.?$ & $-476.1 \pm 30.?$ & vdM12   \\
+$\ry$ / kpc           & $ 612.7 \pm 30.?$ & $ 491.1 \pm 30.?$ & vdM12   \\
+$\rz$ / kpc           & $-283.1 \pm 30.?$ & $-412.9 \pm 30.?$ & vdM12   \\
+$\vx$ / km s$^{-1}$   & $  66.1 \pm 26.7$ & $  43.1 \pm 21.3$ & vdM12   \\
+$\vx$ / km s$^{-1}$   & $ -76.3 \pm 19.0$ & $ 101.3 \pm 23.5$ & vdM12   \\
+$\vx$ / km s$^{-1}$   & $  45.1 \pm 26.5$ & $ 138.8 \pm 28.1$ & vdM12   \\
+\hline
+                      & MW                & M33               & \\
+\hline
+$\distance$ / kpc     & $ xxx.x \pm xx.x$ & $ xxx.x \pm xx.x$ & \\
+$\vrad$ / km s$^{-1}$ & $  xx.x \pm xx.x$ & $  xx.x \pm xx.x$ & \\
+$\vtan$ / km s$^{-1}$ & $  xx.x \pm xx.x$ & $  xx.x \pm xx.x$ & \\
+\hline
+\enddata
+\tablecomments{
+$(\rx,\ry,\rz)$ is a position vector relative to the Galactic center, while
+$(\vx,\vy,\vz)$ is a three-dimensional Galactocentric velocity vector. The
+components of these vectors were used to derive distances and  radial and
+tangential velocities {\it relative to M31}: these are the inputs to the
+likelihood calculations in the text. Uncertainties on quantities 
+in the lower part of this
+table were calculated by Monte
+Carlo, assuming uncorrelated errors on quantities in the upper part.
+%
+References are:
+vdM02~=~\citet{vanderMarel12}
+}
+\medskip
+\end{deluxetable}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+% - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
+
+\subsection{Approximating the Likelihood}
+\label{sec:lhood}
+
+\todo{Marc}{Write this section!}
+
+We use the observed distances and radial and tangential velocities of the MW and M33 in Table 1 to construct a probability density function for the Local Group. Assuming that the values in the table come from Gaussian distributions, we sample a large number of systems similar to the Local Group. 
+
+The density of this "observational" dataset is fit well by a Gaussian mixture model (GMM). (Plot showing goodness of fit? Triangular plot?) The optimal number of components in the GMM is found using the Bayesian Information Criterion with cross validation. The GMM allows us to evaluate the likelihood of a Consuelo Local Group under the observational pdf. This likelihood is an importance weight which allows us to find marginalized posterior pdf's for the Consuelo halo properties.
+
+% ----------------------------------------------------------------------------
+
+\section{Results}
+\label{sec:results}
+
+% - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
+
+\subsection{The Mass of the Local Group from the Kinematics of M31}
+\label{sec:results:LGmass}
+
+Pairs: D, vr, vt constraints from M31. 
+Measurement of  MLG. Precision. 
+
+Figure: 1D plot of Pr(MLG) given \\
+  1) M31 distance\\
+  2) M31 vr\\
+  3) M31 vt\\
+  4) M31 all kinematics
+
+Corner plot of Pr(MMW, MM31, MLG), prior vs all constraints
+
+
+% - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
+
+\subsection{The Mass of M31 from the Kinematics of M33}
+\label{sec:results:M31mass}
+
+Couples: D, vr, vt constraints from M33 given an M31-MW pair. 
+Measurement of  MM31. Precision. 
+
+Figure: 1D plot of Pr(MM31) given \\
+  1) M33 distance\\
+  2) M33 vr\\
+  3) M33 vt\\
+  4) M33 all kinematics
+
+Corner plot of Pr(MM31, MM33, Mcouple), prior vs all constraints
+
+% - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
+
+\subsection{The Masses of the Local Group Galaxy Halos from the Kinematics of M31 and M33}
+\label{sec:results:jointanalysis}
+
+Triplets: D, vr, vt constraints from M33 and M31. 
+Measurement of MMW. Precision. 
+
+Figure: 1D plot of Pr(MMW) given \\
+  1) M31 kinematics\\
+  2) + M33 kinematics\\
+
+Figure: Corner plot of Pr(MMW, MM31, MM33, MLG) given\\
+   1) prior \\
+   2) all kinematics \\
+
+% - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
+
+\subsection{Comparison with the Local Group Timing Argument Mass Estimate}
+\label{sec:results:TA}
+
+Timing argument introduction. Review of Li \& White. Two halo sum, M31
+kinematics, "radial" MTA. Review of VdM12's comment on precision - aim is to
+update Li\&White, show improvement in precision.  
+
+Can compute radial MTA for every model local group,  and compare with actual
+sums of M200. "Calibration" in sense that MTA gives estimate of MW + M31
+masses, under assumption they are point masses on Keplerian orbits. Bias and
+scatter both important.
+
+Figure: corner plot of MLG, MTA, A200 given \\
+  1) M31 kinematics (pairs+DvrM31)\\
+  2) M31 + M33 kinematics (triplets+DVrM31+DVrM33)\\
+
+% - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
+
+\subsection{Focusing on the Milky Way: constraints from other M31 and M33 halo mass estimates}
+\label{sec:results:MW}
+
+Review other measurements of M31 and M33 halos. Adopt one, possibly from
+VdM12. Plot impact on Pr(MMW, MM31, MM33, MLG) and MW mass estimate. MW mass
+estimate, precision. Tension?
+
+Figure: Corner plot of Pr(MMW, MM31, MM33, MLG) given\\
+   1) M31 and M33 kinematics (from earlier) \\
+   2) these plus M31 and M33 halo mass estimates. \\
+
+% - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
+
+%%%%%%%%%%%%%%%%%%%%%%
+% \input{mass_table.tex}
+%%%%%%%%%%%%%%%%%%%%%%
+
+% ----------------------------------------------------------------------------
+
+\section{Discussion}
+\label{sec:discuss}
+
+
+% \subsection{Statistical Robustness}
+% \label{sec:bootstrap}
+% 
+% \subsection{The Information Content of the Observations}
+% \label{sec:bootstrap}
+% Improvements in measurements from cosmological prior? eg distances?
+% 
+% 
+% \subsection{The Masses of M31 and M33: Comparison with Stellar Dynamics
+% Results}
+% \label{sec:M31M33stellardynamics}
+% 
+% 
+% \subsection{The Local Group Mass: Comparison with the Timing Argument}
+% \label{sec:timing}
+% 
+% 
+% \subsection{Further Work}
+% \label{sec:future}
+% 
+% ----------------------------------------------------------------------------
+
+\section{Conclusions}
+\label{sec:conclude}
+
+From this analysis we draw the following conclusions:
+\begin{itemize}
+
+\item The \consuelo simulation has sufficient volume to permit analogs of
+individual galaxy groups to be identified in large numbers. We identified XX
+3-member groups with similar isolation properties to the Local Group.
+
+\item Importance-sampling the \consuelo-sampled halo parameter prior PDF with
+the probability of the M31 and M33 distances and velocities, and the mass of
+the Milky Way, we infer a two-halo Local Group mass of $\MLG = (\MMW + \MEI)
+= (\MPAIRestimate^{+\MPAIRerrorplus}_{-\MPAIRerrorminus}) \times 10^{12}
+\Msun$.
+
+\item M31-MW timing mass argument superceded. How accurate was it? 
+
+\item Weighed M31 using M33 kinematic information. Result.
+
+\item Combining M31 and M33 kinematics to weigh halos. Inferences of the three
+halo masses. MW mass. Tension with other datasets?
+
+% \item We find that the M33 halo provides a significant addition to the Local
+% Group mass: $\MEE = (\MEEestimate^{+\MEEerrorplus}_{-\MEEerrorminus}) \times
+% 10^{12} \Msun$. Including the M33 halo increases the inferred Local Group mass
+% to $\MTRIPLET = (\MMW + \MEI + \MEE) =
+% (\MTRIPLETestimate^{+\MTRIPLETerrorplus}_{-\MTRIPLETerrorminus}) \times
+% 10^{12} \Msun$. We infer the mass of M31 to be $\MEI =
+% (\MEIestimate^{+\MEIerrorplus}_{-\MEIerrorminus}) \times 10^{12} \Msun$
+% 
+% \item For each sample Local Group analog, we can compute the timing argument
+% mass that an observer at the Earth analog's position would derive: the PDF for
+% this quantity is ... relative to that for the true Local Group mass. We find
+% that ... 
+% 
+% \item The M33 kinematics contain information about the proper motion of M31:
+% we predict this to be...
+
+\end{itemize}
+
+% ----------------------------------------------------------------------------
+
+\bibliographystyle{apj}
+\bibliography{references}
+
+% ----------------------------------------------------------------------------
+
+\end{document}
+
