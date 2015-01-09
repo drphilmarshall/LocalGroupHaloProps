@@ -40,3 +40,16 @@ Prior selection description:
 
 Properties to write out:
 ID, Mass, positions, velocities, [angular momenta, intertial tenrosrs]
+
+*************************************
+From Michael's Email:
+
+There are 50 z=0 Consuelo snapshots that have been fully processed by Michael.
+The catalogs are located:
+
+/nfs/slac/g/ki/ki04/mbusha/projects/LasDamas/Simulations/Consuelo/LG_project
+
+The files with names like `MW_halos_4001_z0p000_vir_bgc2.txt' are the
+z = 0 catalogs, while the `MW_halos_4001_z0p054_vir_bgc2.txt' files
+are the z = 0.054 ones.
+
