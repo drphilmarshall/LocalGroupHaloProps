@@ -77,18 +77,19 @@ class Likelihood(object):
         
 # ----------------------------------------------------------------------------
 
-    def approximate(self, mode="GMM"):        
+    def approximate(self, mode="GMM", cv=False):        
         
         if (mode == "GMM"):
-            def bic_scorefn(GMM, X): return GMM.bic(X)
-            score_dict = self.test_GaussMM(num_folds=10, score_fns=[bic_scorefn], maxMM=15)
-            bic = score_dict['bic_scorefn']
+            if (cv):
+                def bic_scorefn(GMM, X): return GMM.bic(X)
+                score_dict = self.test_GaussMM(num_folds=10, score_fns=[bic_scorefn], maxMM=15)
+                bic = score_dict['bic_scorefn']
 
-            min_bic = np.min(bic)
-            min_bic_components = 1+np.array([i for i, x in enumerate(bic) if x == min_bic])
-            print "Minimum BIC: ", min_bic
-            print "Minimum BIC number of components: ", min_bic_components
-            self.set_PDF(mixture.GMM(min_bic_components[0], covariance_type='full'))
+                min_bic = np.min(bic)
+                min_bic_components = 1+np.array([i for i, x in enumerate(bic) if x == min_bic])
+                print "Minimum BIC: ", min_bic
+                print "Minimum BIC number of components: ", min_bic_components
+                self.set_PDF(mixture.GMM(min_bic_components[0], covariance_type='full'))
             self.PDF.fit(self.samples)
         else:
             raise ValueError("Unrecognised approximation mode %s" % mode)
