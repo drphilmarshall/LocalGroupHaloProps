@@ -107,6 +107,15 @@ class Likelihood(object):
 
 # ======================================================================
 
+    def model_gof(self, n_points, mode="GMM"):
+        if (mode == "GMM"):
+            drawn_points = self.PDF.sample(n_samples=n_points)
+            figure = triangle.corner(drawn_points, labels=["MW_D", "MW_vr", "MW_vt", "M33_D", "M33_vr", "M33_vt"], quantiles=[0.16,0.5,0.84], show_titles=True, title_args={"fontsize": 12})
+        else:
+            raise ValueError("Unrecognized approximation mode %s" % mode)
+        return figure
+# ======================================================================
+
     def plot_samples(self, ngauss, overlay=False):
         try:
             figure = triangle.corner(self.samples, labels=["MW_D", "MW_vr", "MW_vt", "M33_D", "M33_vr", "M33_vt"], quantiles=[0.16,0.5,0.84], show_titles=True, title_args={"fontsize": 12})
