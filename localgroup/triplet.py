@@ -3,7 +3,9 @@
 import localgroup
 
 import numpy as np
-
+import sys
+sys.path.append('/afs/slac.stanford.edu/u/ki/yymao/scripts')
+from readHlist import readHlist
 # ======================================================================
 
 class Triplet(object):
@@ -120,13 +122,6 @@ class Triplet(object):
         return self.MW.D, self.MW.v_r, self.MW.v_t, self.M33.D, self.M33.v_r, self.M33.v_t
         
 # ----------------------------------------------------------------------------
-
-    def get_halo_properties(self):
-        
-        return
-
-        
-# ======================================================================
 
 if __name__ == '__main__':
 
