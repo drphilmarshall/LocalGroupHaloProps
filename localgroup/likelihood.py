@@ -107,17 +107,6 @@ class Likelihood(object):
 
 # ======================================================================
 
-    def read_sim_file(self, n_points, path):
-        
-        sim_data = readHlist(path)
-        if n_points > len(sim_data): raise ValueError('n_points too large.')
-        np.random.shuffle(sim_data)
-        self.points = sim_data[:n_points]
-
-        return
-
-# ======================================================================
-
     def model_gof(self, n_points, mode="GMM"):
         if (mode == "GMM"):
             drawn_points = self.PDF.sample(n_samples=n_points)
