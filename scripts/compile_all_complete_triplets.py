@@ -7,7 +7,7 @@ sys.path.append('/afs/slac.stanford.edu/u/ki/yymao/scripts')
 from readHlist import readHlist
 
 # idMW idM31 idM33 Mvir x y z vx vy vz
-header = '# idMW idM31 idM33 MW_Mvir M31_Mvir M33_Mvir MW_x MW_y MW_z M31_x M31_y M31_z M33_x M33_y M_33_z\
+header = '# idMW idM31 idM33 MW_Mvir M31_Mvir M33_Mvir MW_x MW_y MW_z M31_x M31_y M31_z M33_x M33_y M33_z\
  MW_vx MW_vy MW_vz M31_vx M31_vy M31_vz M33_vx M33_vy M33_vz\n'
 path = '/afs/slac.stanford.edu/u/ki/mwillia1/Thesis/data_files/'
 M33_file = 'M33_all_z0p000_data.txt'
