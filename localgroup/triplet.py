@@ -115,6 +115,35 @@ class Triplet(object):
 
         return
 
+# ============================================================================
+
+    def read_sim_points(self, path, n_points, halo_props):
+
+        sim_data = readHlist(path)
+        if sim_data.shape[0] < n_points:
+            raise ValueError('n_points too large.')
+        np.random.shuffle(sim_data)
+        self.sim_data = sim_data[:n_points]
+        self.observe_halos(Nsamples=n_points)
+
+        self.MW.translate_to(self.MW)
+
+        self.M31.x = self.sim_data['M31_x'] - self.sim_data['MW_x']
+        self.M31.y = self.sim_data['M31_y'] - self.sim_data['MW_y']
+        self.M31.z = self.sim_data['M31_z'] - self.sim_data['MW_z']
+        self.M31.vx = self.sim_data['M31_vx'] - self.sim_data['MW_vx']
+        self.M31.vy = self.sim_data['M31_vy'] - self.sim_data['MW_vy']
+        self.M31.vz = self.sim_data['M31_vz'] - self.sim_data['MW_vz']
+        
+        self.M33.x = self.sim_data['M33_x'] - self.sim_data['MW_x']
+        self.M33.y = self.sim_data['M33_y'] - self.sim_data['MW_y']
+        self.M33.z = self.sim_data['M33_z'] - self.sim_data['MW_z']
+        self.M33.vx = self.sim_data['M33_vx'] - self.sim_data['MW_vx']
+        self.M33.vy = self.sim_data['M33_vy'] - self.sim_data['MW_vy']
+        self.M33.vz = self.sim_data['M33_vz'] - self.sim_data['MW_vz']
+
+        return
+
 # ----------------------------------------------------------------------------
 
     def get_kinematics(self):
