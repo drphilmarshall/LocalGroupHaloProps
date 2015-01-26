@@ -149,6 +149,12 @@ class Triplet(object):
         return
 # ============================================================================
 
+    def preprocess(self, means, stds):
+        self.sim_samples = (self.sim_samples - means)/stds 
+
+        return
+# ============================================================================
+
     def tri_plot(self):
 
         figure = triangle.corner(self.sim_samples, labels=["MW_D", "MW_vr", "MW_vt", "M33_D", "M33_vr", "M33_vt"], quantiles=[0.16,0.5,0.84], show_titles=True, title_args={"fontsize": 12})
