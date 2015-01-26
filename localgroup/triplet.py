@@ -6,6 +6,7 @@ import numpy as np
 import sys
 sys.path.append('/afs/slac.stanford.edu/u/ki/yymao/scripts')
 from readHlist import readHlist
+import pickle
 # ======================================================================
 
 class Triplet(object):
@@ -153,6 +154,13 @@ class Triplet(object):
         figure = triangle.corner(self.sim_samples, labels=["MW_D", "MW_vr", "MW_vt", "M33_D", "M33_vr", "M33_vt"], quantiles=[0.16,0.5,0.84], show_titles=True, title_args={"fontsize": 12})
 
         return figure
+
+# ============================================================================
+
+    def save(self, save_path):
+        save_file = open(save_path, "wb")
+        pickle.dump(self, save_file)
+        return
 
 # ----------------------------------------------------------------------------
 
