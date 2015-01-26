@@ -1,7 +1,7 @@
 # ======================================================================
 
 import localgroup
-
+import triangle
 import numpy as np
 import sys
 sys.path.append('/afs/slac.stanford.edu/u/ki/yymao/scripts')
@@ -95,24 +95,25 @@ class Triplet(object):
 # Transform from heliocentric spherical coordinates to M31-centric
 # cartesian coordinates.  
 
-    def transform_to_M31(self):
+    def transform_to_M31(self, sim=False):
 
         # Covert M31 and M33 from heliocentric spherical to 
-        # galactocentric cartesian.  
-        self.M31.x, self.M31.y, self.M31.z, self.M31.vx, self.M31.vy, self.M31.vz = localgroup.heliocentric_equatorial_spherical_to_galactocentric_cartesian(self.M31.RA,self.M31.DEC,self.M31.D,self.M31.mu_west,self.M31.mu_north,self.M31.v_r, R0=self.MW.x, V0=self.MW.vy)
-        self.M31.frame = 'MW'
-        self.M33.x, self.M33.y, self.M33.z, self.M33.vx, self.M33.vy, self.M33.vz = localgroup.heliocentric_equatorial_spherical_to_galactocentric_cartesian(self.M33.RA,self.M33.DEC,self.M33.D,self.M33.mu_west,self.M33.mu_north,self.M33.v_r, R0=self.MW.x, V0=self.MW.vy)
-        self.M33.frame = 'MW'
+        # galactocentric cartesian.
+        if not sim:  
+            self.M31.x, self.M31.y, self.M31.z, self.M31.vx, self.M31.vy, self.M31.vz = localgroup.heliocentric_equatorial_spherical_to_galactocentric_cartesian(self.M31.RA,self.M31.DEC,self.M31.D,self.M31.mu_west,self.M31.mu_north,self.M31.v_r, R0=self.MW.x, V0=self.MW.vy)
+            self.M31.frame = 'MW'
+            self.M33.x, self.M33.y, self.M33.z, self.M33.vx, self.M33.vy, self.M33.vz = localgroup.heliocentric_equatorial_spherical_to_galactocentric_cartesian(self.M33.RA,self.M33.DEC,self.M33.D,self.M33.mu_west,self.M33.mu_north,self.M33.v_r, R0=self.MW.x, V0=self.MW.vy)
+            self.M33.frame = 'MW'
 
-        # First we translate the MW positions from heliocentric
-        # cartesian to galactocentric cartesian.  
-        self.MW.translate_to(self.MW) #NOTE: This must be after heliocentric_equatorial_spherical_to_galactocentric_cartesian calls
+            # First we translate the MW positions from heliocentric
+            # cartesian to galactocentric cartesian.  
+            self.MW.translate_to(self.MW) #NOTE: This must be after heliocentric_equatorial_spherical_to_galactocentric_cartesian calls
 
         # Now we can finally translate to M31 frame
         self.MW.translate_to(self.M31)
         self.M33.translate_to(self.M31)
         self.M31.translate_to(self.M31) #NOTE: This must be last
-
+        if sim: self.sim_samples = np.transpose(np.array(self.get_kinematics()))
         return
 
 # ============================================================================
@@ -134,15 +135,24 @@ class Triplet(object):
         self.M31.vx = self.sim_data['M31_vx'] - self.sim_data['MW_vx']
         self.M31.vy = self.sim_data['M31_vy'] - self.sim_data['MW_vy']
         self.M31.vz = self.sim_data['M31_vz'] - self.sim_data['MW_vz']
-        
+        self.M31.frame = 'MW'        
+
         self.M33.x = self.sim_data['M33_x'] - self.sim_data['MW_x']
         self.M33.y = self.sim_data['M33_y'] - self.sim_data['MW_y']
         self.M33.z = self.sim_data['M33_z'] - self.sim_data['MW_z']
         self.M33.vx = self.sim_data['M33_vx'] - self.sim_data['MW_vx']
         self.M33.vy = self.sim_data['M33_vy'] - self.sim_data['MW_vy']
         self.M33.vz = self.sim_data['M33_vz'] - self.sim_data['MW_vz']
+        self.M33.frame = 'MW'
 
         return
+# ============================================================================
+
+    def tri_plot(self):
+
+        figure = triangle.corner(self.sim_samples, labels=["MW_D", "MW_vr", "MW_vt", "M33_D", "M33_vr", "M33_vt"], quantiles=[0.16,0.5,0.84], show_titles=True, title_args={"fontsize": 12})
+
+        return figure
 
 # ----------------------------------------------------------------------------
 
