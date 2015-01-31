@@ -48,9 +48,9 @@ class Likelihood(object):
     """
 # ======================================================================
 
-    def __init__(self):
+    def __init__(self, isPair=False):
         
-        self.T = localgroup.Triplet()
+        self.T = localgroup.Triplet(isPair=isPair)
         self.PDF = None
 
         return
@@ -108,17 +108,21 @@ class Likelihood(object):
 # ======================================================================
 
     def model_gof(self, n_points, mode="GMM"):
+        labs = ["MW_D", "MW_vr", "MW_vt", "M33_D", "M33_vr", "M33_vt"]
         if (mode == "GMM"):
+            if self.T.isPair: labs = ["MW_D", "MW_vr", "MW_vt"]
             drawn_points = self.PDF.sample(n_samples=n_points)
-            figure = triangle.corner(drawn_points, labels=["MW_D", "MW_vr", "MW_vt", "M33_D", "M33_vr", "M33_vt"], quantiles=[0.16,0.5,0.84], show_titles=True, title_args={"fontsize": 12})
+            figure = triangle.corner(drawn_points, labels=labs, quantiles=[0.16,0.5,0.84], show_titles=True, title_args={"fontsize": 12})
         else:
             raise ValueError("Unrecognized approximation mode %s" % mode)
         return figure
 # ======================================================================
 
     def plot_samples(self, ngauss, overlay=False):
+        labs = ["MW_D", "MW_vr", "MW_vt", "M33_D", "M33_vr", "M33_vt"]
+        if self.T.isPair: labs = ["MW_D", "MW_vr", "MW_vt"]
         try:
-            figure = triangle.corner(self.samples, labels=["MW_D", "MW_vr", "MW_vt", "M33_D", "M33_vr", "M33_vt"], quantiles=[0.16,0.5,0.84], show_titles=True, title_args={"fontsize": 12})
+            figure = triangle.corner(self.samples, labels=labs, quantiles=[0.16,0.5,0.84], show_titles=True, title_args={"fontsize": 12})
         except AttributeError:
             raise AttributeError("L.generate has not been run.")
         figure.gca().annotate("MW and M33 Observational Data Distributions (M31 centric)", xy=(0.5, 1.0), xycoords="figure fraction", xytext=(0, -5), textcoords="offset points", ha="center", va="top")
@@ -161,14 +165,18 @@ class Likelihood(object):
 
 
     def gaussianOverlay(self, figure, ngauss):
+        if self.T.isPair:
+            size = 3
+        else:
+            size = 6
         n_gaussians = ngauss
         if ngauss > 5: raise AttributeError("Only 5 colors can be shown.")
         colors = ['g', 'r', 'y', 'b', 'c']
         transparency = 0.5
         model = mixture.GMM(n_gaussians, covariance_type='full')
-        axes = np.reshape(figure.axes, (6,6))
-        for i in range(6):
-            for j in range(6):
+        axes = np.reshape(figure.axes, (size,size))
+        for i in range(size):
+            for j in range(size):
                 if j < i:
                     model.fit(self.samples)
                     subplot = axes[i,j]

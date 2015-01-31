@@ -46,10 +46,10 @@ class Triplet(object):
     """
 # ======================================================================
 
-    def __init__(self):
+    def __init__(self, isPair=False):
         
         self.Nsamples = None
-        
+        self.isPair = isPair
         return
         
 # ----------------------------------------------------------------------------
@@ -65,10 +65,10 @@ class Triplet(object):
         self.M31 = localgroup.Halo()
         M31file = directory+'/box01_M31.fits'
         self.M31.read(MWfile)
-        
-        self.M33 = localgroup.Halo()
-        M33file = directory+'/box01_M33.fits'
-        self.M33.read(MWfile)
+        if not self.isPair:
+            self.M33 = localgroup.Halo()
+            M33file = directory+'/box01_M33.fits'
+            self.M33.read(MWfile)
         
         return
         
@@ -83,9 +83,9 @@ class Triplet(object):
         
         self.M31 = localgroup.Halo('M31')
         self.M31.sample_from(obs.data['M31'],Nsamples)
-        
-        self.M33 = localgroup.Halo('M33')
-        self.M33.sample_from(obs.data['M33'],Nsamples)
+        if not self.isPair:
+            self.M33 = localgroup.Halo('M33')
+            self.M33.sample_from(obs.data['M33'],Nsamples)
         
         self.Nsamples = Nsamples
         
@@ -103,8 +103,9 @@ class Triplet(object):
         if not sim:  
             self.M31.x, self.M31.y, self.M31.z, self.M31.vx, self.M31.vy, self.M31.vz = localgroup.heliocentric_equatorial_spherical_to_galactocentric_cartesian(self.M31.RA,self.M31.DEC,self.M31.D,self.M31.mu_west,self.M31.mu_north,self.M31.v_r, R0=self.MW.x, V0=self.MW.vy)
             self.M31.frame = 'MW'
-            self.M33.x, self.M33.y, self.M33.z, self.M33.vx, self.M33.vy, self.M33.vz = localgroup.heliocentric_equatorial_spherical_to_galactocentric_cartesian(self.M33.RA,self.M33.DEC,self.M33.D,self.M33.mu_west,self.M33.mu_north,self.M33.v_r, R0=self.MW.x, V0=self.MW.vy)
-            self.M33.frame = 'MW'
+            if not self.isPair:
+                self.M33.x, self.M33.y, self.M33.z, self.M33.vx, self.M33.vy, self.M33.vz = localgroup.heliocentric_equatorial_spherical_to_galactocentric_cartesian(self.M33.RA,self.M33.DEC,self.M33.D,self.M33.mu_west,self.M33.mu_north,self.M33.v_r, R0=self.MW.x, V0=self.MW.vy)
+                self.M33.frame = 'MW'
 
             # First we translate the MW positions from heliocentric
             # cartesian to galactocentric cartesian.  
@@ -112,7 +113,8 @@ class Triplet(object):
 
         # Now we can finally translate to M31 frame
         self.MW.translate_to(self.M31)
-        self.M33.translate_to(self.M31)
+        if not self.isPair:
+            self.M33.translate_to(self.M31)
         self.M31.translate_to(self.M31) #NOTE: This must be last
         if sim: self.sim_samples = np.transpose(np.array(self.get_kinematics()))
         return
@@ -137,14 +139,14 @@ class Triplet(object):
         self.M31.vy = self.sim_data['M31_vy'] - self.sim_data['MW_vy']
         self.M31.vz = self.sim_data['M31_vz'] - self.sim_data['MW_vz']
         self.M31.frame = 'MW'        
-
-        self.M33.x = self.sim_data['M33_x'] - self.sim_data['MW_x']
-        self.M33.y = self.sim_data['M33_y'] - self.sim_data['MW_y']
-        self.M33.z = self.sim_data['M33_z'] - self.sim_data['MW_z']
-        self.M33.vx = self.sim_data['M33_vx'] - self.sim_data['MW_vx']
-        self.M33.vy = self.sim_data['M33_vy'] - self.sim_data['MW_vy']
-        self.M33.vz = self.sim_data['M33_vz'] - self.sim_data['MW_vz']
-        self.M33.frame = 'MW'
+        if not self.isPair:
+            self.M33.x = self.sim_data['M33_x'] - self.sim_data['MW_x']
+            self.M33.y = self.sim_data['M33_y'] - self.sim_data['MW_y']
+            self.M33.z = self.sim_data['M33_z'] - self.sim_data['MW_z']
+            self.M33.vx = self.sim_data['M33_vx'] - self.sim_data['MW_vx']
+            self.M33.vy = self.sim_data['M33_vy'] - self.sim_data['MW_vy']
+            self.M33.vz = self.sim_data['M33_vz'] - self.sim_data['MW_vz']
+            self.M33.frame = 'MW'
 
         return
 # ============================================================================
@@ -156,8 +158,10 @@ class Triplet(object):
 # ============================================================================
 
     def tri_plot(self):
-
-        figure = triangle.corner(self.sim_samples, labels=["MW_D", "MW_vr", "MW_vt", "M33_D", "M33_vr", "M33_vt"], quantiles=[0.16,0.5,0.84], show_titles=True, title_args={"fontsize": 12})
+        if self.isPair:
+            figure = triangle.corner(self.sim_samples, labels=["MW_D", "MW_vr", "MW_vt"], quantiles=[0.16,0.5,0.84], show_titles=True, title_args={"fontsize": 12})
+        else:
+            figure = triangle.corner(self.sim_samples, labels=["MW_D", "MW_vr", "MW_vt", "M33_D", "M33_vr", "M33_vt"], quantiles=[0.16,0.5,0.84], show_titles=True, title_args={"fontsize": 12})
 
         return figure
 
@@ -171,8 +175,10 @@ class Triplet(object):
 # ----------------------------------------------------------------------------
 
     def get_kinematics(self):
-        
-        return self.MW.D, self.MW.v_r, self.MW.v_t, self.M33.D, self.M33.v_r, self.M33.v_t
+        if self.isPair:   
+            return self.MW.D, self.MW.v_r, self.MW.v_t
+        else:
+            return self.MW.D, self.MW.v_r, self.MW.v_t, self.M33.D, self.M33.v_r, self.M33.v_t
         
 # ----------------------------------------------------------------------------
 
