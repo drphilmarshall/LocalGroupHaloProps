@@ -1,5 +1,5 @@
 # ======================================================================
-
+import timingargument
 import localgroup
 import triangle
 import numpy as np
@@ -148,6 +148,12 @@ class Triplet(object):
             self.M33.vz = self.sim_data['M33_vz'] - self.sim_data['MW_vz']
             self.M33.frame = 'MW'
 
+        return
+# ============================================================================
+
+    def compute_timing_mass(self):
+        M, a, x, e = timingargument.mass(self.MW.D, self.MW.v_r, vt=None, approach='radial', t0scatter=False)
+        self.timing_masses = M
         return
 # ============================================================================
 
