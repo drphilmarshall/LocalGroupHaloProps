@@ -157,6 +157,12 @@ class Triplet(object):
         return
 # ============================================================================
 
+    def compute_model_weights(self, L, normalize=True):
+        weights = L.evaluate(self.sim_samples)[0]
+        total_weight = weights.sum()
+        self.weights = 1.0/total_weight*weights
+        return
+# ============================================================================
     def preprocess(self, means, stds):
         self.sim_samples = (self.sim_samples - means)/stds 
 
