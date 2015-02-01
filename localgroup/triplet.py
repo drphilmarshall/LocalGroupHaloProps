@@ -163,6 +163,16 @@ class Triplet(object):
         self.weights = 1.0/total_weight*weights
         return
 # ============================================================================
+    def calculate_N95(self):
+        weights_copy = np.copy(self.weights)
+        weights_copy.sort()
+        sum = 0
+        count = 0
+        while sum < 0.95:
+            sum = sum + weights_copy[count]
+            count = count + 1
+        return count
+# ============================================================================
     def preprocess(self, means, stds):
         self.sim_samples = (self.sim_samples - means)/stds 
 
