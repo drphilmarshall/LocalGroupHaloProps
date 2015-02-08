@@ -122,7 +122,7 @@ class Likelihood(object):
         labs = ["MW_D", "MW_vr", "MW_vt", "M33_D", "M33_vr", "M33_vt"]
         if self.T.isPair: labs = ["MW_D", "MW_vr", "MW_vt"]
         try:
-            figure = triangle.corner(self.samples, labels=labs, quantiles=[0.16,0.5,0.84], show_titles=True, title_args={"fontsize": 12})
+            figure = triangle.corner(self.samples, labels=labs, quantiles=[0.16,0.5,0.84], plot_contours=True, show_titles=True, title_args={"fontsize": 12})
         except AttributeError:
             raise AttributeError("L.generate has not been run.")
         figure.gca().annotate("MW and M33 Observational Data Distributions (M31 centric)", xy=(0.5, 1.0), xycoords="figure fraction", xytext=(0, -5), textcoords="offset points", ha="center", va="top")
