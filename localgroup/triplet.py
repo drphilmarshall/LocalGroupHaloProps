@@ -101,10 +101,10 @@ class Triplet(object):
         # Covert M31 and M33 from heliocentric spherical to 
         # galactocentric cartesian.
         if not sim:  
-            self.M31.x, self.M31.y, self.M31.z, self.M31.vx, self.M31.vy, self.M31.vz = localgroup.heliocentric_equatorial_spherical_to_galactocentric_cartesian(self.M31.RA,self.M31.DEC,self.M31.D,self.M31.mu_west,self.M31.mu_north,self.M31.v_r, R0=self.MW.x, V0=self.MW.vy)
+            self.M31.x, self.M31.y, self.M31.z, self.M31.vx, self.M31.vy, self.M31.vz = localgroup.heliocentric_equatorial_spherical_to_galactocentric_cartesian(self.M31.RA,self.M31.DEC,self.M31.D,self.M31.mu_west,self.M31.mu_north,self.M31.v_r, self.M31.deltavrot_west, self.M31.deltavrot_north, R0=self.MW.x, V0=self.MW.vy)
             self.M31.frame = 'MW'
             if not self.isPair:
-                self.M33.x, self.M33.y, self.M33.z, self.M33.vx, self.M33.vy, self.M33.vz = localgroup.heliocentric_equatorial_spherical_to_galactocentric_cartesian(self.M33.RA,self.M33.DEC,self.M33.D,self.M33.mu_west,self.M33.mu_north,self.M33.v_r, R0=self.MW.x, V0=self.MW.vy)
+                self.M33.x, self.M33.y, self.M33.z, self.M33.vx, self.M33.vy, self.M33.vz = localgroup.heliocentric_equatorial_spherical_to_galactocentric_cartesian(self.M33.RA,self.M33.DEC,self.M33.D,self.M33.mu_west,self.M33.mu_north,self.M33.v_r, self.M33.deltavrot_west, self.M33.deltavrot_north, R0=self.MW.x, V0=self.MW.vy)
                 self.M33.frame = 'MW'
 
             # First we translate the MW positions from heliocentric

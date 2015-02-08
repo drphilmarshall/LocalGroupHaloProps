@@ -62,7 +62,7 @@ def equatorial_to_galactic_proper_motion(mu_w, mu_n,RA,DEC):
 # mu_[west|north] in mas/yr, v_r in km/s
 # x,y,z in Mpc.  vx, vy, vz, in km/s
 
-def spherical_to_cartesian(RA,DEC,D,mu_west,mu_north,v_r):
+def spherical_to_cartesian(RA,DEC,D,mu_west,mu_north,v_r,deltavrot_west, deltavrot_north):
 
     # Heliocentric Cartesian positions (Mpc):
     delta = DEC*deg2rad
@@ -72,8 +72,8 @@ def spherical_to_cartesian(RA,DEC,D,mu_west,mu_north,v_r):
     z = D*sin(delta)
      
     # Convert mu to v
-    v_west = mu_west*muaspyrMpc2kmps*D
-    v_north = mu_north*muaspyrMpc2kmps*D
+    v_west = mu_west*muaspyrMpc2kmps*D - deltavrot_west
+    v_north = mu_north*muaspyrMpc2kmps*D - deltavrot_north
 
     # Heliocentric Cartesian velocities (km/s):
     vx = (x/D)*v_r - (z/D)*v_north*cos(alpha) - v_west*sin(alpha) 
@@ -102,13 +102,13 @@ def heliocentric_galactic_cartesian_to_galactocentric_cartesian(xh,yh,zh,vxh,vyh
 # galactocentric cartesian coordinates (x,y,z, etc).  
 # NOTE:  Add optional argument to take care of internal rotation.  
 
-def heliocentric_equatorial_spherical_to_galactocentric_cartesian(ra, dec, d, mu_w, mu_n, v_r, R0=0.0085, V0=-220):
+def heliocentric_equatorial_spherical_to_galactocentric_cartesian(ra, dec, d, mu_w, mu_n, v_r, dvrot_w, dvrot_n, R0=0.0085, V0=-220):
 
     l,b = equatorial_to_galactic(ra,dec)
 
     mu_l,mu_b = equatorial_to_galactic_proper_motion(mu_w,mu_n,ra,dec)
 
-    xh,yh,zh,vxh,vyh,vzh = spherical_to_cartesian(l, b, d, mu_l, mu_b, v_r)
+    xh,yh,zh,vxh,vyh,vzh = spherical_to_cartesian(l, b, d, mu_l, mu_b, v_r, dvrot_w, dvrot_n)
 
     x,y,z,vx,vy,vz = heliocentric_galactic_cartesian_to_galactocentric_cartesian(xh, yh, zh, vxh, vyh, vzh, R0=R0, V0=V0)
 

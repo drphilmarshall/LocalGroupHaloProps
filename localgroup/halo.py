@@ -98,9 +98,9 @@ class Halo(object):
             self.b               = localgroup.draw(obs['b'],Nsamples)
             self.D               = localgroup.draw(obs['D'],Nsamples)
             self.mu_west         = localgroup.draw(obs['mu_west'],Nsamples)
-            #self.deltavrot_west  = localgroup.draw(obs['deltavrot_west'],Nsamples) #We think this accounts for the rotation of the object -- reread Vand Der Marel to figure out.  
+            self.deltavrot_west  = localgroup.draw(obs['deltavrot_west'],Nsamples) #We think this accounts for the rotation of the object -- reread Vand Der Marel to figure out.  
             self.mu_north        = localgroup.draw(obs['mu_north'],Nsamples)
-            #self.deltavrot_north = localgroup.draw(obs['deltavrot_north'],Nsamples)
+            self.deltavrot_north = localgroup.draw(obs['deltavrot_north'],Nsamples)
             self.v_r             = localgroup.draw(obs['v_r'],Nsamples)
 
 
