@@ -175,10 +175,11 @@ class Likelihood(object):
         transparency = 0.5
         model = mixture.GMM(n_gaussians, covariance_type='full')
         axes = np.reshape(figure.axes, (size,size))
+        model.fit(self.samples)
         for i in range(size):
             for j in range(size):
                 if j < i:
-                    model.fit(self.samples)
+                    #model.fit(self.samples)
                     subplot = axes[i,j]
                     for gauss_num in range(n_gaussians):
                         mean = [model.means_[gauss_num][j], model.means_[gauss_num][i]]
