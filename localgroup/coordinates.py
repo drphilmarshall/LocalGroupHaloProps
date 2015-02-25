@@ -1,6 +1,7 @@
 # ======================================================================
 
-from numpy import sin,cos,arcsin,arccos,arctan2,pi,abs,sqrt,sign
+from numpy import mean,sin,cos,arcsin,arccos,arctan2,pi,abs,sqrt,sign,atleast_1d
+from pytpm import tpm, convert
 
 deg2rad = pi/180.0
 arcsec2rad = deg2rad/3600.0
@@ -25,11 +26,12 @@ def equatorial_to_galactic(RA,DEC):
     delta = DEC*deg2rad
     
     b = arcsin(cos(delta)*cos(deltaG)*cos(alpha - alphaG) + sin(delta)*sin(deltaG))
-    
+    b = atleast_1d(b)
+
     sindl = cos(delta)*sin(alpha-alphaG)/cos(b)
     cosdl = (sin(delta)*cos(deltaG) - cos(delta)*sin(deltaG)*cos(alpha-alphaG))/cos(b)
     dl = arctan2(cosdl,sindl)
-    l = lOmega + dl
+    l = atleast_1d(lOmega + dl)
     l[l < 0.0] += 2.0*pi
     
     return l/deg2rad,b/deg2rad
@@ -40,7 +42,7 @@ def equatorial_to_galactic(RA,DEC):
 
 def equatorial_to_galactic_proper_motion(mu_w, mu_n,RA,DEC):
     
-    mu_alpha = -1*mu_w
+    mu_alpha = mu_w
     mu_delta = mu_n
     alpha = RA*deg2rad
     delta = DEC*deg2rad
@@ -73,13 +75,20 @@ def spherical_to_cartesian(RA,DEC,D,mu_west,mu_north,v_r,deltavrot_west, deltavr
      
     # Convert mu to v
     v_west = mu_west*muaspyrMpc2kmps*D - deltavrot_west
+    for i in range(len(x)):
+        if x[i] < 0:
+            v_west[i] = -v_west[i]
     v_north = mu_north*muaspyrMpc2kmps*D - deltavrot_north
-
+    print 'v_west: ',mean(v_west)
+    print 'v_north: ',mean(v_north)
     # Heliocentric Cartesian velocities (km/s):
-    vx = (x/D)*v_r - (z/D)*v_north*cos(alpha) - v_west*sin(alpha) 
-    vy = (y/D)*v_r - (z/D)*v_north*sin(alpha) + v_west*cos(alpha) 
-    vz = (z/D)*v_r + cos(delta)*v_north
-
+   # vx = (x/D)*v_r - (z/D)*v_north*cos(alpha) - v_west*sin(alpha) 
+   # vy = (y/D)*v_r - (z/D)*v_north*sin(alpha) + v_west*cos(alpha) 
+   # vz = (z/D)*v_r + cos(delta)*v_north
+ 
+    vx = v_r*cos(delta)*cos(alpha) - v_west*sin(alpha) - v_north*sin(delta)*cos(alpha)
+    vy = v_r*cos(delta)*sin(alpha) + v_west*cos(alpha) - v_north*sin(delta)*sin(alpha)
+    vz = v_r*sin(delta) + v_north*cos(delta)
     return x,y,z,vx,vy,vz
 
 # ----------------------------------------------------------------------
@@ -103,13 +112,15 @@ def heliocentric_galactic_cartesian_to_galactocentric_cartesian(xh,yh,zh,vxh,vyh
 # NOTE:  Add optional argument to take care of internal rotation.  
 
 def heliocentric_equatorial_spherical_to_galactocentric_cartesian(ra, dec, d, mu_w, mu_n, v_r, dvrot_w, dvrot_n, R0=0.0085, V0=-220):
-
+    print 'Inside method: heliocentric_equatorial_spherical_to_galactocentric_cartesian'
     l,b = equatorial_to_galactic(ra,dec)
-
+    print 'l = ',l
+    print 'b = ',b
     mu_l,mu_b = equatorial_to_galactic_proper_motion(mu_w,mu_n,ra,dec)
-
+    print 'mu_l = ', mu_l
+    print 'mu_b = ', mu_b
     xh,yh,zh,vxh,vyh,vzh = spherical_to_cartesian(l, b, d, mu_l, mu_b, v_r, dvrot_w, dvrot_n)
-
+    print 'xh, yh, zh, vxh, vyh, vzh = ',xh, yh, zh, vxh, vyh, vzh
     x,y,z,vx,vy,vz = heliocentric_galactic_cartesian_to_galactocentric_cartesian(xh, yh, zh, vxh, vyh, vzh, R0=R0, V0=V0)
 
     return x,y,z,vx,vy,vz
@@ -134,25 +145,33 @@ def heliocentric_equatorial_spherical_to_galactocentric_cartesian(ra, dec, d, mu
 
 if __name__ == '__main__':
 
-    RA,DEC = 2.93286720,-35.13339602
-    l,b = 347.15730758,-78.33861529
+    #RA,DEC = 2.93286720,-35.13339602
+    RA, DEC = 0.0482772, -0.36042
+    #l,b = 347.15730758,-78.33861529
+    l,b = 96.13532, -60.538212
     ll,bb = equatorial_to_galactic(RA,DEC)
     print "l,b = ",ll,bb
     print "  cf XHIP values: ",l,b
 
-    mu_a,mu_d = 169.76,114.63
+    #mu_a,mu_d = 169.76,114.63
+    mu_a, mu_d = 62.20, -15.30
     mu_l,mu_b = equatorial_to_galactic_proper_motion(mu_a,mu_d,RA,DEC)
     print "mu_l,mu_b = ",mu_l,mu_b
-    print "  cf XHIP values: -23.51,-203.48"
+    #mu_ll, mu_bb = -23.51, -203.48
+    mu_ll, mu_bb = 50.83, -38.97
+    print "  cf XHIP values: ", mu_ll, mu_bb
 
-    D = 21.28
-    v_r = -21.0
-    
+    #D = 21.28
+    D = 201.17
+    #v_r = -21.0
+    v_r = 21.61
+    d_vn = 0
+    d_vw = 0 
     K = 4.7404e-3
     v_l = K*mu_l*D
     v_b = K*mu_b*D
     
-    x,y,z,vx,vy,vz = spherical_to_cartesian(l,b,D,v_l,v_b,v_r)
+    x,y,z,vx,vy,vz = spherical_to_cartesian(l,b,D,mu_l/1000,mu_b/1000,v_r,d_vn, d_vw)
     
     print "x,y,z = ",x,y,z
     print "  cf XHIP values: 4.2, -1.0, -20.8"
@@ -162,13 +181,13 @@ if __name__ == '__main__':
     print "OK FINE"
 
     print "Now check galactic center (l,b) = 0,0:"
-    xh,yh,zh,vxh,vyh,vzh = spherical_to_cartesian(0,0,0.0085, -220.,0.,0.)
+    xh,yh,zh,vxh,vyh,vzh = spherical_to_cartesian(0,0,0.0085, -5460.,0.,0., d_vn, d_vw)
     print "Heliocentric Galactic Cartesian location of G.C.: ", xh,yh,zh,vxh,vyh,vzh
 
     x,y,z,vx,vy,vz = heliocentric_galactic_cartesian_to_galactocentric_cartesian(xh, yh, zh, vxh, vyh, vzh)
     print "Galactocentric cartesian coordinates of G.C. (should be all zero): ",x,y,z,vx,vy,vz
 
-    x,y,z,vx,vy,vz = heliocentric_equatorial_spherical_to_galactocentric_cartesian((17.0/24.+42./(24.0*60.0)+29.319/(24.*3600.))*360., -28-59./60-18.54/3600., 0.0085, 2.7e3, -5.6e3, 0.0)
+    x,y,z,vx,vy,vz = heliocentric_equatorial_spherical_to_galactocentric_cartesian((17.0/24.+42./(24.0*60.0)+29.319/(24.*3600.))*360., -28-59./60-18.54/3600., 0.0085, 2.7, -5.6, 0.0,0,0)
     print "Galactocentric cartesian coordinates of G.C. (should be all zero): ",x,y,z,vx,vy,vz
 
     print ""
