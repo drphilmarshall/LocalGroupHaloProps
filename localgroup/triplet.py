@@ -207,7 +207,7 @@ class Triplet(object):
 if __name__ == '__main__':
 
     t = Triplet()
-    t.observe_halos(Nsamples=100000)
+    t.observe_halos(Nsamples=200000)
     t.transform_to_M31()
     D_MW, vr_MW, vt_MW, D_M33, vr_M33, vt_M33 = t.get_kinematics()
 
@@ -286,7 +286,7 @@ if __name__ == '__main__':
                            np.mean(t.M31.vy),'+/-',np.std(t.M31.vy),', ', \
                            np.mean(t.M31.vz),'+/-',np.std(t.M31.vz)
     print "  cf vdM++12: (66+/-27, -76+/-19, 45+/-27) km/s"
-    
+    print "max vx = ",np.max(t.M31.vx) 
     w = np.sqrt(t.M31.vx*t.M31.vx + t.M31.vy*t.M31.vy + t.M31.vz*t.M31.vz)
     print "M31 speed: ",np.mean(w),'+/-',np.std(w)
     print "  cf vdM++12: (110.6 +/- 7.8) km/s"

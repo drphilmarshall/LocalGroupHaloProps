@@ -91,7 +91,7 @@ def spherical_to_cartesian(RA,DEC,D,mu_west,mu_north,v_r,deltavrot_west, deltavr
 # Transformation from Heliocentric Galactic Cartesian system to Galactocentric Cartesian.
 # NOTE: The different definitions of the axis directions. 
 
-def heliocentric_galactic_cartesian_to_galactocentric_cartesian(xh,yh,zh,vxh,vyh,vzh,R0=0.0085,V0=-239):
+def heliocentric_galactic_cartesian_to_galactocentric_cartesian(xh,yh,zh,vxh,vyh,vzh,R0=0.00829,V0=-239):
 
     xg = xh - R0
     yg = yh
@@ -107,7 +107,7 @@ def heliocentric_galactic_cartesian_to_galactocentric_cartesian(xh,yh,zh,vxh,vyh
 # galactocentric cartesian coordinates (x,y,z, etc).  
 # NOTE:  Add optional argument to take care of internal rotation.  
 
-def heliocentric_equatorial_spherical_to_galactocentric_cartesian(ra, dec, d, mu_w, mu_n, v_r, dvrot_w, dvrot_n, R0=0.0085, V0=-220):
+def heliocentric_equatorial_spherical_to_galactocentric_cartesian(ra, dec, d, mu_w, mu_n, v_r, dvrot_w, dvrot_n, R0=0.00829, V0=-239):
     print 'Inside method: heliocentric_equatorial_spherical_to_galactocentric_cartesian'
     l,b = equatorial_to_galactic(ra,dec)
     print 'l = ',l
