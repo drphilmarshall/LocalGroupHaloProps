@@ -74,17 +74,13 @@ def spherical_to_cartesian(RA,DEC,D,mu_west,mu_north,v_r,deltavrot_west, deltavr
     z = D*sin(delta)
      
     # Convert mu to v
-    v_west = mu_west*muaspyrMpc2kmps*D - deltavrot_west
+    v_west = mu_west*muaspyrMpc2kmps*D - 0*deltavrot_west
     for i in range(len(x)):
         if x[i] < 0:
             v_west[i] = -v_west[i]
-    v_north = mu_north*muaspyrMpc2kmps*D - deltavrot_north
+    v_north = mu_north*muaspyrMpc2kmps*D - 0*deltavrot_north
     print 'v_west: ',mean(v_west)
     print 'v_north: ',mean(v_north)
-    # Heliocentric Cartesian velocities (km/s):
-   # vx = (x/D)*v_r - (z/D)*v_north*cos(alpha) - v_west*sin(alpha) 
-   # vy = (y/D)*v_r - (z/D)*v_north*sin(alpha) + v_west*cos(alpha) 
-   # vz = (z/D)*v_r + cos(delta)*v_north
  
     vx = v_r*cos(delta)*cos(alpha) - v_west*sin(alpha) - v_north*sin(delta)*cos(alpha)
     vy = v_r*cos(delta)*sin(alpha) + v_west*cos(alpha) - v_north*sin(delta)*sin(alpha)
@@ -95,7 +91,7 @@ def spherical_to_cartesian(RA,DEC,D,mu_west,mu_north,v_r,deltavrot_west, deltavr
 # Transformation from Heliocentric Galactic Cartesian system to Galactocentric Cartesian.
 # NOTE: The different definitions of the axis directions. 
 
-def heliocentric_galactic_cartesian_to_galactocentric_cartesian(xh,yh,zh,vxh,vyh,vzh,R0=0.0085,V0=-220):
+def heliocentric_galactic_cartesian_to_galactocentric_cartesian(xh,yh,zh,vxh,vyh,vzh,R0=0.0085,V0=-239):
 
     xg = xh - R0
     yg = yh
@@ -146,7 +142,7 @@ def heliocentric_equatorial_spherical_to_galactocentric_cartesian(ra, dec, d, mu
 if __name__ == '__main__':
 
     #RA,DEC = 2.93286720,-35.13339602
-    RA, DEC = 0.0482772, -0.36042
+    RA, DEC = 10.68, 41.27
     #l,b = 347.15730758,-78.33861529
     l,b = 96.13532, -60.538212
     ll,bb = equatorial_to_galactic(RA,DEC)
