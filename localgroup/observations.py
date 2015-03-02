@@ -53,7 +53,7 @@ class Observations(object):
         
         # BUG: need to treat v_rot and v_sun more carefully. See M+C05...
         self.data['MW']['vx'] = [-11.1,1.23,'Gaussian'] # vdM++12 based on Sohn++12 and McMillan12
-        self.data['MW']['vy'] = [(-239.0 - 12.24),np.sqrt(5.0**2+2.05**2),'Gaussian'] # vdM++12 based on S++12 and McMillan12
+        self.data['MW']['vy'] = [(-239.0 -12.24),np.sqrt(5.0**2+2.05**2),'Gaussian'] # vdM++12 based on S++12 and McMillan12
         self.data['MW']['vz'] = [-7.25,0.62,'Gaussian'] # vdM++12 based on S++12 and McMillan12
 
         # M31:
@@ -66,12 +66,12 @@ class Observations(object):
         self.data['M31']['v_west'] = [-125.2, 30.8, 'Gaussian']
         self.data['M31']['v_north'] = [-73.8, 28.4, 'Gaussian']
         
-        #self.data['M31']['mu_west'] = [-42.2,12.3,'Gaussian'] # Sohn++12, muas/yr, does not contain rotation correction, see vdM++12 for corrections
-        self.data['M31']['mu_west'] = [-33.21,8.1,'Gaussian'] # Sohn++12, muas/yr, does not contain rotation correction, see vdM++12 for corrections
+        self.data['M31']['mu_west'] = [-42.2,12.3,'Gaussian'] # Sohn++12, muas/yr, does not contain rotation correction, see vdM++12 for corrections
+    #    self.data['M31']['mu_west'] = [-34.28,8.434,'Gaussian'] # Sohn++12, muas/yr, does not contain rotation correction, see vdM++12 for corrections
         #self.data['M31']['deltavrot_west'] = [8.7, 13.9, 'Gaussian'] # vdM++12, km/s, calculated from numbers in section 2.2
         self.data['M31']['deltavrot_west'] = [-28.8, 0.0, 'Delta'] # vdM++12, km/s, calculated from numbers in section 2.2
-        #self.data['M31']['mu_north'] = [-30.9,11.7,'Gaussian'] # S++12, muas/yr, does not contain rotation correction
-        self.data['M31']['mu_north'] = [-19.9,7.5,'Gaussian'] # S++12, muas/yr, does not contain rotation correction
+        self.data['M31']['mu_north'] = [-30.9,11.7,'Gaussian'] # S++12, muas/yr, does not contain rotation correction
+      #  self.data['M31']['mu_north'] = [-20.21,7.776,'Gaussian'] # S++12, muas/yr, does not contain rotation correction
         #self.data['M31']['deltavrot_north'] = [4.3, 13.6, 'Gaussian'] # vdM++12, km/s, calculated from numbers in section 2.2
         self.data['M31']['deltavrot_north'] = [-39.0, 0.0, 'Delta'] # vdM++12, km/s, calculated from numbers in section 2.2
 
