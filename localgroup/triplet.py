@@ -131,6 +131,7 @@ class Triplet(object):
         self.observe_halos(Nsamples=n_points)
 
         self.MW.translate_to(self.MW)
+        self.MW.Mvir = self.sim_data['MW_Mvir']
 
         self.M31.x = self.sim_data['M31_x'] - self.sim_data['MW_x']
         self.M31.y = self.sim_data['M31_y'] - self.sim_data['MW_y']
@@ -139,6 +140,7 @@ class Triplet(object):
         self.M31.vy = self.sim_data['M31_vy'] - self.sim_data['MW_vy']
         self.M31.vz = self.sim_data['M31_vz'] - self.sim_data['MW_vz']
         self.M31.frame = 'MW'        
+        self.M31.Mvir = self.sim_data['M31_Mvir']
         if not self.isPair:
             self.M33.x = self.sim_data['M33_x'] - self.sim_data['MW_x']
             self.M33.y = self.sim_data['M33_y'] - self.sim_data['MW_y']
@@ -147,7 +149,7 @@ class Triplet(object):
             self.M33.vy = self.sim_data['M33_vy'] - self.sim_data['MW_vy']
             self.M33.vz = self.sim_data['M33_vz'] - self.sim_data['MW_vz']
             self.M33.frame = 'MW'
-
+            self.M33.Mvir = self.sim_data['M33_Mvir']
         return
 # ============================================================================
 
@@ -162,6 +164,13 @@ class Triplet(object):
         total_weight = weights.sum()
         self.weights = 1.0/total_weight*weights
         return
+
+# ============================================================================
+
+
+
+
+
 # ============================================================================
     def calculate_N95(self):
         weights_copy = np.copy(self.weights)
