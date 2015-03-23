@@ -1,6 +1,6 @@
 # ======================================================================
 
-from numpy import mean,sin,cos,arcsin,arccos,arctan2,pi,abs,sqrt,sign,atleast_1d
+from numpy import mean,sin,cos,arcsin,arccos,arctan2,pi,abs,sqrt,sign,atleast_1d,arctan,std
 from pytpm import tpm, convert
 
 deg2rad = pi/180.0
@@ -33,7 +33,8 @@ def equatorial_to_galactic(RA,DEC):
     dl = arctan2(cosdl,sindl)
     l = atleast_1d(lOmega + dl)
     l[l < 0.0] += 2.0*pi
-    
+   
+ 
     return l/deg2rad,b/deg2rad
     
 # ----------------------------------------------------------------------
@@ -76,8 +77,8 @@ def spherical_to_cartesian(RA,DEC,D,mu_west,mu_north,v_r,deltavrot_west, deltavr
     # Convert mu to v
     v_west = -mu_west*muaspyrMpc2kmps*D + 1*deltavrot_west
     v_north = mu_north*muaspyrMpc2kmps*D - 1*deltavrot_north
-    print 'v_west: ',mean(v_west)
-    print 'v_north: ',mean(v_north)
+    print 'v_west:  %f +/- %f'%(mean(v_west),std(v_west)) 
+    print 'v_north: %f +/- %f'%(mean(v_north),std(v_north))
  
     vx = v_r*cos(delta)*cos(alpha) - v_west*sin(alpha) - v_north*sin(delta)*cos(alpha)
     vy = v_r*cos(delta)*sin(alpha) + v_west*cos(alpha) - v_north*sin(delta)*sin(alpha)
@@ -139,7 +140,7 @@ def heliocentric_equatorial_spherical_to_galactocentric_cartesian(ra, dec, d, mu
 if __name__ == '__main__':
 
     #RA,DEC = 2.93286720,-35.13339602
-    RA, DEC = 10.68, 41.27
+    RA, DEC = .14287, -53.0976
     #l,b = 347.15730758,-78.33861529
     l,b = 96.13532, -60.538212
     ll,bb = equatorial_to_galactic(RA,DEC)

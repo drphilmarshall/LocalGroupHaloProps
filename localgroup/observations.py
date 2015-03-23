@@ -70,6 +70,7 @@ class Observations(object):
     #    self.data['M31']['mu_west'] = [-34.28,8.434,'Gaussian'] # Sohn++12, muas/yr, does not contain rotation correction, see vdM++12 for corrections
         #self.data['M31']['deltavrot_west'] = [8.7, 13.9, 'Gaussian'] # vdM++12, km/s, calculated from numbers in section 2.2
         self.data['M31']['deltavrot_west'] = [-28.8, 0.0, 'Delta'] # vdM++12, km/s, calculated from numbers in section 2.2
+        #self.data['M31']['deltavrot_west'] = [12.27, 0.0, 'Delta']
         self.data['M31']['mu_north'] = [-30.9,11.7,'Gaussian'] # S++12, muas/yr, does not contain rotation correction
       #  self.data['M31']['mu_north'] = [-20.21,7.776,'Gaussian'] # S++12, muas/yr, does not contain rotation correction
         #self.data['M31']['deltavrot_north'] = [4.3, 13.6, 'Gaussian'] # vdM++12, km/s, calculated from numbers in section 2.2
