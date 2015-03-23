@@ -301,5 +301,8 @@ if __name__ == '__main__':
     print "M31 speed: ",np.mean(w),'+/-',np.std(w)
     print "  cf vdM++12: (110.6 +/- 7.8) km/s"
 
-    print "Looks like there's a bug in the Galactocentric velocity transformation..."
-  
+
+    print "M33 position: ",np.mean(t.M33.x),np.mean(t.M33.y),np.mean(t.M33.z)  
+    print "M33 velocity: ",np.mean(t.M33.vx),'+/-',np.std(t.M33.vx),', ', \
+                           np.mean(t.M33.vy),'+/-',np.std(t.M33.vy),', ', \
+                           np.mean(t.M33.vz),'+/-',np.std(t.M33.vz)
