@@ -1,7 +1,7 @@
 # ======================================================================
 
 from numpy import mean,sin,cos,arcsin,arccos,arctan2,pi,abs,sqrt,sign,atleast_1d,arctan,std
-from pytpm import tpm, convert
+# from pytpm import tpm, convert
 
 deg2rad = pi/180.0
 arcsec2rad = deg2rad/3600.0
@@ -21,10 +21,10 @@ tol = 1e-8
 # From Poleski 2013.
 
 def equatorial_to_galactic(RA,DEC):
-    
+
     alpha = RA*deg2rad
     delta = DEC*deg2rad
-    
+
     b = arcsin(cos(delta)*cos(deltaG)*cos(alpha - alphaG) + sin(delta)*sin(deltaG))
     b = atleast_1d(b)
 
@@ -33,35 +33,35 @@ def equatorial_to_galactic(RA,DEC):
     dl = arctan2(cosdl,sindl)
     l = atleast_1d(lOmega + dl)
     l[l < 0.0] += 2.0*pi
-   
- 
+
+
     return l/deg2rad,b/deg2rad
-    
+
 # ----------------------------------------------------------------------
 # Rotate proper motions from equatorial to galactic coordinates.
 # From Poleski 2013.
 
 def equatorial_to_galactic_proper_motion(mu_w, mu_n,RA,DEC):
-    
+
     mu_alpha = mu_w
     mu_delta = mu_n
     alpha = RA*deg2rad
     delta = DEC*deg2rad
-    
+
     C1 = sin(deltaG)*cos(delta) - cos(deltaG)*sin(delta)*cos(alpha-alphaG)
     C2 = cos(deltaG)*sin(alpha-alphaG)
     cosb = sqrt(C1*C1+C2*C2)
-    
+
     mu_l = (C1*mu_alpha + C2*mu_delta)/cosb
     mu_b = (C1*mu_delta - C2*mu_alpha)/cosb
 
 
     return mu_l,mu_b
-    
+
 # ----------------------------------------------------------------------
 # Generic transformation between spherical and cartesian coordinates.
 # For galactic coords, use l,b instead of RA,DEC, and so on.
-# UNITS:  RA, DEC should be in degrees.  D is in Mpc.  
+# UNITS:  RA, DEC should be in degrees.  D is in Mpc.
 # mu_[west|north] in mas/yr, v_r in km/s
 # x,y,z in Mpc.  vx, vy, vz, in km/s
 
@@ -73,13 +73,13 @@ def spherical_to_cartesian(RA,DEC,D,mu_west,mu_north,v_r,deltavrot_west, deltavr
     x = D*cos(delta)*cos(alpha)
     y = D*cos(delta)*sin(alpha)
     z = D*sin(delta)
-     
+
     # Convert mu to v
     v_west = -mu_west*muaspyrMpc2kmps*D + 1*deltavrot_west
     v_north = mu_north*muaspyrMpc2kmps*D - 1*deltavrot_north
-    print 'v_west:  %f +/- %f'%(mean(v_west),std(v_west)) 
+    print 'v_west:  %f +/- %f'%(mean(v_west),std(v_west))
     print 'v_north: %f +/- %f'%(mean(v_north),std(v_north))
- 
+
     vx = v_r*cos(delta)*cos(alpha) - v_west*sin(alpha) - v_north*sin(delta)*cos(alpha)
     vy = v_r*cos(delta)*sin(alpha) + v_west*cos(alpha) - v_north*sin(delta)*sin(alpha)
     vz = v_r*sin(delta) + v_north*cos(delta)
@@ -87,7 +87,7 @@ def spherical_to_cartesian(RA,DEC,D,mu_west,mu_north,v_r,deltavrot_west, deltavr
 
 # ----------------------------------------------------------------------
 # Transformation from Heliocentric Galactic Cartesian system to Galactocentric Cartesian.
-# NOTE: The different definitions of the axis directions. 
+# NOTE: The different definitions of the axis directions.
 
 def heliocentric_galactic_cartesian_to_galactocentric_cartesian(xh,yh,zh,vxh,vyh,vzh,R0=0.00829,VX=-11,V0=-239,VZ=-7):
 
@@ -101,9 +101,9 @@ def heliocentric_galactic_cartesian_to_galactocentric_cartesian(xh,yh,zh,vxh,vyh
     return xg,yg,zg,vxg,vyg,vzg
 
 # ----------------------------------------------------------------------
-# Transforms from Heliocentric equatorial spherical coordinates (ra, dec, etc...) to 
-# galactocentric cartesian coordinates (x,y,z, etc).  
-# NOTE:  Add optional argument to take care of internal rotation.  
+# Transforms from Heliocentric equatorial spherical coordinates (ra, dec, etc...) to
+# galactocentric cartesian coordinates (x,y,z, etc).
+# NOTE:  Add optional argument to take care of internal rotation.
 
 def heliocentric_equatorial_spherical_to_galactocentric_cartesian(ra, dec, d, mu_w, mu_n, v_r, dvrot_w, dvrot_n, R0=0.00829, VX=-11, V0=-239, VZ=-7):
     print 'Inside method: heliocentric_equatorial_spherical_to_galactocentric_cartesian'
@@ -121,7 +121,7 @@ def heliocentric_equatorial_spherical_to_galactocentric_cartesian(ra, dec, d, mu
 
 # ======================================================================
 
-# Test on Hipparcos stars, from XHIP catalog 
+# Test on Hipparcos stars, from XHIP catalog
 # http://www.astrostudio.org/xhipreadme.html
 # accessible by Vizier at http://vizier.u-strasbg.fr/viz-bin/VizieR-4
 
@@ -160,13 +160,13 @@ if __name__ == '__main__':
     #v_r = -21.0
     v_r = 21.61
     d_vn = 0
-    d_vw = 0 
+    d_vw = 0
     K = 4.7404e-3
     v_l = K*mu_l*D
     v_b = K*mu_b*D
-    
+
     x,y,z,vx,vy,vz = spherical_to_cartesian(l,b,D,mu_l/1000,mu_b/1000,v_r,d_vn, d_vw)
-    
+
     print "x,y,z = ",x,y,z
     print "  cf XHIP values: 4.2, -1.0, -20.8"
     print "vx,vy,vz = ",vx,vy,vz
