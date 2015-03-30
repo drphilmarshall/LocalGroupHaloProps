@@ -29,12 +29,13 @@ and also `astropy`...
 
 ### Authors
 
-* Phil Marshall (KIPAC)
-* Michael Busha (KIPAC)
 * Marc Williamson (KIPAC)
+* Phil Marshall (KIPAC)
+* Yao-Yuan Mao (KIPAC)
 * Risa Wechsler (KIPAC)
+* Michael Busha (KIPAC)
 
 
 ### License, Citation etc
 
-This code is available for re-use under GPL v2. However, if you make use of it in your research we ask you to cite our forthcoming paper and acknowledge this code repository, please. The paper reference is "Williamson et al, in preparation" - the work documented here will form Marc Williamson's undergrad thesis project.
+This code is available for re-use under GPL v2. However, if you make use of it in your research we ask you to cite our forthcoming paper and acknowledge this code repository, please. The paper reference is "Williamson et al, in preparation" - the work documented here will form Marc Williamson's undergrad thesis project. You can follow the development of this thesis at [overleaf](https://www.overleaf.com/read/pxsmhcmkwdmh).
