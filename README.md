@@ -19,13 +19,16 @@ We also compare our local group mass with some simple timing argument estimates.
 
 ### Getting started
 
-Add the module to your `$PYTHONPATH` and your `$PATH`, and the scripts should run. You'll need the Consuelo halo data of course - we'll try and upload a small sample for test purposes?
+Add the module to your `$PYTHONPATH` and your `$PATH`, and the scripts should run. You'll need the Consuelo halo data of course - we have uploaded a small sample for test purposes.
 
 You will also need the following library modules:
 
-    import numpy,atpy,sys,getopt,string,subprocess,pyfits
+    import numpy,sys,getopt,string,subprocess
 
-and also `astropy`...
+and also `astropy`, and Yao-Yuan Mao's "helpers" module:
+
+    git clone git@bitbucket.org:yymao/helpers.git
+
 
 ### Authors
 
