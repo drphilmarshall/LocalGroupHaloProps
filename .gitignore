@@ -4,6 +4,7 @@
 *.blg
 
 .attic
+overleaf
 
 *.py[cod]
 .ipynb_checkpoints
