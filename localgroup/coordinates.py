@@ -65,7 +65,7 @@ def equatorial_to_galactic_proper_motion(mu_w, mu_n,RA,DEC):
 # mu_[west|north] in mas/yr, v_r in km/s
 # x,y,z in Mpc.  vx, vy, vz, in km/s
 
-def spherical_to_cartesian(RA,DEC,D,mu_west,mu_north,v_r,deltavrot_west, deltavrot_north):
+def spherical_to_cartesian(RA,DEC,D,mu_west,mu_north,v_r,deltavrot_west, deltavrot_north, M31):
 
     # Heliocentric Cartesian positions (Mpc):
     delta = DEC*deg2rad
@@ -75,8 +75,12 @@ def spherical_to_cartesian(RA,DEC,D,mu_west,mu_north,v_r,deltavrot_west, deltavr
     z = D*sin(delta)
      
     # Convert mu to v
-    v_west = -mu_west*muaspyrMpc2kmps*D + 1*deltavrot_west
-    v_north = mu_north*muaspyrMpc2kmps*D - 1*deltavrot_north
+    if not M31:
+        v_west = -mu_west*muaspyrMpc2kmps*D + 1*deltavrot_west
+        v_north = mu_north*muaspyrMpc2kmps*D - 1*deltavrot_north
+    else:
+        v_west = -mu_west
+        v_north = mu_north
     print 'v_west:  %f +/- %f'%(mean(v_west),std(v_west)) 
     print 'v_north: %f +/- %f'%(mean(v_north),std(v_north))
  
@@ -105,7 +109,7 @@ def heliocentric_galactic_cartesian_to_galactocentric_cartesian(xh,yh,zh,vxh,vyh
 # galactocentric cartesian coordinates (x,y,z, etc).  
 # NOTE:  Add optional argument to take care of internal rotation.  
 
-def heliocentric_equatorial_spherical_to_galactocentric_cartesian(ra, dec, d, mu_w, mu_n, v_r, dvrot_w, dvrot_n, R0=0.00829, VX=-11, V0=-239, VZ=-7):
+def heliocentric_equatorial_spherical_to_galactocentric_cartesian(ra, dec, d, mu_w, mu_n, v_r, dvrot_w, dvrot_n, R0=0.00829, VX=-11, V0=-239, VZ=-7, M31=True):
     print 'Inside method: heliocentric_equatorial_spherical_to_galactocentric_cartesian'
     l,b = equatorial_to_galactic(ra,dec)
     print 'l = ',l
@@ -113,7 +117,7 @@ def heliocentric_equatorial_spherical_to_galactocentric_cartesian(ra, dec, d, mu
     #mu_l,mu_b = equatorial_to_galactic_proper_motion(mu_w,mu_n,ra,dec)
     #print 'mu_l = ', mu_l
     #print 'mu_b = ', mu_b
-    xh,yh,zh,vxh,vyh,vzh = spherical_to_cartesian(l, b, d, mu_w, mu_n, v_r, dvrot_w, dvrot_n)
+    xh,yh,zh,vxh,vyh,vzh = spherical_to_cartesian(l, b, d, mu_w, mu_n, v_r, dvrot_w, dvrot_n, M31)
     print 'xh, yh, zh, vxh, vyh, vzh = ',xh, yh, zh, vxh, vyh, vzh
     x,y,z,vx,vy,vz = heliocentric_galactic_cartesian_to_galactocentric_cartesian(xh, yh, zh, vxh, vyh, vzh, R0=R0, V0=V0)
 

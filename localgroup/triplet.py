@@ -4,9 +4,12 @@ import localgroup
 import triangle
 import numpy as np
 import sys
-sys.path.append('/afs/slac.stanford.edu/u/ki/yymao/scripts')
-from readHlist import readHlist
+#sys.path.append('/afs/slac.stanford.edu/u/ki/yymao/scripts')
+#from readHlist import readHlist
 import pickle
+
+sys.path.append('/u/ki/yymao/pyscripts')
+from helpers.SimulationAnalysis import readHlist
 # ======================================================================
 
 class Triplet(object):
@@ -101,10 +104,10 @@ class Triplet(object):
         # Covert M31 and M33 from heliocentric spherical to 
         # galactocentric cartesian.
         if not sim:  
-            self.M31.x, self.M31.y, self.M31.z, self.M31.vx, self.M31.vy, self.M31.vz = localgroup.heliocentric_equatorial_spherical_to_galactocentric_cartesian(self.M31.RA,self.M31.DEC,self.M31.D,self.M31.mu_west,self.M31.mu_north,self.M31.v_r, self.M31.deltavrot_west, self.M31.deltavrot_north, R0=self.MW.x, VX=self.MW.vx, V0=self.MW.vy, VZ=self.MW.vz)
+            self.M31.x, self.M31.y, self.M31.z, self.M31.vx, self.M31.vy, self.M31.vz = localgroup.heliocentric_equatorial_spherical_to_galactocentric_cartesian(self.M31.RA,self.M31.DEC,self.M31.D,self.M31.v_west,self.M31.v_north,self.M31.v_r, self.M31.deltavrot_west, self.M31.deltavrot_north, R0=self.MW.x, VX=self.MW.vx, V0=self.MW.vy, VZ=self.MW.vz, M31=True)
             self.M31.frame = 'MW'
             if not self.isPair:
-                self.M33.x, self.M33.y, self.M33.z, self.M33.vx, self.M33.vy, self.M33.vz = localgroup.heliocentric_equatorial_spherical_to_galactocentric_cartesian(self.M33.RA,self.M33.DEC,self.M33.D,self.M33.mu_west,self.M33.mu_north,self.M33.v_r, self.M33.deltavrot_west, self.M33.deltavrot_north, R0=self.MW.x, VX=self.MW.vx, V0=self.MW.vy, VZ=self.MW.vz)
+                self.M33.x, self.M33.y, self.M33.z, self.M33.vx, self.M33.vy, self.M33.vz = localgroup.heliocentric_equatorial_spherical_to_galactocentric_cartesian(self.M33.RA,self.M33.DEC,self.M33.D,self.M33.mu_west,self.M33.mu_north,self.M33.v_r, self.M33.deltavrot_west, self.M33.deltavrot_north, R0=self.MW.x, VX=self.MW.vx, V0=self.MW.vy, VZ=self.MW.vz, M31=False)
                 self.M33.frame = 'MW'
 
             # First we translate the MW positions from heliocentric
@@ -160,7 +163,9 @@ class Triplet(object):
 # ============================================================================
 
     def compute_model_weights(self, L, normalize=True):
-        weights = L.evaluate(self.sim_samples)[0]
+        weights = np.exp(L.evaluate(self.sim_samples)[0])
+        #minw = weights.min()
+        #weights = weights - minw
         total_weight = weights.sum()
         self.weights = 1.0/total_weight*weights
         return
@@ -175,6 +180,7 @@ class Triplet(object):
     def calculate_N95(self):
         weights_copy = np.copy(self.weights)
         weights_copy.sort()
+        weights_copy = weights_copy[::-1]
         sum = 0
         count = 0
         while sum < 0.95:

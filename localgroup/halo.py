@@ -102,7 +102,9 @@ class Halo(object):
             self.mu_north        = localgroup.draw(obs['mu_north'],Nsamples)
             self.deltavrot_north = localgroup.draw(obs['deltavrot_north'],Nsamples)
             self.v_r             = localgroup.draw(obs['v_r'],Nsamples)
-
+            if self.name == 'M31':
+                self.v_west = localgroup.draw(obs['v_west'], Nsamples)
+                self.v_north = localgroup.draw(obs['v_north'], Nsamples)
 
             # BUG!  Transformation here may be redundant with functions defined in coordinates.py!  Eliminate redundancies!
             # Equatorial tangential motions in km/s:

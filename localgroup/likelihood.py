@@ -170,7 +170,7 @@ class Likelihood(object):
         else:
             size = 6
         n_gaussians = ngauss
-        if ngauss > 5: raise AttributeError("Only 5 colors can be shown.")
+        #if ngauss > 5: raise AttributeError("Only 5 colors can be shown.")
         colors = ['g', 'r', 'y', 'b', 'c']
         transparency = 0.5
         model = mixture.GMM(n_gaussians, covariance_type='full')
@@ -185,7 +185,7 @@ class Likelihood(object):
                         mean = [model.means_[gauss_num][j], model.means_[gauss_num][i]]
                         covar = model.covars_[gauss_num]
                         covar = [[covar[j,j], covar[j,i]], [covar[i,j], covar[i,i]]]
-                        color = colors[gauss_num]
+                        color = colors[gauss_num%5]
                         v, w = linalg.eigh(covar)
                         u = w[0]/linalg.norm(w[0])
                         angle = np.arctan(u[1]/u[0])
