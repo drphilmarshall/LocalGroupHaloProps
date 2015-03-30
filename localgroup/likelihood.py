@@ -7,7 +7,9 @@ from sklearn import mixture
 from sklearn.grid_search import GridSearchCV
 from scipy import linalg
 import matplotlib as mpl
+mpl.rc('text', usetex=True)
 import triangle
+
 # ======================================================================
 
 class Likelihood(object):
@@ -19,11 +21,11 @@ class Likelihood(object):
         Compute the likelihood of a given halo having the observed properties.
 
     COMMENTS
-        This class allows you to generate the approximation used, as well as evalu        ate the likelihood. 
+        This class allows you to generate the approximation used, as well as evalu        ate the likelihood.
 
     INITIALISATION
 
-    
+
     METHODS
         generate           - draw sample vector from observations' distribuions
         approximate        - compute KNN/GMM/etc estimate of PDF
@@ -38,9 +40,9 @@ class Likelihood(object):
     BUGS
 
     AUTHORS
-      This file is part of the LocalGroupHaloProps project, 
-      distributed under the GPL v2, 
-      by Marc Williamson Phil Marshall (KIPAC). 
+      This file is part of the LocalGroupHaloProps project,
+      distributed under the GPL v2,
+      by Marc Williamson Phil Marshall (KIPAC).
       Please cite: Williamson et al in preparation.
 
     HISTORY
@@ -49,12 +51,26 @@ class Likelihood(object):
 # ======================================================================
 
     def __init__(self, isPair=False):
-        
+
         self.T = localgroup.Triplet(isPair=isPair)
         self.PDF = None
+        self.write_labels()
 
         return
-        
+
+# ----------------------------------------------------------------------------
+
+    def write_labels(self):
+
+        if self.T.isPair:
+            # self.labs = ["MW_D", "MW_vr", "MW_vt"]
+            self.labels = ["$\Delta D^{\\rm MW}$", "$\Delta v_{\\rm rad}^{\\rm MW}$", "$\Delta v_{\\rm tan}^{\\rm MW}$"]
+        else:
+            # self.labs = ["MW_D", "MW_vr", "MW_vt", "M33_D", "M33_vr", "M33_vt"]
+            self.labels = ["$\Delta D^{\\rm MW}$", "$\Delta v_{\\rm rad}^{\\rm MW}$", "$\Delta v_{\\rm tan}^{\\rm MW}$", "$\Delta D^{\\rm M33}$", "$\Delta v_{\\rm rad}^{\\rm M33}$", "$\Delta v_{\\rm tan}^{\\rm M33}$"]
+
+        return
+
 # ----------------------------------------------------------------------------
 
     def generate(self,mode="observational",Nsamples=10000):
@@ -68,17 +84,16 @@ class Likelihood(object):
 
         self.preprocess_samples()
 
-
-        # PJM: Might be better to have Triplet.get_kinematics do this 
+        # PJM: Might be better to have Triplet.get_kinematics do this
         # packaging, perhaps... Also, might be better to leave the samples
         # in the Triplet object, and feed them to the GMM...
-        
+
         return
-        
+
 # ----------------------------------------------------------------------------
 
-    def approximate(self, mode="GMM", cv=False):        
-        
+    def approximate(self, mode="GMM", cv=False):
+
         if (mode == "GMM"):
             if (cv):
                 def bic_scorefn(GMM, X): return GMM.bic(X)
@@ -108,28 +123,34 @@ class Likelihood(object):
 # ======================================================================
 
     def model_gof(self, n_points, mode="GMM"):
-        labs = ["MW_D", "MW_vr", "MW_vt", "M33_D", "M33_vr", "M33_vt"]
+
+        self.write_labels()
+
         if (mode == "GMM"):
-            if self.T.isPair: labs = ["MW_D", "MW_vr", "MW_vt"]
             drawn_points = self.PDF.sample(n_samples=n_points)
-            figure = triangle.corner(drawn_points, labels=labs, quantiles=[0.16,0.5,0.84], show_titles=True, title_args={"fontsize": 12})
+            figure = triangle.corner(drawn_points, labels=self.labels, quantiles=[0.16,0.5,0.84], show_titles=True, title_args={"fontsize": 12})
         else:
             raise ValueError("Unrecognized approximation mode %s" % mode)
+
         return figure
+
 # ======================================================================
 
     def plot_samples(self, ngauss, overlay=False):
-        labs = ["MW_D", "MW_vr", "MW_vt", "M33_D", "M33_vr", "M33_vt"]
-        if self.T.isPair: labs = ["MW_D", "MW_vr", "MW_vt"]
+
+        self.write_labels()
+
         try:
-            figure = triangle.corner(self.samples, labels=labs, quantiles=[0.16,0.5,0.84], plot_contours=True, show_titles=True, title_args={"fontsize": 12})
+            figure = triangle.corner(self.samples, labels=self.labels, quantiles=[0.16,0.5,0.84], plot_contours=True, show_titles=True, title_args={"fontsize": 12})
         except AttributeError:
             raise AttributeError("L.generate has not been run.")
+
         figure.gca().annotate("MW and M33 Observational Data Distributions (M31 centric)", xy=(0.5, 1.0), xycoords="figure fraction", xytext=(0, -5), textcoords="offset points", ha="center", va="top")
-        
+
         if overlay:
             self.gaussianOverlay(figure, ngauss)
         figure.savefig("L_samples_tri.png")
+
         return figure
 
 # ======================================================================
@@ -196,9 +217,6 @@ class Likelihood(object):
                         subplot.add_artist(ell)
 
         return
-
-
-
 
 # ======================================================================
 

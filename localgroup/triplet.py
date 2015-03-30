@@ -4,8 +4,6 @@ import localgroup
 import triangle
 import numpy as np
 import sys
-#sys.path.append('/afs/slac.stanford.edu/u/ki/yymao/scripts')
-#from readHlist import readHlist
 import pickle
 
 sys.path.append('/u/ki/yymao/pyscripts')
@@ -18,7 +16,7 @@ class Triplet(object):
         Triplet
 
     PURPOSE
-        Define a local group analog, containing three halos, and 
+        Define a local group analog, containing three halos, and
         perform various calculations.
 
     COMMENTS
@@ -28,7 +26,7 @@ class Triplet(object):
 
     INITIALISATION
 
-    
+
     METHODS
 
         read_halos
@@ -39,9 +37,9 @@ class Triplet(object):
     BUGS
 
     AUTHORS
-      This file is part of the LocalGroupHaloProps project, 
-      distributed under the GPL v2, 
-      by Phil Marshall and Michael Busha (KIPAC). 
+      This file is part of the LocalGroupHaloProps project,
+      distributed under the GPL v2,
+      by Phil Marshall and Michael Busha (KIPAC).
       Please cite: Marshall et al in preparation.
 
     HISTORY
@@ -50,21 +48,21 @@ class Triplet(object):
 # ======================================================================
 
     def __init__(self, isPair=False):
-        
+
         self.Nsamples = None
         self.isPair = isPair
         return
-        
+
 # ----------------------------------------------------------------------------
 
     def read_halos(self,directory):
-        
+
         # Could be a lot more elegant.
-        
+
         self.MW = localgroup.Halo()
         MWfile = directory+'/box01_MW.fits'
         self.MW.read(MWfile)
-        
+
         self.M31 = localgroup.Halo()
         M31file = directory+'/box01_M31.fits'
         self.M31.read(MWfile)
@@ -72,36 +70,36 @@ class Triplet(object):
             self.M33 = localgroup.Halo()
             M33file = directory+'/box01_M33.fits'
             self.M33.read(MWfile)
-        
+
         return
-        
+
 # ----------------------------------------------------------------------------
 
     def observe_halos(self,Nsamples=10000):
-        
+
         obs = localgroup.Observations()
-        
+
         self.MW = localgroup.Halo('MW')
         self.MW.sample_from(obs.data['MW'],Nsamples)
-        
+
         self.M31 = localgroup.Halo('M31')
         self.M31.sample_from(obs.data['M31'],Nsamples)
         if not self.isPair:
             self.M33 = localgroup.Halo('M33')
             self.M33.sample_from(obs.data['M33'],Nsamples)
-        
+
         self.Nsamples = Nsamples
-        
+
         return
-        
+
 # ----------------------------------------------------------------------------
 
 # Transform from heliocentric spherical coordinates to M31-centric
-# cartesian coordinates.  
+# cartesian coordinates.
 
     def transform_to_M31(self, sim=False):
 
-        # Covert M31 and M33 from heliocentric spherical to 
+        # Covert M31 and M33 from heliocentric spherical to
         # galactocentric cartesian.
         if not sim:  
             self.M31.x, self.M31.y, self.M31.z, self.M31.vx, self.M31.vy, self.M31.vz = localgroup.heliocentric_equatorial_spherical_to_galactocentric_cartesian(self.M31.RA,self.M31.DEC,self.M31.D,self.M31.v_west,self.M31.v_north,self.M31.v_r, self.M31.deltavrot_west, self.M31.deltavrot_north, R0=self.MW.x, VX=self.MW.vx, V0=self.MW.vy, VZ=self.MW.vz, M31=True)
@@ -111,7 +109,7 @@ class Triplet(object):
                 self.M33.frame = 'MW'
 
             # First we translate the MW positions from heliocentric
-            # cartesian to galactocentric cartesian.  
+            # cartesian to galactocentric cartesian.
             self.MW.translate_to(self.MW) #NOTE: This must be after heliocentric_equatorial_spherical_to_galactocentric_cartesian calls
 
         # Now we can finally translate to M31 frame
@@ -142,7 +140,7 @@ class Triplet(object):
         self.M31.vx = self.sim_data['M31_vx'] - self.sim_data['MW_vx']
         self.M31.vy = self.sim_data['M31_vy'] - self.sim_data['MW_vy']
         self.M31.vz = self.sim_data['M31_vz'] - self.sim_data['MW_vz']
-        self.M31.frame = 'MW'        
+        self.M31.frame = 'MW'
         self.M31.Mvir = self.sim_data['M31_Mvir']
         if not self.isPair:
             self.M33.x = self.sim_data['M33_x'] - self.sim_data['MW_x']
@@ -171,12 +169,6 @@ class Triplet(object):
         return
 
 # ============================================================================
-
-
-
-
-
-# ============================================================================
     def calculate_N95(self):
         weights_copy = np.copy(self.weights)
         weights_copy.sort()
@@ -189,16 +181,24 @@ class Triplet(object):
         return count
 # ============================================================================
     def preprocess(self, means, stds):
-        self.sim_samples = (self.sim_samples - means)/stds 
+        self.sim_samples = (self.sim_samples - means)/stds
 
         return
 # ============================================================================
 
-    def tri_plot(self):
+    def plot_kinematics(self):
+
         if self.isPair:
-            figure = triangle.corner(self.sim_samples, labels=["MW_D", "MW_vr", "MW_vt"], quantiles=[0.16,0.5,0.84], show_titles=True, title_args={"fontsize": 12})
+            # labs = ["MW_D", "MW_vr", "MW_vt"]
+            labels = ["$\Delta D^{\\rm MW}$", "$\Delta v_{\\rm rad}^{\\rm MW}$", "$\Delta v_{\\rm tan}^{\\rm MW}$"]
         else:
-            figure = triangle.corner(self.sim_samples, labels=["MW_D", "MW_vr", "MW_vt", "M33_D", "M33_vr", "M33_vt"], quantiles=[0.16,0.5,0.84], show_titles=True, title_args={"fontsize": 12})
+            # labs = ["MW_D", "MW_vr", "MW_vt", "M33_D", "M33_vr", "M33_vt"]
+            labels = ["$\Delta D^{\\rm MW}$", "$\Delta v_{\\rm rad}^{\\rm MW}$", "$\Delta v_{\\rm tan}^{\\rm MW}$", "$\Delta D^{\\rm M33}$", "$\Delta v_{\\rm rad}^{\\rm M33}$", "$\Delta v_{\\rm tan}^{\\rm M33}$"]
+
+        if self.isPair:
+            figure = triangle.corner(self.sim_samples, labels=labels, quantiles=[0.16,0.5,0.84], show_titles=True, title_args={"fontsize": 12})
+        else:
+            figure = triangle.corner(self.sim_samples, labels=labels, quantiles=[0.16,0.5,0.84], show_titles=True, title_args={"fontsize": 12})
 
         return figure
 
@@ -212,11 +212,11 @@ class Triplet(object):
 # ----------------------------------------------------------------------------
 
     def get_kinematics(self):
-        if self.isPair:   
+        if self.isPair:
             return self.MW.D, self.MW.v_r, self.MW.v_t
         else:
             return self.MW.D, self.MW.v_r, self.MW.v_t, self.M33.D, self.M33.v_r, self.M33.v_t
-        
+
 # ----------------------------------------------------------------------------
 
 if __name__ == '__main__':
@@ -231,7 +231,7 @@ if __name__ == '__main__':
     print D_MW[i], vr_MW[i], vt_MW[i]
     i = 99
     print D_MW[i], vr_MW[i], vt_MW[i]
- 
+
     print "Median MW kinematic parameters:"
     print np.median(D_MW), np.median(vr_MW), np.median(vt_MW)
 
@@ -246,7 +246,7 @@ if __name__ == '__main__':
 
 
     """
-    
+
     print "Checking MW:"
     # Check speed:
     w = np.sqrt(t.MW.vx[0]*t.MW.vx[0] + t.MW.vy[0]*t.MW.vy[0] + t.MW.vz[0]*t.MW.vz[0])
@@ -271,44 +271,44 @@ if __name__ == '__main__':
     print " "
     """
 
-    
+
     print "Before taking out solar motion, M31 velocity: ",np.mean(t.M31.vx),'+/-',np.std(t.M31.vx),', ', \
                            np.mean(t.M31.vy),'+/-',np.std(t.M31.vy),', ', \
                            np.mean(t.M31.vz),'+/-',np.std(t.M31.vz)
-   
+
     print " "
 
     # Now transform to galactocentric coordinates:
-    
+
     print "Calculating Galactocentric quantities..."
     #print np.mean(t.MW.vx), np.mean(t.MW.vy), np.mean(t.MW.vz)
     t.M31.translate_to(t.MW)
     t.M33.translate_to(t.MW)
     t.MW.translate_to(t.MW)
-    
+
     # What is the space motion of M31? (eq 3 of vdM12)
-    
+
     print "M31 position: ",np.mean(t.M31.x),np.mean(t.M31.y),np.mean(t.M31.z)
     print "  cf vdM++12: (-0.379, 0.613, -0.283)"
-    
+
  #   print "M31 proper motion: ",np.mean(t.M31.v_west),'+/-',np.std(t.M31.v_west),', ', \
   #                              np.mean(t.M31.v_north),'+/-',np.std(t.M31.v_north)
    # print "  cf vdM++12: (-125+/-31, -74+/-28) km/s"
    # print "This is a little off because of our deltavrot hackery..."
-   
+
     print " "
-    
+
     print "M31 velocity: ",np.mean(t.M31.vx),'+/-',np.std(t.M31.vx),', ', \
                            np.mean(t.M31.vy),'+/-',np.std(t.M31.vy),', ', \
                            np.mean(t.M31.vz),'+/-',np.std(t.M31.vz)
     print "  cf vdM++12: (66+/-27, -76+/-19, 45+/-27) km/s"
-    print "max vx = ",np.max(t.M31.vx) 
+    print "max vx = ",np.max(t.M31.vx)
     w = np.sqrt(t.M31.vx*t.M31.vx + t.M31.vy*t.M31.vy + t.M31.vz*t.M31.vz)
     print "M31 speed: ",np.mean(w),'+/-',np.std(w)
     print "  cf vdM++12: (110.6 +/- 7.8) km/s"
 
 
-    print "M33 position: ",np.mean(t.M33.x),np.mean(t.M33.y),np.mean(t.M33.z)  
+    print "M33 position: ",np.mean(t.M33.x),np.mean(t.M33.y),np.mean(t.M33.z)
     print "M33 velocity: ",np.mean(t.M33.vx),'+/-',np.std(t.M33.vx),', ', \
                            np.mean(t.M33.vy),'+/-',np.std(t.M33.vy),', ', \
                            np.mean(t.M33.vz),'+/-',np.std(t.M33.vz)
