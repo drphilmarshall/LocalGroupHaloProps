@@ -6,7 +6,8 @@ import numpy as np
 import sys
 import pickle
 
-sys.path.append('/u/ki/yymao/pyscripts')
+# Make sure Yao-Yuan Mao's "helpers" module is on your PYTHONPATH:
+#   git clone git@bitbucket.org:yymao/helpers.git
 from helpers.SimulationAnalysis import readHlist
 # ======================================================================
 
@@ -101,7 +102,7 @@ class Triplet(object):
 
         # Covert M31 and M33 from heliocentric spherical to
         # galactocentric cartesian.
-        if not sim:  
+        if not sim:
             self.M31.x, self.M31.y, self.M31.z, self.M31.vx, self.M31.vy, self.M31.vz = localgroup.heliocentric_equatorial_spherical_to_galactocentric_cartesian(self.M31.RA,self.M31.DEC,self.M31.D,self.M31.v_west,self.M31.v_north,self.M31.v_r, self.M31.deltavrot_west, self.M31.deltavrot_north, R0=self.MW.x, VX=self.MW.vx, V0=self.MW.vy, VZ=self.MW.vz, M31=True)
             self.M31.frame = 'MW'
             if not self.isPair:

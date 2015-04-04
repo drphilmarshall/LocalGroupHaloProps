@@ -19,22 +19,26 @@ We also compare our local group mass with some simple timing argument estimates.
 
 ### Getting started
 
-Add the module to your `$PYTHONPATH` and your `$PATH`, and the scripts should run. You'll need the Consuelo halo data of course - we'll try and upload a small sample for test purposes?
+Add the module to your `$PYTHONPATH` and your `$PATH`, and the scripts should run. You'll need the Consuelo halo data of course - we have uploaded a small sample for test purposes.
 
 You will also need the following library modules:
 
-    import numpy,atpy,sys,getopt,string,subprocess,pyfits
+    import numpy,sys,getopt,string,subprocess
 
-and also `astropy`...
+and also `astropy`, and Yao-Yuan Mao's "helpers" module:
+
+    git clone git@bitbucket.org:yymao/helpers.git
+
 
 ### Authors
 
-* Phil Marshall (KIPAC)
-* Michael Busha (KIPAC)
 * Marc Williamson (KIPAC)
+* Phil Marshall (KIPAC)
+* Yao-Yuan Mao (KIPAC)
 * Risa Wechsler (KIPAC)
+* Michael Busha (KIPAC)
 
 
 ### License, Citation etc
 
-This code is available for re-use under GPL v2. However, if you make use of it in your research we ask you to cite our forthcoming paper and acknowledge this code repository, please. The paper reference is "Williamson et al, in preparation" - the work documented here will form Marc Williamson's undergrad thesis project.
+This code is available for re-use under GPL v2. However, if you make use of it in your research we ask you to cite our forthcoming paper and acknowledge this code repository, please. The paper reference is "Williamson et al, in preparation" - the work documented here will form Marc Williamson's undergrad thesis project. You can follow the development of this thesis at [overleaf](https://www.overleaf.com/read/pxsmhcmkwdmh).
