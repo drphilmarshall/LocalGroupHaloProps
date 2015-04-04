@@ -149,7 +149,6 @@ class Likelihood(object):
 
         if overlay:
             self.gaussianOverlay(figure, ngauss)
-        figure.savefig("L_samples_tri.png")
 
         return figure
 
