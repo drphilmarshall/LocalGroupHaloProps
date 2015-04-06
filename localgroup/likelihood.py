@@ -64,10 +64,10 @@ class Likelihood(object):
 
         if self.T.isPair:
             # self.labs = ["MW_D", "MW_vr", "MW_vt"]
-            self.labels = ["$\Delta D^{\\rm MW}$", "$\Delta v_{\\rm rad}^{\\rm MW}$", "$\Delta v_{\\rm tan}^{\\rm MW}$"]
+            self.labels = ["$D^{\\rm MW}$", "$v_{\\rm rad}^{\\rm MW}$", "$v_{\\rm tan}^{\\rm MW}$"]
         else:
             # self.labs = ["MW_D", "MW_vr", "MW_vt", "M33_D", "M33_vr", "M33_vt"]
-            self.labels = ["$\Delta D^{\\rm MW}$", "$\Delta v_{\\rm rad}^{\\rm MW}$", "$\Delta v_{\\rm tan}^{\\rm MW}$", "$\Delta D^{\\rm M33}$", "$\Delta v_{\\rm rad}^{\\rm M33}$", "$\Delta v_{\\rm tan}^{\\rm M33}$"]
+            self.labels = ["$D^{\\rm MW}$", "$v_{\\rm rad}^{\\rm MW}$", "$v_{\\rm tan}^{\\rm MW}$", "$D^{\\rm M33}$", "$v_{\\rm rad}^{\\rm M33}$", "$v_{\\rm tan}^{\\rm M33}$"]
 
         return
 
@@ -122,26 +122,25 @@ class Likelihood(object):
 
 # ======================================================================
 
-    def model_gof(self, n_points, mode="GMM"):
-
+    def model_gof(self, n_points, color, fig=None, mode="GMM"):
         self.write_labels()
 
         if (mode == "GMM"):
-            drawn_points = self.PDF.sample(n_samples=n_points)
-            figure = triangle.corner(drawn_points, labels=self.labels, quantiles=[0.16,0.5,0.84], show_titles=True, title_args={"fontsize": 12})
+            drawn_points = self.PDF.sample(n_samples=n_points)*self.samples_stds + self.samples_means
+            figure = triangle.corner(drawn_points, labels=self.labels, quantiles=[0.16,0.5,0.84], fig=fig, show_titles=True, title_args={"fontsize": 12}, color=color)
         else:
             raise ValueError("Unrecognized approximation mode %s" % mode)
-
-        return figure
+        if fig==None: return figure
+        return fig
 
 # ======================================================================
 
-    def plot_samples(self, ngauss, overlay=False):
-
+    def plot_samples(self, ngauss, color, fig=None, overlay=False):
+        self.unprocess()
         self.write_labels()
 
         try:
-            figure = triangle.corner(self.samples, labels=self.labels, quantiles=[0.16,0.5,0.84], plot_contours=True, show_titles=True, title_args={"fontsize": 12})
+            figure = triangle.corner(self.samples, labels=self.labels, quantiles=[0.16,0.5,0.84], fig=fig, plot_contours=True, show_titles=True, title_args={"fontsize": 12}, color=color)
         except AttributeError:
             raise AttributeError("L.generate has not been run.")
 
@@ -149,7 +148,7 @@ class Likelihood(object):
 
         if overlay:
             self.gaussianOverlay(figure, ngauss)
-
+        self.preprocess_samples()
         return figure
 
 # ======================================================================
@@ -181,6 +180,11 @@ class Likelihood(object):
 
         return
 
+# ======================================================================
+
+    def unprocess(self):
+        self.samples = self.samples*self.samples_stds + self.samples_means
+        return
 # ======================================================================
 
 

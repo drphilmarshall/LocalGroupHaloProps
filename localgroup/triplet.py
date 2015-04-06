@@ -185,22 +185,29 @@ class Triplet(object):
         self.sim_samples = (self.sim_samples - means)/stds
 
         return
+
 # ============================================================================
 
-    def plot_kinematics(self):
+    def unprocess(self, means, stds):
+        self.sim_samples = self.sim_samples*stds + means
+        return
 
+# ============================================================================
+
+    def plot_kinematics(self, means, stds, color, fig=None):
+        self.unprocess(means, stds)
         if self.isPair:
             # labs = ["MW_D", "MW_vr", "MW_vt"]
-            labels = ["$\Delta D^{\\rm MW}$", "$\Delta v_{\\rm rad}^{\\rm MW}$", "$\Delta v_{\\rm tan}^{\\rm MW}$"]
+            labels = ["$D^{\\rm MW}$", "$v_{\\rm rad}^{\\rm MW}$", "$v_{\\rm tan}^{\\rm MW}$"]
         else:
             # labs = ["MW_D", "MW_vr", "MW_vt", "M33_D", "M33_vr", "M33_vt"]
-            labels = ["$\Delta D^{\\rm MW}$", "$\Delta v_{\\rm rad}^{\\rm MW}$", "$\Delta v_{\\rm tan}^{\\rm MW}$", "$\Delta D^{\\rm M33}$", "$\Delta v_{\\rm rad}^{\\rm M33}$", "$\Delta v_{\\rm tan}^{\\rm M33}$"]
+            labels = ["$D^{\\rm MW}$", "$v_{\\rm rad}^{\\rm MW}$", "$v_{\\rm tan}^{\\rm MW}$", "$D^{\\rm M33}$", "$v_{\\rm rad}^{\\rm M33}$", "$v_{\\rm tan}^{\\rm M33}$"]
 
         if self.isPair:
-            figure = triangle.corner(self.sim_samples, labels=labels, quantiles=[0.16,0.5,0.84], show_titles=True, title_args={"fontsize": 12})
+            figure = triangle.corner(self.sim_samples, labels=labels, quantiles=[0.16,0.5,0.84], fig=fig, show_titles=True, title_args={"fontsize": 12}, color=color)
         else:
-            figure = triangle.corner(self.sim_samples, labels=labels, quantiles=[0.16,0.5,0.84], show_titles=True, title_args={"fontsize": 12})
-
+            figure = triangle.corner(self.sim_samples, labels=labels, quantiles=[0.16,0.5,0.84], fig=fig, show_titles=True, title_args={"fontsize": 12}, color=color)
+        self.preprocess(means, stds)
         return figure
 
 # ============================================================================
