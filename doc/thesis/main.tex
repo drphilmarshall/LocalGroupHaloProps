@@ -7,6 +7,7 @@
 
 \usepackage{aas_macros}
 \usepackage{natbib}
+%\usepackage{siunitx}
 \bibliographystyle{apj}
 
 \shorttitle{Short Title}
@@ -183,31 +184,15 @@ Cosmological Simulations: I. The Halo Masses of M31, M33 and the Milky Way}
 
 \begin{abstract} 
 
-We study the local group of galaxies in its cosmological context, by matching
-dark matter halos in the \consuelo N-body simulation with kinematic
-observations of M31 and M33. Treating the \consuelo halo  catalog as a list of
-samples drawn from the cosmological prior PDF for the local group properties,
-we select local group analogs whose isolation matches our own, and then
-compute importances for the samples as combined likelihoods for the
-observations. 
-%
-From the ``observed'' galactocentric distance, radial velocity and tangential 
-velocity of M31 alone, we infer the mass of the local group to be $\MLG =
+We study the local group of galaxies by identifying analogous systems in the \consuelo N-body simulation.  The \consuelo halo catalogs are treated as a large sample drawn from the cosmological prior PDF, and local group analogs are identified by matching the observed kinematics of the system.  Weights are calculated for the \consuelo sample by finding the likelihoods for the simulated kinematic properties compared to observations.  We study the effect of including the existence and kinematics of M33 on the posterior distributions of the local group mass by using three types of samples: from only the "observed" galactocentric distance, radial velocity, and tangential velocity of M31, we infer the mass of the local group to be $\MLG =
 (\MMW + \MEI) = (\MPAIRestimate^{+\MPAIRerrorplus}_{-\MPAIRerrorminus}) \times
-10^{12} \Msun$. This is ... than the mass that has been estimated from the
+10^{12} \Msun$. Including the only the existence of M33 as a condition for identifying local group analogs results in a different inference of the mass, $\MLG =
+(\MMW + \MEI) = (\MPAIRestimate^{+\MPAIRerrorplus}_{-\MPAIRerrorminus}) \times
+10^{12} \Msun$. Finally including the kinematics of M33 we infer the mass of the local group to be $\MLG =
+(\MMW + \MEI) = (\MPAIRestimate^{+\MPAIRerrorplus}_{-\MPAIRerrorminus}) \times
+10^{12} \Msun$.  This is ... than the mass that has been estimated from the
 timing argument: we show that for our matched analogs the timing argument mass
-systematically ... the local group mass. 
-%
-Transforming the ``observed'' galactocentric distance, radial velocity and
-tangential  velocity of M33 into the M31 rest-frame, and accounting for
-covariance between these measurements, we also infer the mass of the M31--M33
-system to be  $(\MEI + \MEE) =
-(\MbAestimate^{+\MbAerrorplus}_{-\MbAerrorminus}) \times 10^{12} \Msun$.
-%
-Combining the kinematic constraints from both M31 and M33,  we infer a local
-group mass of $\MLG = (\MMW + \MEI) =
-(\MTRIPLETestimate^{+\MTRIPLETerrorplus}_{-\MTRIPLETerrorminus}) \times
-10^{12} \Msun$, and are able to estimate the halo masses of the three galaxies
+systematically ... the local group mass.  We are also able to estimate the halo masses of the three galaxies
 individually, finding these to be $\MEI =
 (\MEIestimate^{+\MEIerrorplus}_{-\MEIerrorminus}) \times 10^{12} \Msun$, $\MEE
 = (\MEEestimate^{+\MEEerrorplus}_{-\MEEerrorminus}) \times 10^{12} \Msun$, 
@@ -216,6 +201,7 @@ and $\MMW = (\MMWestimate^{+\MMWerrorplus}_{-\MMWerrorminus}) \times 10^{12}
 %
 This Milky Way halo mass estimate is in xxxagreement with previous estimates
 from stellar and dwarf satellite kinematics.
+
 
 \end{abstract}
 
@@ -243,13 +229,13 @@ simple models fitted to stellar or gas kinematics \citep[e.g.\
 ][]{Xue+08,M31rotcurve} or to the observed positions and 
 velocities of satellite galaxies \citep[e.g.\ ][]{EvansEtc}. 
 
-Our goal is to map out the dark matter distribution in the Local Group
+Our goal is to tightly constrain the mass of the Local Group
 by combining observational data on the  positions and velocities of the
 three largest LG members with our understanding of structure formation
 in $\Lambda$CDM universes, as detailed in halo catalogs extracted from
 cosmological N-body simulations. We treat halo catalogs as containing
 samples drawn from a very informative, highly correlated prior PDF for
-halo properties, and then  importance sample them with likelihood
+halo properties, and then  calculate weighted posterior PDF's using likelihood
 functions based on the observed kinematics of the particular system
 under study. In \citet[][hereafter B11]{Bus++11} we presented a new
 measurement of the Milky Way halo mass, made in this way using the
@@ -276,11 +262,13 @@ In short, we seek answers to the following questions:
 \begin{itemize}
 \item What is the mass of dark matter in the Local Group?
 \item How accurate is the Timing Argument for the Local Group mass?
+\item How do the existence and kinematics of M33 impact the Local Group mass?
 \item What are the masses of the dark matter halos of M31, M33 and the Milky
 Way?
+\item How sensitive is this method to the isolation criteria used to define an LG-analog?
 \end{itemize}
 
-This paper is structured as follows. In \Sref{sec:method} we review the
+This paper is structured as follows. In \Sref{sec:coord} we review the coordinate systems and transformations used in this project.  In \Sref{sec:method} we review the
 halo inference methodology, and introduce the \consuelo N-body
 simulation suite we use. Then in \Sref{sec:data} we summarise the
 observational constraints we place on our model halo population during
@@ -311,7 +299,57 @@ Three types of coordinate systems are used in this work: Geocentric Equatorial, 
 \par The equatorial system is centered on the Earth and based on the concept of a celestial sphere (ie all stars are projected onto a sphere of infinite radius centered on the Earth). Two angles characterize the positions of objects on the celestial sphere: right ascension and declination. Right ascension, $\alpha$, is the angle measured eastwards along the celestial equator between the vernal equinox and the hour circle passing through an object.  Declination, $\delta$, is the angular distance of an object above or below the celestial equator.  
 \par The heliocentric galactic coordinate system (often ambiguously referred to as galactic coordinates), is a different spherical coordinate system centered at the Sun.  The heliocentric fundamental plane is aligned with the galactic plane, and the primary direction is along the line connecting the sun and the galactic center.  Positions are measured in galactic latitude and longitude. Latitude, $b$, measures angular distance of an object perpendicular to the galactic plane, with positive angles to the north galactic pole. Longitude, $l$, is the angular distance measured eastward along the galactic equator from the galactic center.
 \par The galactocentric coordinate system used in this paper is the same as the one used by van der Marel \citep{VdM08}.  The $Z$ axis points towards the galactic north pole, the $Y$ axis is oriented in the direction of the sun's rotation about the galactic center, and the $X$ axis points from the sun towards the galactic center. This is a standard, right-handed coordinate system.
+\subsection{Equatorial to Galactic Transformation}
+\label{sec:eq_to_gal}
+\par This transformation is a rotation from equatorial coordinates to galactic coordinates. Given the right ascension and declination of a galaxy, $(\alpha,\delta)$, the transformation returns the galactic latitude and longitude, $(l,b)$. We use the same method described by \cite{poleski2013}, solving the following system of equations to find the galactic coordinates:
+\begin{equation}
+\begin{aligned}
+\sin b &= \cos\delta\cos\delta_{G}\cos(\alpha - \alpha_{G}) + \sin\delta\sin\delta_{G} \\
+\sin(l_{\Omega} - l)\cos b &= \cos\delta\sin(\alpha - \alpha_{G}) \\
+\cos(l_{\Omega} - l)\cos b &= \sin\delta\cos\delta_{G} - \cos\delta\sin\delta_{G}\cos(\alpha - \alpha_{G})
+\end{aligned}
+\end{equation}
 
+where $\alpha_{G} = 192.85948$ and $\delta_{G} = 27.12825$ are the equatorial coordinates of the galactic north pole, and $l_{\Omega}$ is the galactic longitude of the ascending node of the galactic plane.
+\subsection{Galactic Spherical to Cartesian}
+\label{sec:sphere_to_cart}
+Before transforming to the galactocentric reference frame, we first transform the galactic latitude and longitude to cartesian coordinates. Expressing the coordinates in radians, the position in cartesians is simple:
+\begin{equation}
+\begin{aligned}
+x &= D\cos b\sin l \\
+y &= D\cos b\sin l \\
+z &= D\sin b
+\end{aligned}
+\end{equation}
+where $D$ is the distance to the observed galaxy (M31 or M33). 
+\par The velocity transformation is more complicated.  They are given by:
+\begin{equation}
+\begin{aligned}
+v_{x} &= v_{r}\cos(b)cos(l) - v_{W}\sin(l) - v_{N}\sin(b)\cos(l)\\
+v_{y} &= v_{r}\cos(b)\sin(l) + v_{W}\cos(l) - v_{N}\sin(b)\sin(l) \\
+v_{z} &= v_{r}\sin(b) + v_{N}\cos(b)
+\end{aligned}
+\end{equation}
+where $v_{r}$ is the line of sight velocity of the observed galaxy, and $(v_{W},v_{N})$ are the linear velocities in the west and north directions as measured in the equatorial frame. In our project, we treat the velocity transformations of M31 and M33 differently due to better constraints on $(v_{W},v_{N})$ for M31 existing in the literature. For M31, we use van der Marel's constraints as the "observed" values: $(v_{W},v_{N}) = (-125.2 \pm 30.8, -73.8 \pm 28.4)$ \citep{vdm12m31}. There are only observations of the proper motion of M33 in spherical equatorial coordinates, so an extra transformation must be made to find the $(v_{W},v_{N})$ for M33. We follow van der Marel's method exactly from \cite{VdM08}.
+\subsection{Heliocentric to Galactocentric}
+\label{sec:hel_to_gal}
+Transforming to the Galactocentric cartesian frame from the Heliocentric cartesian frame is a simple translation in the $X$ direction. The galactocentric positions are thus:
+\begin{equation}
+\begin{aligned}
+x_{g} &= x_{h} - R_{0}
+y_{g} &= y_{h} \\
+z_{g} &= z_{h}
+\end{aligned}
+\end{equation}
+where $R_{0} = 8.29 \pm 0.16$ kpc as used in \cite{vdm12m31}. The velocity transformations are slightly more complicated than a normal translation because the effects of the solar velocity in the central galaxy must be removed. We use the values derived by Schönrich et al: $v_{\odot} = (11.1, 12.24, 7.25)$ with the listed uncertainties \citep{sunlsr}. Thus the velocities in the galactocentric frame are:
+\begin{equation}
+\begin{aligned}
+v_{x,g} &= v_{x,h} - v_{\odot,x} \\
+v_{y,g} &= v_{y,h} - (V_{0}+v_{\odot,y})\\
+v_{z,g} &= v_{z,h} - v_{\odot,z}
+\end{aligned}
+\end{equation}
+where $V_{0} = 239.3 \pm 10.3$ is the circular velocity of the local standard of rest about the galactic center \citep{vdm12m31}.
 % ----------------------------------------------------------------------------
 
 \section{Methodology}
@@ -325,7 +363,7 @@ the \consuelo cosmological N-body simulations that we use in this work.
 \subsection{Halo catalogs: samples from the halo prior PDF}
 \label{sec:sampling}
 
-\todo{Phil}{Write this section!}
+\todo{Marc}{Write this section!}
 
 Basic concept. Multivariate PDF fof halo properties.
 
@@ -337,9 +375,9 @@ bootstrapping.
 % - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
 
 \subsection{The \consuelo Simulation}
-\label{sec:sampling}
+\label{sec:sampling_b}
 
-\todo{Mike}{Write this section!}
+\todo{Marc}{Write this section!}
 
 Description: size, resolution. Number of halos. Mvir and cvir converted to M200
 and c200?
@@ -348,9 +386,9 @@ and c200?
 % - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
 
 \subsection{The Local Group prior}
-\label{sec:sampling}
+\label{sec:sampling_c}
 
-\todo{Mike}{Write this section!}
+\todo{Marc}{Write this section!}
 
 Justification of hard-edged prior. Isolation criteria. Comparison to work of
 CLUES (constrained sims), Li \& White (timing arg), and Karenchentsev (local
@@ -366,7 +404,7 @@ triplets have more mass than pairs, how big an effect?
 \subsection{Observational Constraints}
 \label{sec:data}
 
-\todo{Phil}{Write this section!}
+\todo{Marc}{Write this section!}
 
 We now turn to the observational data that we use to constrain our two and
 three-halo cosmological models of the Local Group. Separate out
@@ -436,6 +474,19 @@ We use the observed distances and radial and tangential velocities of the MW and
 
 The density of this "observational" dataset is fit well by a Gaussian mixture model (GMM). (Plot showing goodness of fit? Triangular plot?) The optimal number of components in the GMM is found using the Bayesian Information Criterion with cross validation. The GMM allows us to evaluate the likelihood of a Consuelo Local Group under the observational pdf. This likelihood is an importance weight which allows us to find marginalized posterior pdf's for the Consuelo halo properties.
 
+
+\begin{figure*}
+  \centering \includegraphics[width=\textwidth]{plots/model_gof.png}
+  \caption{The 1-D and 2-D marginalizations of the parameter space used to create the GMM model. The sample generated from the observed values of the 6 parameters (blue) and the sample drawn from the resulting GMM (red) overlap almost perfectly.}
+  \label{fig:gof}
+\end{figure*}
+
+\begin{figure*}
+  \centering \includegraphics[width=\textwidth]{plots/sim_plot.png}
+  \caption{The 1-D and 2-D marginalizations of the CONSUELO triplet sample (green) overlayed with the corresponding marginalizations from the sample drawn from the GMM model (red). The intersection shows which of the CONSUELO triplets are given the most weight by the model.}
+  \label{fig:sim_plot}
+\end{figure*}
+
 % ----------------------------------------------------------------------------
 
 \section{Results}
@@ -457,6 +508,23 @@ Figure: 1D plot of Pr(MLG) given \\
 
 Corner plot of Pr(MMW, MM31, MLG), prior vs all constraints
 
+\begin{figure}
+\includegraphics[width=\linewidth]{plots/res_plot.png}
+  \caption{Log masses (units of $M_{\odot}$) of the MW, M31, and the LG weighted by likelihood. The displayed values above the histograms are the triplet numbers.}
+  \label{fig:res_plot}
+\end{figure}
+
+\begin{figure}
+\includegraphics[width=\linewidth]{plots/pdf_lg_plot.png}
+  \caption{The likelihood distribution of the mass of the Local Group. The Triplet distribution suffers from small statistics.}
+  \label{fig:lg_pdf}
+\end{figure}
+
+\begin{figure}
+\includegraphics[width=\linewidth]{plots/pdf_mw_plot.png}
+  \caption{The likelihood distribution of the mass of the MW. The Triplet distribution suffers from small statistics.}
+  \label{fig:mw_pdf}
+\end{figure}
 
 % - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
 
