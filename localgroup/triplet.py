@@ -5,6 +5,7 @@ import triangle
 import numpy as np
 import sys
 import pickle
+from sklearn import mixture
 
 # Make sure Yao-Yuan Mao's "helpers" module is on your PYTHONPATH:
 #   git clone git@bitbucket.org:yymao/helpers.git
@@ -155,14 +156,28 @@ class Triplet(object):
         return
 # ============================================================================
 
+    def GMM(self, ngauss, data):
+        self.gmm = mixture.GMM(ngauss, covariance_type='full')
+        self.gmm.fit(data)
+        return
+# ============================================================================
+
+    def GMM_sample(self, N):
+        self.gmm_samples = self.gmm.sample(N)
+        return
+# ============================================================================
+
     def compute_timing_mass(self):
         M, a, x, e = timingargument.mass(self.MW.D, self.MW.v_r, vt=None, approach='radial', t0scatter=False)
         self.timing_masses = M
         return
 # ============================================================================
 
-    def compute_model_weights(self, L, normalize=True):
-        weights = np.exp(L.evaluate(self.sim_samples)[0])
+    def compute_model_weights(self, L, mode, normalize=True):
+        if mode == 'sim':
+            weights = np.exp(L.evaluate(self.sim_samples)[0])
+        elif mode == 'gmm':
+            weights = np.exp(L.evaluate(self.gmm_samples)[0])
         #minw = weights.min()
         #weights = weights - minw
         total_weight = weights.sum()
@@ -181,21 +196,26 @@ class Triplet(object):
             count = count + 1
         return count
 # ============================================================================
-    def preprocess(self, means, stds):
-        self.sim_samples = (self.sim_samples - means)/stds
-
+    def preprocess(self, means, stds, mode):
+        if mode == 'sim':
+            self.sim_samples = (self.sim_samples - means)/stds
+        elif mode == 'gmm':
+            self.gmm_samples = (self.gmm_samples - means)/stds
         return
 
 # ============================================================================
 
-    def unprocess(self, means, stds):
-        self.sim_samples = self.sim_samples*stds + means
+    def unprocess(self, means, stds, mode):
+        if mode == 'sim':
+            self.sim_samples = self.sim_samples*stds + means
+        elif mode == 'gmm':
+            self.gmm_samples = self.gmm_samples*stds + means
         return
 
 # ============================================================================
 
-    def plot_kinematics(self, means, stds, color, fig=None):
-        self.unprocess(means, stds)
+    def plot_kinematics(self, data, mode, means, stds, color, fig=None):
+        self.unprocess(means, stds, mode)
         if self.isPair:
             # labs = ["MW_D", "MW_vr", "MW_vt"]
             labels = ["$D^{\\rm MW}$", "$v_{\\rm rad}^{\\rm MW}$", "$v_{\\rm tan}^{\\rm MW}$"]
@@ -204,10 +224,10 @@ class Triplet(object):
             labels = ["$D^{\\rm MW}$", "$v_{\\rm rad}^{\\rm MW}$", "$v_{\\rm tan}^{\\rm MW}$", "$D^{\\rm M33}$", "$v_{\\rm rad}^{\\rm M33}$", "$v_{\\rm tan}^{\\rm M33}$"]
 
         if self.isPair:
-            figure = triangle.corner(self.sim_samples, labels=labels, quantiles=[0.16,0.5,0.84], fig=fig, show_titles=True, title_args={"fontsize": 12}, color=color)
+            figure = triangle.corner(data, labels=labels, quantiles=[0.16,0.5,0.84], fig=fig, show_titles=True, title_args={"fontsize": 12}, color=color)
         else:
-            figure = triangle.corner(self.sim_samples, labels=labels, quantiles=[0.16,0.5,0.84], fig=fig, show_titles=True, title_args={"fontsize": 12}, color=color)
-        self.preprocess(means, stds)
+            figure = triangle.corner(data, labels=labels, quantiles=[0.16,0.5,0.84], fig=fig, show_titles=True, title_args={"fontsize": 12}, color=color)
+        self.preprocess(means, stds, mode)
         return figure
 
 # ============================================================================
