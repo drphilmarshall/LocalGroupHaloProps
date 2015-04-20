@@ -6,6 +6,7 @@ import numpy as np
 import sys
 import pickle
 from sklearn import mixture
+import matplotlib.pyplot as plt
 
 # Make sure Yao-Yuan Mao's "helpers" module is on your PYTHONPATH:
 #   git clone git@bitbucket.org:yymao/helpers.git
@@ -156,6 +157,30 @@ class Triplet(object):
         return
 # ============================================================================
 
+    def dist_filter(self, condition):
+        if not self.isPair:
+            fig = plt.subplot(2,2,1)
+            plt.hist(self.sim_samples[:,0])
+            plt.title("MW Consuelo D distribution")
+            plt.subplot(2,2,2)
+            plt.hist(self.sim_samples[:,3])
+            plt.title("M33 Consuelo D distribution")
+            print "sim_sample length before: ", self.sim_samples.shape
+            self.MW.Mvir = self.MW.Mvir[condition]
+            self.M31.Mvir = self.M31.Mvir[condition]
+            self.M33.Mvir = self.M33.Mvir[condition]
+            self.sim_samples = self.sim_samples[condition]
+            print "sim_sample length after: ", self.sim_samples.shape
+            plt.subplot(2,2,3)
+            plt.hist(self.sim_samples[:,0])
+            plt.title("MW Consuelo D distribution")
+            plt.subplot(2,2,4)
+            plt.hist(self.sim_samples[:,3])
+            plt.title("M33 Consuelo D distribution")
+        return fig
+
+# ============================================================================
+
     def GMM(self, ngauss, data):
         self.gmm = mixture.GMM(ngauss, covariance_type='full')
         self.gmm.fit(data)
@@ -214,8 +239,12 @@ class Triplet(object):
 
 # ============================================================================
 
-    def plot_kinematics(self, data, mode, means, stds, color, fig=None):
+    def plot_kinematics(self, mode, means, stds, color, fig=None):
         self.unprocess(means, stds, mode)
+        if mode == 'sim':
+            data = self.sim_samples
+        elif mode == 'gmm':
+            data = self.gmm_samples
         if self.isPair:
             # labs = ["MW_D", "MW_vr", "MW_vt"]
             labels = ["$D^{\\rm MW}$", "$v_{\\rm rad}^{\\rm MW}$", "$v_{\\rm tan}^{\\rm MW}$"]
