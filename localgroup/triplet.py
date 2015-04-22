@@ -125,8 +125,7 @@ class Triplet(object):
 
 # ============================================================================
 
-    def read_sim_points(self, path, n_points, halo_props):
-
+    def read_sim_points(self, path, n_points, halo_props, h=0.7, a=1.0):
         sim_data = readHlist(path)
         if sim_data.shape[0] < n_points:
             raise ValueError('n_points too large.')
@@ -135,25 +134,26 @@ class Triplet(object):
         self.observe_halos(Nsamples=n_points)
 
         self.MW.translate_to(self.MW)
-        self.MW.Mvir = self.sim_data['MW_Mvir']
+        self.MW.Mvir = h*self.sim_data['MW_Mvir']
 
-        self.M31.x = self.sim_data['M31_x'] - self.sim_data['MW_x']
-        self.M31.y = self.sim_data['M31_y'] - self.sim_data['MW_y']
-        self.M31.z = self.sim_data['M31_z'] - self.sim_data['MW_z']
+        self.M31.x = a*h*(self.sim_data['M31_x'] - self.sim_data['MW_x'])
+        self.M31.y = a*h*(self.sim_data['M31_y'] - self.sim_data['MW_y'])
+        self.M31.z = a*h*(self.sim_data['M31_z'] - self.sim_data['MW_z'])
         self.M31.vx = self.sim_data['M31_vx'] - self.sim_data['MW_vx']
         self.M31.vy = self.sim_data['M31_vy'] - self.sim_data['MW_vy']
         self.M31.vz = self.sim_data['M31_vz'] - self.sim_data['MW_vz']
         self.M31.frame = 'MW'
-        self.M31.Mvir = self.sim_data['M31_Mvir']
+        self.M31.Mvir = h*self.sim_data['M31_Mvir']
         if not self.isPair:
-            self.M33.x = self.sim_data['M33_x'] - self.sim_data['MW_x']
-            self.M33.y = self.sim_data['M33_y'] - self.sim_data['MW_y']
-            self.M33.z = self.sim_data['M33_z'] - self.sim_data['MW_z']
+            self.M33.x = a*h*(self.sim_data['M33_x'] - self.sim_data['MW_x'])
+            self.M33.y = a*h*(self.sim_data['M33_y'] - self.sim_data['MW_y'])
+            self.M33.z = a*h*(self.sim_data['M33_z'] - self.sim_data['MW_z'])
             self.M33.vx = self.sim_data['M33_vx'] - self.sim_data['MW_vx']
             self.M33.vy = self.sim_data['M33_vy'] - self.sim_data['MW_vy']
             self.M33.vz = self.sim_data['M33_vz'] - self.sim_data['MW_vz']
             self.M33.frame = 'MW'
-            self.M33.Mvir = self.sim_data['M33_Mvir']
+            self.M33.Mvir = h*self.sim_data['M33_Mvir']
+        self.LG_Mvir = self.M31.Mvir + self.MW.Mvir
         return
 # ============================================================================
 
@@ -177,18 +177,60 @@ class Triplet(object):
             plt.subplot(2,2,4)
             plt.hist(self.sim_samples[:,3])
             plt.title("M33 Consuelo D distribution")
+        else:
+            fig = plt.subplot(2,1,1)
+            plt.hist(self.sim_samples[:,0])
+            plt.title("MW Consuelo D distribution")
+            print "sim_sample length before: ", self.sim_samples.shape
+            self.MW.Mvir = self.MW.Mvir[condition]
+            self.M31.Mvir = self.M31.Mvir[condition]
+            self.sim_samples = self.sim_samples[condition]
+            print "sim_sample length after: ", self.sim_samples.shape
+            plt.subplot(2,1,2)
+            plt.hist(self.sim_samples[:,0])
+            plt.title("MW Consuelo D distribution")
         return fig
 
 # ============================================================================
 
     def GMM(self, ngauss, data):
         self.gmm = mixture.GMM(ngauss, covariance_type='full')
+        self.gmm_data = data
+       # self.gmm_data_means = np.array([np.mean(self.gmm_data[:,i]) for i in range(self.gmm_data.shape[1])])
+        #self.gmm_data_stds = np.array([np.std(self.gmm_data[:,i]) for i in range(self.gmm_data.shape[1])])
+        #self.preprocess(self.gmm_data_means, self.gmm_data_stds, 'gmm_data')
         self.gmm.fit(data)
         return
 # ============================================================================
 
     def GMM_sample(self, N):
         self.gmm_samples = self.gmm.sample(N)
+        return
+# ============================================================================
+
+    def GMM_prior(self, ncomp, sample_size):
+        dat = np.transpose(np.vstack((np.transpose(self.sim_samples), self.M31.Mvir, self.MW.Mvir, self.M33.Mvir)))
+        self.GMM(ncomp, dat)
+        self.GMM_sample(sample_size)
+        self.unprocess(self.gmm_data_means, self.gmm_data_stds, 'gmm_data')
+        self.unprocess(self.gmm_data_means, self.gmm_data_stds, 'gmm')
+        self.MW.Mvir = np.copy(self.gmm_samples[:,7])
+        self.M31.Mvir = np.copy(self.gmm_samples[:,6])
+        self.LG_Mvir = np.copy(self.MW.Mvir) + np.copy(self.M31.Mvir)
+        if not self.isPair:
+            self.M33.Mvir = np.copy(self.gmm_samples[:,8])
+        filter_nan = np.logical_not(np.isnan(self.MW.Mvir))&\
+                     np.logical_not(np.isnan(self.M31.Mvir))&\
+                     np.logical_not(np.isnan(self.LG_Mvir))
+        if not self.isPair:
+            filter_nan = filter_nan&np.logical_not(np.isnan(self.M33.Mvir))
+        self.MW.Mvir = self.MW.Mvir[filter_nan]
+        self.M31.Mvir = self.M31.Mvir[filter_nan]
+        self.LG_Mvir = self.LG_Mvir[filter_nan]
+        if not self.isPair:
+            self.M33.Mvir = self.M33.Mvir[filter_nan]
+        self.gmm_samples = self.gmm_samples[filter_nan]
+        self.gmm_samples = self.gmm_samples[:,0:6]
         return
 # ============================================================================
 
@@ -226,6 +268,8 @@ class Triplet(object):
             self.sim_samples = (self.sim_samples - means)/stds
         elif mode == 'gmm':
             self.gmm_samples = (self.gmm_samples - means)/stds
+        elif mode == 'gmm_data':
+            self.gmm_data = (self.gmm_data - means)/stds
         return
 
 # ============================================================================
@@ -235,6 +279,8 @@ class Triplet(object):
             self.sim_samples = self.sim_samples*stds + means
         elif mode == 'gmm':
             self.gmm_samples = self.gmm_samples*stds + means
+        elif mode == 'gmm_data':
+            self.gmm_data = self.gmm_data*stds + means
         return
 
 # ============================================================================
@@ -244,7 +290,7 @@ class Triplet(object):
         if mode == 'sim':
             data = self.sim_samples
         elif mode == 'gmm':
-            data = self.gmm_samples
+            data = self.gmm_samples[:,0:6]
         if self.isPair:
             # labs = ["MW_D", "MW_vr", "MW_vt"]
             labels = ["$D^{\\rm MW}$", "$v_{\\rm rad}^{\\rm MW}$", "$v_{\\rm tan}^{\\rm MW}$"]

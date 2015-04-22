@@ -11,27 +11,24 @@ from helpers.SimulationAnalysis import readHlist
 header = '# idMW idM31 idM33 MW_Mvir M31_Mvir M33_Mvir MW_x MW_y MW_z M31_x M31_y M31_z M33_x M33_y M33_z\
  MW_vx MW_vy MW_vz M31_vx M31_vy M31_vz M33_vx M33_vy M33_vz\n'
 path = '/afs/slac.stanford.edu/u/ki/mwillia1/Thesis/LocalGroupHaloProps/scripts/'
-M33_file = 'M33_all_z0p000_data.txt'
-MW_trip_file = 'MW_all_z0p000_data.txt'
-M31_trip_file = 'M31_all_z0p000_data.txt'
 
-#M33_data = readHlist(path+M33_file)
-MW_data = readHlist(path+MW_trip_file)
-os.system('rm %s'%(path+MW_trip_file))
-os.system('python compile_all_M33_data.py')
+
+M33_file = 'M33_all_Triplets_z0p054_data.txt'
+MW_trip_file = 'MW_all_Triplets_z0p054_data.txt'
+M31_trip_file = 'M31_all_Triplets_z0p054_data.txt'
+
+M33_data = readHlist(path+M33_file)
 M31_data = readHlist(path+M31_trip_file)
-os.system('rm %s'%(path+M31_trip_file))
+MW_data = readHlist(path+MW_trip_file)
 
-triplet_file = open('complete_triplets.txt', 'w')
+triplet_file = open('complete_triplets_054.txt', 'w')
 triplet_file.write(header)
 for MW_line in MW_data:
     MW_id = MW_line['idMW']
     M31_id = MW_line['idM31']
     M33_id = MW_line['idM33']
-    if not M33_id==-1: continue
     M31_line = M31_data[M31_data['idM31']==M31_id][0]
-    #M33_line = M33_data[M33_data['idM33']==M33_id][0]
-    M33_line = np.copy(M31_line)
+    M33_line = M33_data[M33_data['idM33']==M33_id][0]
     triplet_file.write('%d %d %d %f %f %f '%(MW_line['idMW'], M31_line['idM31'], M33_line['idM33'], \
 MW_line['Mvir'], M31_line['Mvir'], M33_line['Mvir']))
     triplet_file.write('%f %f %f %f %f %f %f %f %f '%(MW_line['x'], MW_line['y'], MW_line['z'], \

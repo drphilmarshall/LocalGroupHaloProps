@@ -3,16 +3,17 @@
 
 import numpy as np
 import sys
-sys.path.append('/afs/slac.stanford.edu/u/ki/yymao/scripts')
-from readHlist import readHlist
+
+sys.path.append('/u/ki/yymao/pyscripts')
+from helpers.SimulationAnalysis import readHlist
 
 header = '# idMW idM31 idM33 Mvir x y z vx vy vz\n'
 
 path = '/nfs/slac/g/ki/ki04/mbusha/projects/LasDamas/Simulations/Consuelo/LG_project/'
-prefix = 'MW_halos_'
-suffix = '_z0p000_vir_bgc2.txt'
+prefix = 'M31_halos_'
+suffix = '_z0p054_vir_bgc2.txt'
 
-Triplet_file = open('MW_all_Triplets_z0p000_data.txt','a+')
+Triplet_file = open('M31_all_Triplets_z0p054_data.txt','a+')
 Triplet_file.write(header)
 for i in range(4001,4051):
     halo_file_name = path+prefix+str(i)+suffix
