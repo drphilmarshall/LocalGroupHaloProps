@@ -299,9 +299,9 @@ class Triplet(object):
             labels = ["$D^{\\rm MW}$", "$v_{\\rm rad}^{\\rm MW}$", "$v_{\\rm tan}^{\\rm MW}$", "$D^{\\rm M33}$", "$v_{\\rm rad}^{\\rm M33}$", "$v_{\\rm tan}^{\\rm M33}$"]
 
         if self.isPair:
-            figure = triangle.corner(data, labels=labels, quantiles=[0.16,0.5,0.84], fig=fig, show_titles=True, title_args={"fontsize": 12}, color=color)
+            figure = triangle.corner(data, labels=labels, quantiles=[0.16,0.5,0.84], fig=fig, show_titles=True, title_args={"fontsize": 12}, label_args={"fontsize": 16}, color=color)
         else:
-            figure = triangle.corner(data, labels=labels, quantiles=[0.16,0.5,0.84], fig=fig, show_titles=True, title_args={"fontsize": 12}, color=color)
+            figure = triangle.corner(data, labels=labels, quantiles=[0.16,0.5,0.84], fig=fig, show_titles=True, title_args={"fontsize": 12}, label_args={"fontsize": 16}, color=color)
         self.preprocess(means, stds, mode)
         return figure
 

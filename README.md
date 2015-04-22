@@ -9,6 +9,8 @@ Demo [here](http://nbviewer.ipython.org/github/drphilmarshall/LocalGroupHaloProp
 
 Notes [here](http://nbviewer.ipython.org/github/drphilmarshall/LocalGroupHaloProps/blob/master/notes.ipynb)
 
+Triplets --with M33 [here](http://nbviewer.ipython.org/github/drphilmarshall/LocalGroupHaloProps/blob/master/triplets.ipynb)
+
 ### Program
 
 We take the observational constraints on the sky position of, distance to, radial velocity and proper motion of M31 and M33, and transform them into constraints on the M31-centric distances, radial velocities and tangential velocities of M33 and the Milky Way. We do this my drawing samples from the posterior PDFs for the observables, transforming them to the M31 frame, and then approximating the resulting 6-D PDF.
