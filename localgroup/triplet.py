@@ -293,10 +293,10 @@ class Triplet(object):
             data = self.gmm_samples[:,0:6]
         if self.isPair:
             # labs = ["MW_D", "MW_vr", "MW_vt"]
-            labels = ["$D^{\\rm MW}$", "$v_{\\rm rad}^{\\rm MW}$", "$v_{\\rm tan}^{\\rm MW}$"]
+            labels = ["$D^{\\rm MW} Mpc$", "$v_{\\rm rad}^{\\rm MW} km/s$", "$v_{\\rm tan}^{\\rm MW} km/s$"]
         else:
             # labs = ["MW_D", "MW_vr", "MW_vt", "M33_D", "M33_vr", "M33_vt"]
-            labels = ["$D^{\\rm MW}$", "$v_{\\rm rad}^{\\rm MW}$", "$v_{\\rm tan}^{\\rm MW}$", "$D^{\\rm M33}$", "$v_{\\rm rad}^{\\rm M33}$", "$v_{\\rm tan}^{\\rm M33}$"]
+            labels = ["$D^{\\rm MW} Mpc$", "$v_{\\rm rad}^{\\rm MW} km/s$", "$v_{\\rm tan}^{\\rm MW} km/s$", "$D^{\\rm M33} Mpc$", "$v_{\\rm rad}^{\\rm M33} km/s$", "$v_{\\rm tan}^{\\rm M33} km/s$"]
 
         if self.isPair:
             figure = triangle.corner(data, labels=labels, quantiles=[0.16,0.5,0.84], fig=fig, show_titles=True, title_args={"fontsize": 12}, label_args={"fontsize": 16}, color=color)

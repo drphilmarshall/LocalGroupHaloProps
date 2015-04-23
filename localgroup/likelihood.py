@@ -64,10 +64,10 @@ class Likelihood(object):
 
         if self.T.isPair:
             # self.labs = ["MW_D", "MW_vr", "MW_vt"]
-            self.labels = ["$D^{\\rm MW}$", "$v_{\\rm rad}^{\\rm MW}$", "$v_{\\rm tan}^{\\rm MW}$"]
+            self.labels = ["$D^{\\rm MW} Mpc$", "$v_{\\rm rad}^{\\rm MW} km/s$", "$v_{\\rm tan}^{\\rm MW} km/s$"]
         else:
             # self.labs = ["MW_D", "MW_vr", "MW_vt", "M33_D", "M33_vr", "M33_vt"]
-            self.labels = ["$D^{\\rm MW}$", "$v_{\\rm rad}^{\\rm MW}$", "$v_{\\rm tan}^{\\rm MW}$", "$D^{\\rm M33}$", "$v_{\\rm rad}^{\\rm M33}$", "$v_{\\rm tan}^{\\rm M33}$"]
+            self.labels = ["$D^{\\rm MW} Mpc$", "$v_{\\rm rad}^{\\rm MW} km/s$", "$v_{\\rm tan}^{\\rm MW} km/s$", "$D^{\\rm M33} Mpc$", "$v_{\\rm rad}^{\\rm M33} km/s$", "$v_{\\rm tan}^{\\rm M33} km/s$"]
 
         return
 
