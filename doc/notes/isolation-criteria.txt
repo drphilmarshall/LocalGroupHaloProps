@@ -1,0 +1,81 @@
+This file details the new (currently being implemented) isolation criteria. The algorithm will be slightly different for pairs and triplets, so both will be described below.
+
+
+Pairs:
+
+Priors:
+1.  The MW is a central galaxy. 
+2.  MW, M31, M33 all have vmax > 80 km/s (partly due to simulation resolution for Consuelo. This could be changed for Darksky.)
+3.  The MW is less massive than M31.
+4.  M31 is within 970 kpc of the MW (this is 5-sigma larger than the true value D=0.77 +/- 0.04)
+5.  MW and M31 are not within the virial radius of any other halo.  We implement this criteria by enforcing that the MW and M31 are the two largest halos within a sphere of radius 2 Mpc centered on the midpoint of the line connecting them.
+
+6.  (Discussed by Marc, Risa, Yao, but possibly redundant because of #5).  Consider the union, S, of two sets of halos, A and B (ie S = A U B).  A is defined to be the set of all halos within 970 kpc of the MW.  B is defined to be the set of all halos within 970 kpc of M31.  The MW and M31 are the two largest halos in the set S.
+
+Algorithm:
+1.  Cut the catalog at vmax = 80
+2.  Loop over halos, treating each as a potential MW
+3.  For each candidate MW, identify the corresponding candidate M31 according to:
+    - M31 candidate is the largest halo within 970 kpc of MW
+    - M31 candidate must be larger than MW
+4.  Keep the valid MW-M31 pair according to:
+    - The MW and M31 candidates are the largest halos within a 2 Mpc radius sphere centered on the midpoint of the line connecting them.
+
+
+
+
+Triplets: (case 1: M31 is the largest halo)
+
+Priors:
+1.  The MW is a central galaxy. 
+2.  MW, M31, M33 all have vmax > 80 km/s (partly due to simulation resolution for Consuelo. This could be changed for Darksky.)
+3.  The MW is less massive than M31.
+4.  M31 is within 970 kpc of the MW (this is 5-sigma larger than the true value D=0.77 +/- 0.04)
+5.  M33 is within 400 kpc of M31 (actual value is about 200 kpc)
+6.  MW and M31 are not within the virial radius of any other halo.  We implement this criteria by enforcing that the MW and M31 are the two largest halos within a sphere of radius 2 Mpc centered on the midpoint of the line connecting them.
+
+7.  (Discussed by Marc, Risa, Yao, but possibly redundant because of #6).  Consider the union, S, of two sets of halos, A and B (ie S = A U B).  A is defined to be the set of all halos within 970 kpc of the MW.  B is defined to be the set of all halos within 970 kpc of M31.  The MW and M31 are the two largest halos in the set S.
+
+Algorithm:
+
+1.  Cut the catalog at vmax = 80
+2.  Loop over halos, treating each as a potential MW
+3.  For each candidate MW, identify the corresponding candidate M31 according to:
+    - M31 candidate is the largest halo within 970 kpc of MW
+    - M31 candidate must be larger than MW
+    - The MW and M31 candidates are the largest halos within a 2 Mpc radius sphere centered on the midpoint of the line connecting them.
+4.  Identify M33 candidate according to:
+    - M33 is the largest halo within 400 kpc of the M31 candidate.
+5.  Keep valid Triplet according to:
+    - All conditions in step 3 are met.
+    - A valid M33 candidate is found.
+
+
+
+Triplets: (case 2: M31 is the halo with M33)
+
+Case 1 is simply a subset of this case.  We can find all of the triplets that satisfy the conditions of case 1, but apply the new condition that M31 must be LESS massive than the MW.  The union of case 1 and this "reverse" case 1 will yield all the LG analogs that would be identified by case 2.
+
+Priors:
+1.  The MW is a central galaxy. 
+2.  MW, M31, M33 all have vmax > 80 km/s (partly due to simulation resolution for Consuelo. This could be changed for Darksky.)
+3.  The MW is less massive than M31.
+4.  M31 is within 970 kpc of the MW (this is 5-sigma larger than the true value D=0.77 +/- 0.04)
+5.  M33 is within 400 kpc of M31 (actual value is about 200 kpc)
+6.  MW and M31 are not within the virial radius of any other halo.  We implement this criteria by enforcing that the MW and M31 are the two largest halos within a sphere of radius 2 Mpc centered on the midpoint of the line connecting them.
+
+7.  (Discussed by Marc, Risa, Yao, but possibly redundant because of #6).  Consider the union, S, of two sets of halos, A and B (ie S = A U B).  A is defined to be the set of all halos within 970 kpc of the MW.  B is defined to be the set of all halos within 970 kpc of M31.  The MW and M31 are the two largest halos in the set S.
+
+Algorithm:
+
+1.  Cut the catalog at vmax = 80
+2.  Loop over halos, treating each as a potential MW
+3.  For each candidate MW, identify the corresponding candidate M31 according to:
+    - M31 candidate is the largest halo within 970 kpc of MW
+    - M31 candidate must be larger than MW
+    - The MW and M31 candidates are the largest halos within a 2 Mpc radius sphere centered on the midpoint of the line connecting them.
+4.  Identify M33 candidate according to:
+    - M33 is the largest halo within 400 kpc of the M31 candidate.
+5.  Keep valid Triplet according to:
+    - All conditions in step 3 are met.
+    - A valid M33 candidate is found.
