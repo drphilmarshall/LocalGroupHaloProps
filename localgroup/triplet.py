@@ -157,6 +157,19 @@ class Triplet(object):
         return
 # ============================================================================
 
+    def mass_filter(self, mode='sim'):
+        cond = self.MW.Mvir < self.M31.Mvir
+        if mode == 'sim':
+            self.sim_samples = self.sim_samples[cond]
+            self.MW.Mvir = self.MW.Mvir[cond]
+            self.M31.Mvir = self.M31.Mvir[cond]
+            if not self.isPair: self.M33.Mvir = self.M33.Mvir[cond]
+            self.LG_Mvir = self.LG_Mvir[cond]
+            print 'sim_samples new shape: ', self.sim_samples.shape
+        else:
+            raise ValueError("Can only filter in mode=sim")
+        return
+# ============================================================================
     def dist_filter(self, condition):
         if not self.isPair:
             fig = plt.subplot(2,2,1)

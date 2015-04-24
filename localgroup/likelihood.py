@@ -128,7 +128,7 @@ class Likelihood(object):
         if (mode == "GMM"):
             drawn_points = self.PDF.sample(n_samples=n_points)*self.samples_stds + self.samples_means
             drawn_points = drawn_points[drawn_points[:,2] > 0]
-            figure = triangle.corner(drawn_points, labels=self.labels, quantiles=[0.16,0.5,0.84], fig=fig, show_titles=True, title_args={"fontsize": 16}, label_args={"fontsize": 16}, color=color, verbose=False)
+            figure = triangle.corner(drawn_points, labels=self.labels, quantiles=[0.16,0.5,0.84], fig=fig, show_titles=True, title_args={"fontsize": 12}, label_args={"fontsize": 16}, color=color, verbose=False)
         else:
             raise ValueError("Unrecognized approximation mode %s" % mode)
         if fig==None: return figure
@@ -141,7 +141,7 @@ class Likelihood(object):
         self.write_labels()
 
         try:
-            figure = triangle.corner(self.samples, labels=self.labels, quantiles=[0.16,0.5,0.84], fig=fig, plot_contours=True, show_titles=True, title_args={"fontsize": 16}, label_args={"fontsize": 16}, color=color)
+            figure = triangle.corner(self.samples, labels=self.labels, quantiles=[0.16,0.5,0.84], fig=fig, plot_contours=True, show_titles=True, title_args={"fontsize": 12}, label_args={"fontsize": 16}, color=color)
         except AttributeError:
             raise AttributeError("L.generate has not been run.")
 
