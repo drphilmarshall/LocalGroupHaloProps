@@ -17,7 +17,7 @@ Pairs --GMM prior [here](http://nbviewer.ipython.org/github/drphilmarshall/Local
 
 Pairs --Consuelo prior [here](http://nbviewer.ipython.org/github/drphilmarshall/LocalGroupHaloProps/blob/master/pairs.ipynb)
 
-
+ASURPS Poster [here](https://www.overleaf.com/read/bkwpxstxpqns)
 
 ### Program
 
