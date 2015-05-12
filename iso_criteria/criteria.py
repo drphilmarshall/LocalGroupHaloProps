@@ -21,6 +21,17 @@ def find_periodic_midpoint(p1, p2, box_size, periodic=True):
     mid = np.fmod(mid, box_size)
     return mid
 
+def find_largest_sub(tree, center, D, halos, pair_idx, vmax_cut=None, periodic=True):
+    idx = tree.query_radius(center, D, periodic, 'index')
+    idx = idx[np.in1d(idx, pair_idx, True, True)]
+    if len(idx):
+        sub_ind = idx[halos['mvir'][idx].argmax()]
+        if halos['vmax'][sub_ind] > (vmax_cut or np.inf):
+            return -1, 0.0
+    else:
+        return -1, 0.0
+    return sub_ind, halos['mvir'][sub_ind]
+
 def isolated(pairs, halos, host_flag, D_iso, D_M33, box_size, vmax_cut=None, periodic=True):
     print 'before: ', len(pairs)
 #    iso_pairs = []
@@ -32,7 +43,8 @@ def isolated(pairs, halos, host_flag, D_iso, D_M33, box_size, vmax_cut=None, per
     MW_M33_larger = []
     with fast3tree(halos[list('xyz')].view(float).reshape(-1, 3)) as tree:
         for pair in pairs:
-            h1, h2 = halos[host_flag[list(pair)]] #h1 is the larger halo
+            pair_idx = host_flag[list(pair)]
+            h1, h2 = halos[pair_idx] #h1 is the larger halo
             p1 = np.fromiter((h1[ax] for ax in 'xyz'), float)
             p2 = np.fromiter((h2[ax] for ax in 'xyz'), float)
 
@@ -51,40 +63,11 @@ def isolated(pairs, halos, host_flag, D_iso, D_M33, box_size, vmax_cut=None, per
                 MW_M31_larger.append(pair[1])
             else:
                 continue #no need to search M33
-            
-                
 
-            #find M33, in two ways
-            idx = tree.query_radius(p1, D_M33, periodic, 'index')
-#            idx = idx[halos['vmax'][idx] < 80]
-#            M33_ind = idx[halos['mvir'][idx].argmax()] if len(idx) else -1
-            m31_delete_ind = halos['mvir'][idx].argmax()
-            idx = np.delete(idx, m31_delete_ind) #So we don't identify M31 as M33
-            if len(idx):
-                m33_candidate = halos['mvir'][idx].argmax()
-                if halos[idx[m33_candidate]]['id']==halos[host_flag][pair[1]]['id']: #If MW is identified as M33
-                    idx = np.delete(idx, m33_candidate)
-            M33_ind = idx[halos['mvir'][idx].argmax()] if len(idx) else -1
-            if not vmax_cut==None:
-                if halos['vmax'][M33_ind] > vmax_cut: M33_ind = -1
-            M33_M31_larger.append(M33_ind)
-
-            idx = tree.query_radius(p2, D_M33, periodic, 'index')
-#            idx = idx[halos['vmax'][idx] < 80]
-#            LMC_ind = idx[halos['mvir'][idx].argmax()] if len(idx) else -1
-            m31_delete_ind = halos['mvir'][idx].argmax()
-            idx = np.delete(idx, m31_delete_ind) #So we don't identify M31 as M33
-            if len(idx):
-                m33_candidate = halos['mvir'][idx].argmax()
-                if halos[idx[m33_candidate]]['id']==halos[host_flag][pair[1]]['id']: #If MW is identified as M33
-                    idx = np.delete(idx, m33_candidate)
-            LMC_ind = idx[halos['mvir'][idx].argmax()] if len(idx) else -1
-            if not vmax_cut==None:
-                if halos['vmax'][LMC_ind] > vmax_cut: LMC_ind = -1
-                
-            M33_mass = halos['mvir'][M33_ind] if M33_ind != -1 else 0
-            LMC_mass = halos['mvir'][LMC_ind] if LMC_ind != -1 else 0
-
+            #find M33
+            M33_ind, M33_mass = find_largest_sub(tree, p1, D_M33, halos, pair_idx, vmax_cut, periodic)
+            LMC_ind, LMC_mass = find_largest_sub(tree, p2, D_M33, halos, pair_idx, vmax_cut, periodic)
+            M33_M31_larger.append(M33_ind)#assumes M31 is p1 (ie larger than MW)
             if LMC_mass > M33_mass:
                 M33_ind = LMC_ind
                 M31_M33_larger.append(pair[1]) #append the smaller mass index in the pair -> M31 since LMC > M33
@@ -118,3 +101,4 @@ def get_data(halos, host_flag, MW_inds, M31_inds, M33_inds):
 def get_trip_data(data):
     trip_data = data[data['M33_id']!=-1]
     return trip_data
+
