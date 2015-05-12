@@ -2,104 +2,119 @@ from fast3tree import fast3tree
 import numpy as np
 
 
-
-def find_pairs(points, D):
+def find_pairs(halos, host_flag, D):
     pairs = []
+    points = halos[host_flag][list('xyz')].view(float).reshape(-1, 3)
     with fast3tree(points) as tree:
         for i, p in enumerate(points):
             idx = tree.query_radius(p, D, True, 'index')
             idx = idx[idx > i]
-            pairs.extend(((i, j) for j in idx))
+            pairs.extend(((i, j) if halos['mvir'][host_flag[i]] > halos['mvir'][host_flag[j]] else (j, i) for j in idx))
     return pairs
 
-
-def find_periodic_midpoint(p1, p2, box_size):
-    ndim = len(p1)
-    mid = []
-    for i in range(ndim):
-        non_pbc_dist = np.abs(p1[i] - p2[i])
-        if non_pbc_dist < box_size/2.0:
-            mid.append(p1[i] - np.sign(p1[i] - p2[i])*non_pbc_dist/2.0)
-        else:
-            pbc_dist = box_size - non_pbc_dist
-            mid.append((p1[i] + np.sign(p1[i] - p2[i])*pbc_dist/2.0 + box_size)%box_size)
+def find_periodic_midpoint(p1, p2, box_size, periodic=True):
+    mid = (p1 + p2)*0.5
+    if not periodic:
+        return mid
+    half_box_size = box_size*0.5
+    mid[np.fabs(p1 - p2) > half_box_size] += half_box_size
+    mid = np.fmod(mid, box_size)
     return mid
 
+def isolated(pairs, halos, host_flag, D_iso, D_M33, box_size, vmax_cut=None, periodic=True):
+    print 'before: ', len(pairs)
+#    iso_pairs = []
+    MW_M31_larger = []
+    M31_M31_larger = []
+    M33_M31_larger = []
+    M33_M33_larger = []
+    M31_M33_larger = []
+    MW_M33_larger = []
+    with fast3tree(halos[list('xyz')].view(float).reshape(-1, 3)) as tree:
+        for pair in pairs:
+            h1, h2 = halos[host_flag[list(pair)]] #h1 is the larger halo
+            p1 = np.fromiter((h1[ax] for ax in 'xyz'), float)
+            p2 = np.fromiter((h2[ax] for ax in 'xyz'), float)
 
-def isolated(ps, D, points, masses):
-    print 'before: ', len(ps)
-    iso_pairs = []
-    for pair in ps:
-        ptA = points[pair[0]]
-        ptB = points[pair[1]]
-        mid = find_periodic_midpoint(ptA, ptB, 420)
-        with fast3tree(points) as tree:
-            idx = tree.query_radius(mid, D, True, 'index')
-            masses_in_iso_region = np.array([masses[ind] for ind in idx])
-            masses_in_iso_region.sort()
-            masses_in_iso_region = masses_in_iso_region[::-1]
-            massA = masses[pair[0]]
-            massB = masses[pair[1]]
-            if ((massA==masses_in_iso_region[0] and massB==masses_in_iso_region[1]) or \
-               (massA==masses_in_iso_region[1] and massB==masses_in_iso_region[0])):
-                iso_pairs.append(pair)
-    print 'after: ', len(iso_pairs)
-    return iso_pairs
+            mid = find_periodic_midpoint(p1, p2, box_size, periodic)
+            idx = tree.query_radius(mid, D_iso, periodic, 'index')
 
-def label_MW_M31(pairs, masses):
-    all_MW = []
-    all_M31 = []
-    for pair in pairs:
-        if masses[pair[0]] > masses[pair[1]]:
-            all_M31.append(pair[0])
-            all_MW.append(pair[1])
-        else:
-            all_MW.append(pair[0])
-            all_M31.append(pair[1])
-    return all_MW, all_M31
+            biggest = halos['mvir'][idx].argmax()
+            idx = np.delete(idx, biggest)
+            biggest = halos['mvir'][idx].argmax() #biggest is now second-biggest
+            
+
+            # the second index has a smaller mass
+            if h2['mvir'] == halos['mvir'][idx[biggest]]:
+#                iso_pairs.append(pair) #satisfying iso
+                M31_M31_larger.append(pair[0])
+                MW_M31_larger.append(pair[1])
+            else:
+                continue #no need to search M33
+            
+                
+
+            #find M33, in two ways
+            idx = tree.query_radius(p1, D_M33, periodic, 'index')
+#            idx = idx[halos['vmax'][idx] < 80]
+#            M33_ind = idx[halos['mvir'][idx].argmax()] if len(idx) else -1
+            m31_delete_ind = halos['mvir'][idx].argmax()
+            idx = np.delete(idx, m31_delete_ind) #So we don't identify M31 as M33
+            if len(idx):
+                m33_candidate = halos['mvir'][idx].argmax()
+                if halos[idx[m33_candidate]]['id']==halos[host_flag][pair[1]]['id']: #If MW is identified as M33
+                    idx = np.delete(idx, m33_candidate)
+            M33_ind = idx[halos['mvir'][idx].argmax()] if len(idx) else -1
+            if not vmax_cut==None:
+                if halos['vmax'][M33_ind] > vmax_cut: M33_ind = -1
+            M33_M31_larger.append(M33_ind)
+
+            idx = tree.query_radius(p2, D_M33, periodic, 'index')
+#            idx = idx[halos['vmax'][idx] < 80]
+#            LMC_ind = idx[halos['mvir'][idx].argmax()] if len(idx) else -1
+            m31_delete_ind = halos['mvir'][idx].argmax()
+            idx = np.delete(idx, m31_delete_ind) #So we don't identify M31 as M33
+            if len(idx):
+                m33_candidate = halos['mvir'][idx].argmax()
+                if halos[idx[m33_candidate]]['id']==halos[host_flag][pair[1]]['id']: #If MW is identified as M33
+                    idx = np.delete(idx, m33_candidate)
+            LMC_ind = idx[halos['mvir'][idx].argmax()] if len(idx) else -1
+            if not vmax_cut==None:
+                if halos['vmax'][LMC_ind] > vmax_cut: LMC_ind = -1
+                
+            M33_mass = halos['mvir'][M33_ind] if M33_ind != -1 else 0
+            LMC_mass = halos['mvir'][LMC_ind] if LMC_ind != -1 else 0
+
+            if LMC_mass > M33_mass:
+                M33_ind = LMC_ind
+                M31_M33_larger.append(pair[1]) #append the smaller mass index in the pair -> M31 since LMC > M33
+                MW_M33_larger.append(pair[0]) #append the larger mass index in the pair -> MW since LMC > M33
+            else:
+                M31_M33_larger.append(pair[0]) #append the smaller mass index in the pair -> M31 since LMC < M33
+                MW_M33_larger.append(pair[1]) #append the larger mass index in the pair -> MW since LMC < M33
+            M33_M33_larger.append(M33_ind)
+
+    print 'after: ', len(MW_M31_larger)
+    return MW_M31_larger, M31_M31_larger, M33_M31_larger, M33_M33_larger, M31_M33_larger, MW_M33_larger
 
 
-def find_M33(all_points, D, all_masses, host_inds, host_points, M31_given):
-    all_M33 = []
-    if M31_given:
-        for M31_ind in host_inds:
-            M31_pos = host_points[M31_ind]
-            with fast3tree(all_points) as tree:
-                idx = tree.query_radius(M31_pos, D, True, 'index')
-                M33_masses = [all_masses[x] for x in idx]
-                if len(idx)==0:
-                    M33 = -1
-                else:
-                    M33 = idx[M33_masses.index(max(M33_masses))]
-                all_M33.append(M33)
-    else:
-        all_M31 = []
-        all_MW = []
-        for pair in host_inds:
-        M33_pair = []
-        M33_mass_pair = []
-        for elem in pair:
-            M31_pos = host_points[elem]
-            with fast3tree(all_points) as tree:
-                idx = tree.query_radius(M31_pos, D, True, 'index')
-                M33_masses = [all_masses[x] for x in idx]
-                if len(idx)==0:
-                    M33 = -1
-                    mass = -1
-                else:
-                    mass_ind = M33_masses.index(max(M33_masses))
-                    M33 = idx[mass_ind]
-                    mass = all_masses[m33_masses[mass_ind]]
-                    
-                M33_pair.append(M33)
-                M33_mass_pair.append(mass)
-                if M33_mass_pair[0] > M33_mass_pair[1]:
-                    all_M33.append(M33_pair[0])
-                    all_M31.append(pair[0])
-                    all_MW.append(pair[1])
-                else:
-                    all_M33.append(M33_pair[1])
-                    all_M31.append(pair[1])
-                    all_MW.append(pair[0])
-    if not M31_given: return all_M33, all_M31, all_MW
-    return all_M33
+def get_data(halos, host_flag, MW_inds, M31_inds, M33_inds):
+    fn = ['MW_'+nm for nm in halos.dtype.names]
+    fn1 = ['M31_'+nm for nm in halos.dtype.names]
+    fn2 = ['M33_'+nm for nm in halos.dtype.names]
+    fields = np.hstack((np.array(fn), np.array(fn1), np.array(fn2)))
+    dtype = np.dtype([(f, int if f.endswith('id') else float) for f in fields])
+    num_sys = len(MW_inds)
+    data = np.empty(num_sys, dtype)
+    no_M33_data = np.copy(halos[0])
+    for f in no_M33_data.dtype.names: no_M33_data[f]=-1
+    mw_dat = halos[host_flag[MW_inds]]
+    m31_dat = halos[host_flag[M31_inds]]
+    m33_dat = np.array([halos[i] if i>0 else no_M33_data for i in M33_inds])
+    for i in range(len(data)):
+        data[i] = tuple(mw_dat[i])+tuple(m31_dat[i])+tuple(m33_dat[i])
+    return data
+
+def get_trip_data(data):
+    trip_data = data[data['M33_id']!=-1]
+    return trip_data

@@ -125,8 +125,11 @@ class Triplet(object):
 
 # ============================================================================
 
-    def read_sim_points(self, path, n_points, halo_props, h=0.7, a=1.0):
-        sim_data = readHlist(path)
+    def read_sim_points(self, path, n_points, halo_props, h=0.7, a=1.0, npy=False):
+        if npy:
+            sim_data = np.load(path)
+        else:
+            sim_data = readHlist(path)
         if sim_data.shape[0] < n_points:
             raise ValueError('n_points too large.')
         np.random.shuffle(sim_data)
@@ -134,7 +137,7 @@ class Triplet(object):
         self.observe_halos(Nsamples=n_points)
 
         self.MW.translate_to(self.MW)
-        self.MW.Mvir = h*self.sim_data['MW_Mvir']
+        self.MW.Mvir = h*self.sim_data['MW_mvir']
 
         self.M31.x = a*h*(self.sim_data['M31_x'] - self.sim_data['MW_x'])
         self.M31.y = a*h*(self.sim_data['M31_y'] - self.sim_data['MW_y'])
@@ -143,7 +146,7 @@ class Triplet(object):
         self.M31.vy = self.sim_data['M31_vy'] - self.sim_data['MW_vy']
         self.M31.vz = self.sim_data['M31_vz'] - self.sim_data['MW_vz']
         self.M31.frame = 'MW'
-        self.M31.Mvir = h*self.sim_data['M31_Mvir']
+        self.M31.Mvir = h*self.sim_data['M31_mvir']
         if not self.isPair:
             self.M33.x = a*h*(self.sim_data['M33_x'] - self.sim_data['MW_x'])
             self.M33.y = a*h*(self.sim_data['M33_y'] - self.sim_data['MW_y'])
@@ -152,7 +155,7 @@ class Triplet(object):
             self.M33.vy = self.sim_data['M33_vy'] - self.sim_data['MW_vy']
             self.M33.vz = self.sim_data['M33_vz'] - self.sim_data['MW_vz']
             self.M33.frame = 'MW'
-            self.M33.Mvir = h*self.sim_data['M33_Mvir']
+            self.M33.Mvir = h*self.sim_data['M33_mvir']
         self.LG_Mvir = self.M31.Mvir + self.MW.Mvir
         return
 # ============================================================================
