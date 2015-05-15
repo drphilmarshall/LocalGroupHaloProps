@@ -5,11 +5,16 @@ sys.path.append('/u/ki/yymao/pyscripts')
 from fast3tree import fast3tree
 
 vmax = int(sys.argv[1])
+base_path = sys.argv[2]
+box_num = int(sys.argv[3])
+
+hlist_path = base_path+str(box_num)+'/'+str(box_num)+'hlist.npy'
 if vmax:
     vmax_cut=80
 else:
     vmax_cut=None
-halos = np.load('/lustre/ki/pfs/mwillia1/LG_project/Consuelo_Boxes/4001hlist.npy')
+
+halos = np.load(hlist_path)
 halos = halos[halos['vmax']>40]
 host_flag = np.where(halos['upid'] == -1)[0]
 
@@ -26,7 +31,7 @@ dat_M33_larger = iso_criteria.criteria.get_data(halos, host_flag, MW_M33_larger,
 trip_dat_M31_larger = iso_criteria.criteria.get_trip_data(dat_M31_larger)
 trip_dat_M33_larger = iso_criteria.criteria.get_trip_data(dat_M33_larger)
 
-save_path = '/lustre/ki/pfs/mwillia1/LG_project/Consuelo_Boxes/4001/'
+save_path = base_path+str(box_num)+'/'
 if vmax:
     np.save(save_path+'dat_M31_larger_vcut.npy', dat_M31_larger)
     np.save(save_path+'dat_M33_larger_vcut.npy', dat_M33_larger)

@@ -1,4 +1,5 @@
 # ======================================================================
+from __future__ import division
 import timingargument
 import localgroup
 import triangle
@@ -7,10 +8,15 @@ import sys
 import pickle
 from sklearn import mixture
 import matplotlib.pyplot as plt
+from scipy.optimize import fsolve
 
 # Make sure Yao-Yuan Mao's "helpers" module is on your PYTHONPATH:
 #   git clone git@bitbucket.org:yymao/helpers.git
 from helpers.SimulationAnalysis import readHlist
+
+
+Dvir_to_D200 = 0.047107689
+D200_to_Dvir = 2.12279568
 # ======================================================================
 
 class Triplet(object):
@@ -138,6 +144,9 @@ class Triplet(object):
 
         self.MW.translate_to(self.MW)
         self.MW.Mvir = h*self.sim_data['MW_mvir']
+        self.MW.Rvir = h*self.sim_data['MW_rvir']
+        self.MW.Rs = h*self.sim_data['MW_rs']
+        self.MW.Cvir = self.MW.Rvir/self.MW.Rs
 
         self.M31.x = a*h*(self.sim_data['M31_x'] - self.sim_data['MW_x'])
         self.M31.y = a*h*(self.sim_data['M31_y'] - self.sim_data['MW_y'])
@@ -147,6 +156,9 @@ class Triplet(object):
         self.M31.vz = self.sim_data['M31_vz'] - self.sim_data['MW_vz']
         self.M31.frame = 'MW'
         self.M31.Mvir = h*self.sim_data['M31_mvir']
+        self.M31.Rvir = h*self.sim_data['M31_rvir']
+        self.M31.Rs = h*self.sim_data['M31_rs']
+        self.M31.Cvir = self.M31.Rvir/self.M31.Rs
         if not self.isPair:
             self.M33.x = a*h*(self.sim_data['M33_x'] - self.sim_data['MW_x'])
             self.M33.y = a*h*(self.sim_data['M33_y'] - self.sim_data['MW_y'])
@@ -156,6 +168,9 @@ class Triplet(object):
             self.M33.vz = self.sim_data['M33_vz'] - self.sim_data['MW_vz']
             self.M33.frame = 'MW'
             self.M33.Mvir = h*self.sim_data['M33_mvir']
+            self.M33.Rvir = h*self.sim_data['M33_rvir']
+            self.M33.Rs = h*self.sim_data['M33_rs']
+            self.M33.Cvir = self.M33.Rvir/self.M33.Rs
         self.LG_Mvir = self.M31.Mvir + self.MW.Mvir
         return
 # ============================================================================
@@ -183,8 +198,17 @@ class Triplet(object):
             plt.title("M33 Consuelo D distribution")
             print "sim_sample length before: ", self.sim_samples.shape
             self.MW.Mvir = self.MW.Mvir[condition]
+            self.MW.Rvir = self.MW.Rvir[condition]
+            self.MW.Rs = self.MW.Rs[condition]
+            self.MW.Cvir = self.MW.Cvir[condition]
             self.M31.Mvir = self.M31.Mvir[condition]
+            self.M31.Rvir = self.M31.Rvir[condition]
+            self.M31.Rs = self.M31.Rs[condition]
+            self.M31.Cvir = self.M31.Cvir[condition]
             self.M33.Mvir = self.M33.Mvir[condition]
+            self.M33.Rvir = self.M33.Rvir[condition]
+            self.M33.Rs = self.M33.Rs[condition]
+            self.M33.Cvir = self.M33.Cvir[condition]
             self.sim_samples = self.sim_samples[condition]
             print "sim_sample length after: ", self.sim_samples.shape
             plt.subplot(2,2,3)
@@ -199,7 +223,13 @@ class Triplet(object):
             plt.title("MW Consuelo D distribution")
             print "sim_sample length before: ", self.sim_samples.shape
             self.MW.Mvir = self.MW.Mvir[condition]
+            self.MW.Rvir = self.MW.Rvir[condition]
+            self.MW.Rs = self.MW.Rs[condition]
+            self.MW.Cvir = self.MW.Cvir[condition]
             self.M31.Mvir = self.M31.Mvir[condition]
+            self.M31.Rvir = self.M31.Rvir[condition]
+            self.M31.Rs = self.M31.Rs[condition]
+            self.M31.Cvir = self.M31.Cvir[condition]
             self.sim_samples = self.sim_samples[condition]
             print "sim_sample length after: ", self.sim_samples.shape
             plt.subplot(2,1,2)
@@ -337,6 +367,31 @@ class Triplet(object):
             return self.MW.D, self.MW.v_r, self.MW.v_t, self.M33.D, self.M33.v_r, self.M33.v_t
 
 # ----------------------------------------------------------------------------
+
+# Theory and expressions from Appendix in http://arxiv.org/pdf/0709.1159v1.pdf
+
+    def calculate_cvir_to_c200(self, cvir):
+        f = lambda x, y=0: x**3*(np.log(1.0+1.0/x) - 1.0/(1+x))-y
+        inv_args = D200_to_Dvir*np.array(map(f, 1.0/cvir))
+        c200 = 1.0/np.array([fsolve(f, [10], y)[0] for y in inv_args])
+        return c200
+
+    def calculate_Mvir_to_M200(self, Mvir, cvir, c200):
+        M200 = Mvir*D200_to_Dvir*(c200/cvir)**3
+        return np.array(M200)
+
+# ============================================================================
+
+
+
+
+
+
+
+
+
+
+
 
 if __name__ == '__main__':
 
