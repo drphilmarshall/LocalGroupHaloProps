@@ -8,7 +8,7 @@ vmax = int(sys.argv[1])
 base_path = sys.argv[2]
 box_num = int(sys.argv[3])
 
-hlist_path = base_path+str(box_num)+'/'+str(box_num)+'hlist.npy'
+hlist_path = base_path+str(box_num)+'/'+str(box_num)+'hlist_0.949.npy'
 if vmax:
     vmax_cut=80
 else:
@@ -33,12 +33,12 @@ trip_dat_M33_larger = iso_criteria.criteria.get_trip_data(dat_M33_larger)
 
 save_path = base_path+str(box_num)+'/'
 if vmax:
-    np.save(save_path+'dat_M31_larger_vcut.npy', dat_M31_larger)
-    np.save(save_path+'dat_M33_larger_vcut.npy', dat_M33_larger)
-    np.save(save_path+'trip_dat_M31_larger_vcut.npy', trip_dat_M31_larger)
-    np.save(save_path+'trip_dat_M33_larger_vcut.npy', trip_dat_M33_larger)
+    np.save(save_path+'dat_M31_larger_vcut_0.949.npy', dat_M31_larger)
+    np.save(save_path+'dat_M33_larger_vcut_0.949.npy', dat_M33_larger)
+    np.save(save_path+'trip_dat_M31_larger_vcut_0.949.npy', trip_dat_M31_larger)
+    np.save(save_path+'trip_dat_M33_larger_vcut_0.949.npy', trip_dat_M33_larger)
 else:
-    np.save(save_path+'dat_M31_larger.npy', dat_M31_larger)
-    np.save(save_path+'dat_M33_larger.npy', dat_M33_larger)
-    np.save(save_path+'trip_dat_M31_larger.npy', trip_dat_M31_larger)
-    np.save(save_path+'trip_dat_M33_larger.npy', trip_dat_M33_larger)
+    np.save(save_path+'dat_M31_larger_0.949.npy', dat_M31_larger)
+    np.save(save_path+'dat_M33_larger_0.949.npy', dat_M33_larger)
+    np.save(save_path+'trip_dat_M31_larger_0.949.npy', trip_dat_M31_larger)
+    np.save(save_path+'trip_dat_M33_larger_0.949.npy', trip_dat_M33_larger)
