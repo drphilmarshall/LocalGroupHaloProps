@@ -42,3 +42,6 @@ nosetests.xml
 .mr.developer.cfg
 .project
 .pydevproject
+
+# Overleaf paper directory (cloned from https://git.overleaf.com/2396345hsjsxd)
+overleaf
