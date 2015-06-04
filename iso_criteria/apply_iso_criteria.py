@@ -8,14 +8,14 @@ vmax = int(sys.argv[1])
 base_path = sys.argv[2]
 box_num = int(sys.argv[3])
 
-hlist_path = base_path+str(box_num)+'/'+str(box_num)+'hlist_0.949.npy'
+hlist_path = base_path+str(box_num)+'/'+str(box_num)+'hlist.npy'
 if vmax:
-    vmax_cut=80
+    vmax_cut=vmax
 else:
     vmax_cut=None
 
 halos = np.load(hlist_path)
-halos = halos[halos['vmax']>40]
+halos = halos[halos['vmax']>80]
 host_flag = np.where(halos['upid'] == -1)[0]
 
 pair_dist = 1.0/0.7 #units of Mpc/h
@@ -33,12 +33,12 @@ trip_dat_M33_larger = iso_criteria.criteria.get_trip_data(dat_M33_larger)
 
 save_path = base_path+str(box_num)+'/'
 if vmax:
-    np.save(save_path+'dat_M31_larger_vcut_0.949.npy', dat_M31_larger)
-    np.save(save_path+'dat_M33_larger_vcut_0.949.npy', dat_M33_larger)
-    np.save(save_path+'trip_dat_M31_larger_vcut_0.949.npy', trip_dat_M31_larger)
-    np.save(save_path+'trip_dat_M33_larger_vcut_0.949.npy', trip_dat_M33_larger)
+    np.save(save_path+'dat_M31_larger_vmax>'+str(vmax)+'.npy', dat_M31_larger)
+    np.save(save_path+'dat_M33_larger_vmax>'+str(vmax)+'.npy', dat_M33_larger)
+    np.save(save_path+'trip_dat_M31_larger_vmax>'+str(vmax)+'.npy', trip_dat_M31_larger)
+    np.save(save_path+'trip_dat_M33_larger_vmax>'+str(vmax)+'.npy', trip_dat_M33_larger)
 else:
-    np.save(save_path+'dat_M31_larger_0.949.npy', dat_M31_larger)
-    np.save(save_path+'dat_M33_larger_0.949.npy', dat_M33_larger)
-    np.save(save_path+'trip_dat_M31_larger_0.949.npy', trip_dat_M31_larger)
-    np.save(save_path+'trip_dat_M33_larger_0.949.npy', trip_dat_M33_larger)
+    np.save(save_path+'dat_M31_larger_vres80.npy', dat_M31_larger)
+    np.save(save_path+'dat_M33_larger_vres80.npy', dat_M33_larger)
+    np.save(save_path+'trip_dat_M31_larger_vres80.npy', trip_dat_M31_larger)
+    np.save(save_path+'trip_dat_M33_larger_vres80.npy', trip_dat_M33_larger)

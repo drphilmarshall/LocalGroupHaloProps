@@ -9,5 +9,7 @@ base_path = '/nfs/slac/g/ki/ki20/cosmo/behroozi/Consuelo/'
 box = int(sys.argv[1])
 
 #os.mkdir('/lustre/ki/pfs/mwillia1/LG_project/Consuelo_Boxes/'+str(box))
-halos = readHlist(base_path+str(box)+'/hlists/hlist_0.94900.list')
-np.save('/lustre/ki/pfs/mwillia1/LG_project/Consuelo_Boxes/'+str(box)+'/'+str(box)+'hlist_0.949.npy', halos)
+halos = readHlist(base_path+str(box)+'/hlists/hlist_1.00000.list')
+
+np.save('/afs/slac.stanford.edu/u/ki/mwillia1/Thesis/LocalGroupHaloProps/iso_criteria', halos)
+#np.save('/lustre/ki/pfs/mwillia1/LG_project/Consuelo_Boxes/'+str(box)+'/'+str(box)+'hlist', halos)
