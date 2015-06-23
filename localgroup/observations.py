@@ -114,6 +114,17 @@ class Observations(object):
         # from Brunthaler++2005, page 4:  mu_west = -23.2 +/- 6.8 (4.7+18.5)
         #                                 mu_north = 7.5 +/- 8.8
 
+
+        self.data['LMC']['RA'] = [80.8939, 0.0,'Delta'] # deg, NED
+        self.data['LMC']['DEC'] = [-69.7561, 0.0,'Delta'] # deg, NED
+        self.data['LMC']['l'] = [280.4653,0.0,'Delta'] # deg, NED
+        self.data['LMC']['b'] = [-32.8883,0.0,'Delta'] # deg, NED
+        self.data['LMC']['D']  = [0.50,0.025,'Gaussian'] # vdM02_LMC Mpc
+        self.data['LMC']['mu_west'] = [-1910.0,20.0,'Gaussian'] # Kallavayalil13 muas
+        self.data['LMC']['mu_north'] = [229.0,47.0,'Gaussian'] # Kallavayalil13 muas
+        self.data['LMC']['v_r'] = [262.2,3.4,'Gaussian'] # vdMG02_LMC, km/s
+
+
         return
 
 # ======================================================================
