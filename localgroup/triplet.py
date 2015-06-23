@@ -131,7 +131,7 @@ class Triplet(object):
 
 # ============================================================================
 
-    def read_sim_points(self, path, n_points, halo_props, h=0.7, a=1.0, npy=False):
+    def read_sim_points(self, path, n_points, halo_props, h=0.7, a=1.0, npy=False, M31_larger=True):
         if npy:
             sim_data = np.load(path)
         else:
@@ -141,36 +141,62 @@ class Triplet(object):
         np.random.shuffle(sim_data)
         self.sim_data = sim_data[:n_points]
         self.observe_halos(Nsamples=n_points)
-
+        
+        larger = 'M31_'
+        smaller = 'MW_'
+        larger_sub = 'M33_' #sub of larger host
+        smaller_sub = 'LMC_' # sub of smaller host
+        if not M31_larger:
+            # Assign MW label to the larger halo in the data file
+            larger = 'MW_'
+            smaller = 'M31_'
+            larger_sub = 'LMC_'
+            smaller_sub = 'M33_'
+        
         self.MW.translate_to(self.MW)
-        self.MW.Mvir = h*self.sim_data['MW_mvir']
-        self.MW.Rvir = h*self.sim_data['MW_rvir']
-        self.MW.Rs = h*self.sim_data['MW_rs']
+        self.MW.Mvir = h*self.sim_data[smaller+'mvir']
+        self.MW.Rvir = h*self.sim_data[smaller+'rvir']
+        self.MW.Rs = h*self.sim_data[smaller+'rs']
         self.MW.Cvir = self.MW.Rvir/self.MW.Rs
 
-        self.M31.x = a*h*(self.sim_data['M31_x'] - self.sim_data['MW_x'])
-        self.M31.y = a*h*(self.sim_data['M31_y'] - self.sim_data['MW_y'])
-        self.M31.z = a*h*(self.sim_data['M31_z'] - self.sim_data['MW_z'])
-        self.M31.vx = self.sim_data['M31_vx'] - self.sim_data['MW_vx']
-        self.M31.vy = self.sim_data['M31_vy'] - self.sim_data['MW_vy']
-        self.M31.vz = self.sim_data['M31_vz'] - self.sim_data['MW_vz']
+        self.M31.x = a*h*(self.sim_data[larger+'x'] - self.sim_data[smaller+'x'])
+        self.M31.y = a*h*(self.sim_data[larger+'y'] - self.sim_data[smaller+'y'])
+        self.M31.z = a*h*(self.sim_data[larger+'z'] - self.sim_data[smaller+'z'])
+        self.M31.vx = self.sim_data[larger+'vx'] - self.sim_data[smaller+'vx']
+        self.M31.vy = self.sim_data[larger+'vy'] - self.sim_data[smaller+'vy']
+        self.M31.vz = self.sim_data[larger+'vz'] - self.sim_data[smaller+'vz']
         self.M31.frame = 'MW'
-        self.M31.Mvir = h*self.sim_data['M31_mvir']
-        self.M31.Rvir = h*self.sim_data['M31_rvir']
-        self.M31.Rs = h*self.sim_data['M31_rs']
+        self.M31.Mvir = h*self.sim_data[larger+'mvir']
+        self.M31.Rvir = h*self.sim_data[larger+'rvir']
+        self.M31.Rs = h*self.sim_data[larger+'rs']
         self.M31.Cvir = self.M31.Rvir/self.M31.Rs
         if not self.isPair:
-            self.M33.x = a*h*(self.sim_data['M33_x'] - self.sim_data['MW_x'])
-            self.M33.y = a*h*(self.sim_data['M33_y'] - self.sim_data['MW_y'])
-            self.M33.z = a*h*(self.sim_data['M33_z'] - self.sim_data['MW_z'])
-            self.M33.vx = self.sim_data['M33_vx'] - self.sim_data['MW_vx']
-            self.M33.vy = self.sim_data['M33_vy'] - self.sim_data['MW_vy']
-            self.M33.vz = self.sim_data['M33_vz'] - self.sim_data['MW_vz']
+            self.M33.x = a*h*(self.sim_data[larger_sub+'x'] - self.sim_data[smaller+'x'])
+            self.M33.y = a*h*(self.sim_data[larger_sub+'y'] - self.sim_data[smaller+'y'])
+            self.M33.z = a*h*(self.sim_data[larger_sub+'z'] - self.sim_data[smaller+'z'])
+            self.M33.vx = self.sim_data[larger_sub+'vx'] - self.sim_data[smaller+'vx']
+            self.M33.vy = self.sim_data[larger_sub+'vy'] - self.sim_data[smaller+'vy']
+            self.M33.vz = self.sim_data[larger_sub+'vz'] - self.sim_data[smaller+'vz']
             self.M33.frame = 'MW'
-            self.M33.Mvir = h*self.sim_data['M33_mvir']
-            self.M33.Rvir = h*self.sim_data['M33_rvir']
-            self.M33.Rs = h*self.sim_data['M33_rs']
+            self.M33.Mvir = h*self.sim_data[larger_sub+'mvir']
+            self.M33.Rvir = h*self.sim_data[larger_sub+'rvir']
+            self.M33.Rs = h*self.sim_data[larger_sub+'rs']
             self.M33.Cvir = self.M33.Rvir/self.M33.Rs
+
+            
+            self.LMC.x = a*h*(self.sim_data[smaller_sub+'x'] - self.sim_data[smaller+'x'])
+            self.LMC.y = a*h*(self.sim_data[smaller_sub+'y'] - self.sim_data[smaller+'y'])
+            self.LMC.z = a*h*(self.sim_data[smaller_sub+'z'] - self.sim_data[smaller+'z'])
+            self.LMC.vx = self.sim_data[smaller_sub+'vx'] - self.sim_data[smaller+'vx']
+            self.LMC.vy = self.sim_data[smaller_sub+'vy'] - self.sim_data[smaller+'vy']
+            self.LMC.vz = self.sim_data[smaller_sub+'vz'] - self.sim_data[smaller+'vz']
+            self.LMC.frame = 'MW'
+            self.LMC.Mvir = h*self.sim_data[smaller_sub+'mvir']
+            self.LMC.Rvir = h*self.sim_data[smaller_sub+'rvir']
+            self.LMC.Rs = h*self.sim_data[smaller_sub+'rs']
+            self.LMC.Cvir = self.M33.Rvir/self.M33.Rs
+
+            
         self.LG_Mvir = self.M31.Mvir + self.MW.Mvir
         return
 # ============================================================================
