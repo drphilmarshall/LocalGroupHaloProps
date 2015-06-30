@@ -39,6 +39,7 @@ class Observations(object):
         self.data['MW'] = dict()
         self.data['M31'] = dict()
         self.data['M33'] = dict()
+        self.data['LMC'] = dict()
         self.assignment()
         return 
 
@@ -119,11 +120,14 @@ class Observations(object):
         self.data['LMC']['DEC'] = [-69.7561, 0.0,'Delta'] # deg, NED
         self.data['LMC']['l'] = [280.4653,0.0,'Delta'] # deg, NED
         self.data['LMC']['b'] = [-32.8883,0.0,'Delta'] # deg, NED
-        self.data['LMC']['D']  = [0.50,0.025,'Gaussian'] # vdM02_LMC Mpc
-        self.data['LMC']['mu_west'] = [-1910.0,20.0,'Gaussian'] # Kallavayalil13 muas
-        self.data['LMC']['mu_north'] = [229.0,47.0,'Gaussian'] # Kallavayalil13 muas
-        self.data['LMC']['v_r'] = [262.2,3.4,'Gaussian'] # vdMG02_LMC, km/s
-
+        self.data['LMC']['D']  = [0.050,0.0025,'Gaussian'] # vdM02_LMC Mpc
+        self.data['LMC']['mu_west'] = [-1680.0,160.0,'Gaussian'] # Kallavayalil13 muas
+        self.data['LMC']['mu_north'] = [340.0,160.0,'Gaussian'] # Kallavayalil13 muas
+        self.data['LMC']['v_r'] = [262.0,3.4,'Gaussian'] # vdMG02_LMC, km/s
+        self.data['LMC']['deltavrot_west'] = [0.0, 0.0, 'Delta'] # vdMG08, km/s, derived from B++05
+        self.data['LMC']['deltavrot_north'] = [0.0, 0.0, 'Delta'] # vdMG08, km/s, derived from B++05
+        self.data['LMC']['v_west'] = [-399, 40.8, 'Gaussian']
+        self.data['LMC']['v_north'] = [80.0, 40.4, 'Gaussian']
 
         return
 

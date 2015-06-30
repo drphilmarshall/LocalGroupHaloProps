@@ -89,20 +89,6 @@ class Halo(object):
             self.vy              = localgroup.draw(obs['vy'],Nsamples)
             self.vz              = localgroup.draw(obs['vz'],Nsamples)
 
-        elif self.name == 'LMC':
-
-            self.RA              = localgroup.draw(obs['RA'],Nsamples)
-            self.DEC             = localgroup.draw(obs['DEC'],Nsamples)
-            self.l               = localgroup.draw(obs['l'],Nsamples)
-            self.b               = localgroup.draw(obs['b'],Nsamples)
-            self.D               = localgroup.draw(obs['D'],Nsamples)
-            self.mu_west         = localgroup.draw(obs['mu_west'],Nsamples)
-            self.mu_north        = localgroup.draw(obs['mu_north'],Nsamples)
-            self.v_r             = localgroup.draw(obs['v_r'],Nsamples)
-            #self.v_west = localgroup.draw(obs['v_west'], Nsamples)
-            #self.v_north = localgroup.draw(obs['v_north'], Nsamples)
-
-
                
         else:   #Called for M31 and M33
          
@@ -117,7 +103,7 @@ class Halo(object):
             self.mu_north        = localgroup.draw(obs['mu_north'],Nsamples)
             self.deltavrot_north = localgroup.draw(obs['deltavrot_north'],Nsamples)
             self.v_r             = localgroup.draw(obs['v_r'],Nsamples)
-            if self.name == 'M31':
+            if self.name == 'M31' or self.name== 'LMC':
                 self.v_west = localgroup.draw(obs['v_west'], Nsamples)
                 self.v_north = localgroup.draw(obs['v_north'], Nsamples)
 

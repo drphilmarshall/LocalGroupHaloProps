@@ -97,6 +97,9 @@ class Triplet(object):
             self.M33 = localgroup.Halo('M33')
             self.M33.sample_from(obs.data['M33'],Nsamples)
 
+            self.LMC = localgroup.Halo('LMC')
+            self.LMC.sample_from(obs.data['LMC'], Nsamples)
+
         self.Nsamples = Nsamples
 
         return
@@ -116,15 +119,19 @@ class Triplet(object):
             if not self.isPair:
                 self.M33.x, self.M33.y, self.M33.z, self.M33.vx, self.M33.vy, self.M33.vz = localgroup.heliocentric_equatorial_spherical_to_galactocentric_cartesian(self.M33.RA,self.M33.DEC,self.M33.D,self.M33.mu_west,self.M33.mu_north,self.M33.v_r, self.M33.deltavrot_west, self.M33.deltavrot_north, R0=self.MW.x, VX=self.MW.vx, V0=self.MW.vy, VZ=self.MW.vz, M31=False)
                 self.M33.frame = 'MW'
-
+                                
+                self.LMC.x, self.LMC.y, self.LMC.z, self.LMC.vx, self.LMC.vy, self.LMC.vz = localgroup.heliocentric_equatorial_spherical_to_galactocentric_cartesian(self.LMC.RA,self.LMC.DEC,self.LMC.D,self.LMC.mu_west,self.LMC.mu_north,self.LMC.v_r, self.LMC.deltavrot_west, self.LMC.deltavrot_north, R0=self.MW.x, VX=self.MW.vx, V0=self.MW.vy, VZ=self.MW.vz, M31=False)
+                self.LMC.frame = 'MW'
             # First we translate the MW positions from heliocentric
             # cartesian to galactocentric cartesian.
+            #self.LMC.translate_to(self.MW)
             self.MW.translate_to(self.MW) #NOTE: This must be after heliocentric_equatorial_spherical_to_galactocentric_cartesian calls
-
+            #self.LMC.translate_to(self.MW)
         # Now we can finally translate to M31 frame
         self.MW.translate_to(self.M31)
         if not self.isPair:
             self.M33.translate_to(self.M31)
+            self.LMC.translate_to(self.M31)
         self.M31.translate_to(self.M31) #NOTE: This must be last
         if sim: self.sim_samples = np.transpose(np.array(self.get_kinematics()))
         return
@@ -390,7 +397,7 @@ class Triplet(object):
         if self.isPair:
             return self.MW.D, self.MW.v_r, self.MW.v_t
         else:
-            return self.MW.D, self.MW.v_r, self.MW.v_t, self.M33.D, self.M33.v_r, self.M33.v_t
+            return self.MW.D, self.MW.v_r, self.MW.v_t, self.M33.D, self.M33.v_r, self.M33.v_t, self.LMC.D, self.LMC.v_r, self.LMC.v_t
 
 # ----------------------------------------------------------------------------
 
@@ -424,7 +431,7 @@ if __name__ == '__main__':
     t = Triplet()
     t.observe_halos(Nsamples=200000)
     t.transform_to_M31()
-    D_MW, vr_MW, vt_MW, D_M33, vr_M33, vt_M33 = t.get_kinematics()
+    D_MW, vr_MW, vt_MW, D_M33, vr_M33, vt_M33, D_LMC, vr_LMC, vt_LMC = t.get_kinematics()
 
     print "Kinematics of first and 100th MW object: "
     i = 0
@@ -484,6 +491,7 @@ if __name__ == '__main__':
     #print np.mean(t.MW.vx), np.mean(t.MW.vy), np.mean(t.MW.vz)
     t.M31.translate_to(t.MW)
     t.M33.translate_to(t.MW)
+    t.LMC.translate_to(t.MW)
     t.MW.translate_to(t.MW)
 
     # What is the space motion of M31? (eq 3 of vdM12)
@@ -512,3 +520,8 @@ if __name__ == '__main__':
     print "M33 velocity: ",np.mean(t.M33.vx),'+/-',np.std(t.M33.vx),', ', \
                            np.mean(t.M33.vy),'+/-',np.std(t.M33.vy),', ', \
                            np.mean(t.M33.vz),'+/-',np.std(t.M33.vz)
+
+    print "LMC position: ",np.mean(t.LMC.x),np.mean(t.LMC.y),np.mean(t.LMC.z)
+    print "LMC velocity: ",np.mean(t.LMC.vx),'+/-',np.std(t.LMC.vx),', ', \
+                           np.mean(t.LMC.vy),'+/-',np.std(t.LMC.vy),', ', \
+                           np.mean(t.LMC.vz),'+/-',np.std(t.LMC.vz)
