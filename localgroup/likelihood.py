@@ -67,7 +67,7 @@ class Likelihood(object):
             self.labels = ["$D^{\\rm MW} Mpc$", "$v_{\\rm rad}^{\\rm MW} km/s$", "$v_{\\rm tan}^{\\rm MW} km/s$"]
         else:
             # self.labs = ["MW_D", "MW_vr", "MW_vt", "M33_D", "M33_vr", "M33_vt"]
-            self.labels = ["$D^{\\rm MW} Mpc$", "$v_{\\rm rad}^{\\rm MW} km/s$", "$v_{\\rm tan}^{\\rm MW} km/s$", "$D^{\\rm M33} Mpc$", "$v_{\\rm rad}^{\\rm M33} km/s$", "$v_{\\rm tan}^{\\rm M33} km/s$"]
+            self.labels = ["$D^{\\rm MW} Mpc$", "$v_{\\rm rad}^{\\rm MW} km/s$", "$v_{\\rm tan}^{\\rm MW} km/s$", "$D^{\\rm M33} Mpc$", "$v_{\\rm rad}^{\\rm M33} km/s$", "$v_{\\rm tan}^{\\rm M33} km/s$","$D^{\\rm LMC} Mpc$", "$v_{\\rm rad}^{\\rm LMC} km/s$", "$v_{\\rm tan}^{\\rm LMC} km/s$"]
 
         return
 
@@ -114,12 +114,11 @@ class Likelihood(object):
 
     def evaluate(self, points, mode="GMM"):
         if (mode == "GMM"):
-            logprobs, resps = self.PDF.score_samples(points)
+            logprobs = self.PDF.score_mem(points)
         else:
             raise ValueError("Unrecognised approximation mode %s" % mode )
 
-        return logprobs, resps
-
+        return logprobs
 # ======================================================================
 
     def model_gof(self, n_points, color, fig=None, mode="GMM"):

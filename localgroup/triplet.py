@@ -124,15 +124,18 @@ class Triplet(object):
                 self.LMC.frame = 'MW'
             # First we translate the MW positions from heliocentric
             # cartesian to galactocentric cartesian.
-            #self.LMC.translate_to(self.MW)
             self.MW.translate_to(self.MW) #NOTE: This must be after heliocentric_equatorial_spherical_to_galactocentric_cartesian calls
-            #self.LMC.translate_to(self.MW)
-        # Now we can finally translate to M31 frame
-        self.MW.translate_to(self.M31)
-        if not self.isPair:
+            self.LMC.translate_to(self.MW)
+            self.M31.translate_to(self.MW)
             self.M33.translate_to(self.M31)
-            self.LMC.translate_to(self.M31)
-        self.M31.translate_to(self.M31) #NOTE: This must be last
+      # Now we can finally translate to M31 frame
+#        self.MW.translate_to(self.M31)
+#        if not self.isPair:
+#            self.M33.translate_to(self.M31)
+#            self.LMC.translate_to(self.M31)
+#        self.M31.translate_to(self.M31) #NOTE: This must be last
+        #self.M31.translate_to(self.MW)
+#        if not self.isPair: self.LMC.translate_to(self.MW)
         if sim: self.sim_samples = np.transpose(np.array(self.get_kinematics()))
         return
 
@@ -319,28 +322,39 @@ class Triplet(object):
         return
 # ============================================================================
 
-    def compute_model_weights(self, L, mode, normalize=True):
+    def normalize_weights(self):
+        total_weight = self.weights.sum()
+        self.weights = 1.0/total_weight*self.weights 
+        return
+
+    def compute_model_weights(self, L, mode, normalize=True, split=1):
+
+        all_weights = np.empty(0)
         if mode == 'sim':
-            weights = np.exp(L.evaluate(self.sim_samples)[0])
+            split_samples = np.split(self.sim_samples, split)
         elif mode == 'gmm':
-            weights = np.exp(L.evaluate(self.gmm_samples)[0])
-        #minw = weights.min()
-        #weights = weights - minw
-        total_weight = weights.sum()
-        self.weights = 1.0/total_weight*weights
+            split_samples = np.split(self.gmm_samples, split)
+        
+        for sample in split_samples:
+            weights = np.exp(L.evaluate(sample))
+            all_weights_len = all_weights.shape[0]
+            all_weights.resize(all_weights_len+weights.shape[0])
+            all_weights[all_weights_len:] = weights
+        self.weights = all_weights
+        if normalize: self.normalize_weights()
         return
 
 # ============================================================================
-    def calculate_N95(self):
+    def calculate_N95(self, level=0.95):
         weights_copy = np.copy(self.weights)
         weights_copy.sort()
         weights_copy = weights_copy[::-1]
         sum = 0
         count = 0
-        while sum < 0.95:
+        while sum < level:
             sum = sum + weights_copy[count]
             count = count + 1
-        return count
+        return count, weights_copy[count]
 # ============================================================================
     def preprocess(self, means, stds, mode):
         if mode == 'sim':
@@ -375,7 +389,7 @@ class Triplet(object):
             labels = ["$D^{\\rm MW} Mpc$", "$v_{\\rm rad}^{\\rm MW} km/s$", "$v_{\\rm tan}^{\\rm MW} km/s$"]
         else:
             # labs = ["MW_D", "MW_vr", "MW_vt", "M33_D", "M33_vr", "M33_vt"]
-            labels = ["$D^{\\rm MW} Mpc$", "$v_{\\rm rad}^{\\rm MW} km/s$", "$v_{\\rm tan}^{\\rm MW} km/s$", "$D^{\\rm M33} Mpc$", "$v_{\\rm rad}^{\\rm M33} km/s$", "$v_{\\rm tan}^{\\rm M33} km/s$"]
+            labels = ["$D^{\\rm MW} Mpc$", "$v_{\\rm rad}^{\\rm MW} km/s$", "$v_{\\rm tan}^{\\rm MW} km/s$", "$D^{\\rm M33} Mpc$", "$v_{\\rm rad}^{\\rm M33} km/s$", "$v_{\\rm tan}^{\\rm M33} km/s$", "$D^{\\rm LMC} Mpc$", "$v_{\\rm rad}^{\\rm LMC} km/s$", "$v_{\\rm tan}^{\\rm LMC} km/s$"]
 
         if self.isPair:
             figure = triangle.corner(data, labels=labels, quantiles=[0.16,0.5,0.84], fig=fig, show_titles=True, title_args={"fontsize": 12}, label_args={"fontsize": 16}, color=color)
@@ -395,9 +409,9 @@ class Triplet(object):
 
     def get_kinematics(self):
         if self.isPair:
-            return self.MW.D, self.MW.v_r, self.MW.v_t
+            return self.M31.D, self.M31.v_r, self.M31.v_t
         else:
-            return self.MW.D, self.MW.v_r, self.MW.v_t, self.M33.D, self.M33.v_r, self.M33.v_t, self.LMC.D, self.LMC.v_r, self.LMC.v_t
+            return self.M31.D, self.M31.v_r, self.M31.v_t, self.M33.D, self.M33.v_r, self.M33.v_t, self.LMC.D, self.LMC.v_r, self.LMC.v_t
 
 # ----------------------------------------------------------------------------
 
@@ -489,10 +503,10 @@ if __name__ == '__main__':
 
     print "Calculating Galactocentric quantities..."
     #print np.mean(t.MW.vx), np.mean(t.MW.vy), np.mean(t.MW.vz)
-    t.M31.translate_to(t.MW)
-    t.M33.translate_to(t.MW)
-    t.LMC.translate_to(t.MW)
-    t.MW.translate_to(t.MW)
+#    t.M31.translate_to(t.MW)
+#    t.M33.translate_to(t.MW)
+##    t.LMC.translate_to(t.MW)
+#    t.MW.translate_to(t.MW)
 
     # What is the space motion of M31? (eq 3 of vdM12)
 
