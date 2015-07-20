@@ -125,9 +125,9 @@ class Triplet(object):
             # First we translate the MW positions from heliocentric
             # cartesian to galactocentric cartesian.
             self.MW.translate_to(self.MW) #NOTE: This must be after heliocentric_equatorial_spherical_to_galactocentric_cartesian calls
-            self.LMC.translate_to(self.MW)
-            self.M31.translate_to(self.MW)
-            self.M33.translate_to(self.M31)
+        self.LMC.translate_to(self.MW)
+        self.M31.translate_to(self.MW)
+        self.M33.translate_to(self.M31)
       # Now we can finally translate to M31 frame
 #        self.MW.translate_to(self.M31)
 #        if not self.isPair:
