@@ -64,10 +64,10 @@ class Likelihood(object):
 
         if self.T.isPair:
             # self.labs = ["MW_D", "MW_vr", "MW_vt"]
-            self.labels = ["$D^{\\rm MW} Mpc$", "$v_{\\rm rad}^{\\rm MW} km/s$", "$v_{\\rm tan}^{\\rm MW} km/s$"]
+            self.labels = ["$D^{\\rm M31} Mpc$", "$v_{\\rm rad}^{\\rm M31} km/s$", "$v_{\\rm tan}^{\\rm M31} km/s$"]
         else:
             # self.labs = ["MW_D", "MW_vr", "MW_vt", "M33_D", "M33_vr", "M33_vt"]
-            self.labels = ["$D^{\\rm MW} Mpc$", "$v_{\\rm rad}^{\\rm MW} km/s$", "$v_{\\rm tan}^{\\rm MW} km/s$", "$D^{\\rm M33} Mpc$", "$v_{\\rm rad}^{\\rm M33} km/s$", "$v_{\\rm tan}^{\\rm M33} km/s$","$D^{\\rm LMC} Mpc$", "$v_{\\rm rad}^{\\rm LMC} km/s$", "$v_{\\rm tan}^{\\rm LMC} km/s$"]
+            self.labels = ["$D^{\\rm M31} Mpc$", "$v_{\\rm rad}^{\\rm M31} km/s$", "$v_{\\rm tan}^{\\rm M31} km/s$", "$D^{\\rm M33} Mpc$", "$v_{\\rm rad}^{\\rm M33} km/s$", "$v_{\\rm tan}^{\\rm M33} km/s$","$D^{\\rm LMC} Mpc$", "$v_{\\rm rad}^{\\rm LMC} km/s$", "$v_{\\rm tan}^{\\rm LMC} km/s$"]
 
         return
 
@@ -127,6 +127,7 @@ class Likelihood(object):
         if (mode == "GMM"):
             drawn_points = self.PDF.sample(n_samples=n_points)*self.samples_stds + self.samples_means
             drawn_points = drawn_points[drawn_points[:,2] > 0]
+            drawn_points = drawn_points[drawn_points[:,8] > 0]
             figure = triangle.corner(drawn_points, labels=self.labels, quantiles=[0.16,0.5,0.84], fig=fig, show_titles=True, title_args={"fontsize": 12}, label_args={"fontsize": 16}, color=color, verbose=False)
         else:
             raise ValueError("Unrecognized approximation mode %s" % mode)
