@@ -103,8 +103,12 @@ class Observations(object):
         #                                 mu_north = 7.5 +/- 8.8
 
 
-        self.data['LMC']['RA'] = [80.8939, 0.0,'Delta'] # deg, NED
-        self.data['LMC']['DEC'] = [-69.7561, 0.0,'Delta'] # deg, NED
+        #self.data['LMC']['RA'] = [80.8939, 0.0,'Delta'] # deg, NED
+        #self.data['LMC']['DEC'] = [-69.7561, 0.0,'Delta'] # deg, NED
+
+        self.data['LMC']['RA'] = [78.76, 0.52,'Gaussian'] # deg, NED
+        self.data['LMC']['DEC'] = [-69.19, 0.25,'Gaussian'] # deg, NED
+
         self.data['LMC']['l'] = [280.4653,0.0,'Delta'] # deg, NED
         self.data['LMC']['b'] = [-32.8883,0.0,'Delta'] # deg, NED
         self.data['LMC']['D']  = [0.050,1*0.0025,'Gaussian'] # vdM02_LMC Mpc
