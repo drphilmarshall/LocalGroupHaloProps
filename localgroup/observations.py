@@ -68,17 +68,10 @@ class Observations(object):
         self.data['M31']['v_north'] = [-73.8, 28.4, 'Gaussian']
         
         self.data['M31']['mu_west'] = [-42.2,12.3,'Gaussian'] # Sohn++12, muas/yr, does not contain rotation correction, see vdM++12 for corrections
-    #    self.data['M31']['mu_west'] = [-34.28,8.434,'Gaussian'] # Sohn++12, muas/yr, does not contain rotation correction, see vdM++12 for corrections
-        #self.data['M31']['deltavrot_west'] = [8.7, 13.9, 'Gaussian'] # vdM++12, km/s, calculated from numbers in section 2.2
         self.data['M31']['deltavrot_west'] = [-28.8, 0.0, 'Delta'] # vdM++12, km/s, calculated from numbers in section 2.2
-        #self.data['M31']['deltavrot_west'] = [12.27, 0.0, 'Delta']
         self.data['M31']['mu_north'] = [-30.9,11.7,'Gaussian'] # S++12, muas/yr, does not contain rotation correction
-      #  self.data['M31']['mu_north'] = [-20.21,7.776,'Gaussian'] # S++12, muas/yr, does not contain rotation correction
-        #self.data['M31']['deltavrot_north'] = [4.3, 13.6, 'Gaussian'] # vdM++12, km/s, calculated from numbers in section 2.2
         self.data['M31']['deltavrot_north'] = [-39.0, 0.0, 'Delta'] # vdM++12, km/s, calculated from numbers in section 2.2
 
-    #    self.data['M31']['mu_west'] = [-44.6,12.9,'Gaussian'] # Sohn++12, muas/yr, does not contain rotation correction, see vdM++12 for corrections
-    #    self.data['M31']['mu_north'] = [-32.1,12.3,'Gaussian'] # S++12, muas/yr, does not contain rotation correction
         self.data['M31']['v_r'] = [-301.0,1.0,'Gaussian']  # vdMG08, km/s
 
         # How were deltavrots derived?
@@ -101,20 +94,8 @@ class Observations(object):
         self.data['M33']['l'] = [133.6101611,0.0,'Delta'] # deg, NED
         self.data['M33']['b'] = [-31.3305875,0.0,'Delta'] # deg, NED
         self.data['M33']['D']  = [0.794,0.023,'Gaussian'] # M++04, vdMG08, Mpc
-        # vrot corrections below {
-        self.data['M33']['mu_west'] = [-4.7,3.2,'Gaussian'] # vDMG08, B++05, B++07 muas/yr
-        self.data['M33']['deltavrot_west'] = [70.0, 23.0, 'Gaussian'] # vdMG08, km/s, derived from B++05
-        self.data['M33']['mu_north'] = [-14.1,6.4,'Gaussian'] # vDMG08, B++05, B++07 muas/yr
-        self.data['M33']['deltavrot_north'] = [-81.0, 23.0, 'Gaussian'] # vdMG08, km/s, derived from B++05
-         
-   #     self.data['M33']['mu_west'] = [-4.7,3.2,'Gaussian'] # vDMG08, B++05, B++07 muas/yr
-    #    self.data['M33']['deltavrot_west'] = [18.5, 6.0, 'Gaussian'] # vdMG08, km/s, derived from B++05
-     #   self.data['M33']['mu_north'] = [-14.1,6.4,'Gaussian'] # vDMG08, B++05, B++07 muas/yr
-      #  self.data['M33']['deltavrot_north'] = [21.6, 6.0, 'Gaussian'] # vdMG08, km/s, derived from B++05
-
-   # end vrot corrections }
-   #     self.data['M33']['mu_west'] = [-23.2,6.8,'Gaussian'] # B++05 muas/yr
-   #     self.data['M33']['mu_north'] = [7.5,8.8,'Gaussian'] # B++05 muas/yr
+        self.data['M33']['mu_west'] = [-23.2,6.8,'Gaussian'] # B++05 muas/yr
+        self.data['M33']['mu_north'] = [7.5,8.8,'Gaussian'] # B++05 muas/yr
         self.data['M33']['v_r'] = [-180.0,1.0,'Gaussian'] # vdMG08, km/s
 
         # We may be able to ignore the deltavrot numbers by using the values
@@ -126,12 +107,10 @@ class Observations(object):
         self.data['LMC']['DEC'] = [-69.7561, 0.0,'Delta'] # deg, NED
         self.data['LMC']['l'] = [280.4653,0.0,'Delta'] # deg, NED
         self.data['LMC']['b'] = [-32.8883,0.0,'Delta'] # deg, NED
-        self.data['LMC']['D']  = [0.050,4*0.0025,'Gaussian'] # vdM02_LMC Mpc
-        self.data['LMC']['mu_west'] = [-1910.0,4*160.0,'Gaussian'] # Kallavayalil13 muas
-        self.data['LMC']['mu_north'] = [229.0,4*160.0,'Gaussian'] # Kallavayalil13 muas
+        self.data['LMC']['D']  = [0.050,1*0.0025,'Gaussian'] # vdM02_LMC Mpc
+        self.data['LMC']['mu_west'] = [-1910.0,1*160.0,'Gaussian'] # Kallavayalil13 muas
+        self.data['LMC']['mu_north'] = [229.0,1*160.0,'Gaussian'] # Kallavayalil13 muas
         self.data['LMC']['v_r'] = [262.0,3.4,'Gaussian'] # vdMG02_LMC, km/s
-        self.data['LMC']['deltavrot_west'] = [0.0, 0.0, 'Delta'] # vdMG08, km/s, derived from B++05
-        self.data['LMC']['deltavrot_north'] = [0.0, 0.0, 'Delta'] # vdMG08, km/s, derived from B++05
         self.data['LMC']['v_west'] = [-399, 40.8, 'Gaussian']
         self.data['LMC']['v_north'] = [80.0, 40.4, 'Gaussian']
 

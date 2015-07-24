@@ -76,8 +76,8 @@ def spherical_to_cartesian(RA,DEC,D,mu_west,mu_north,v_r,deltavrot_west, deltavr
 
     # Convert mu to v
     if not halo=='M31':
-        v_west = -mu_west*muaspyrMpc2kmps*D + 1*deltavrot_west
-        v_north = mu_north*muaspyrMpc2kmps*D - 1*deltavrot_north
+        v_west = -mu_west*muaspyrMpc2kmps*D
+        v_north = mu_north*muaspyrMpc2kmps*D
     else:
         v_west = -mu_west
         v_north = mu_north
@@ -93,7 +93,7 @@ def spherical_to_cartesian(RA,DEC,D,mu_west,mu_north,v_r,deltavrot_west, deltavr
 # Transformation from Heliocentric Galactic Cartesian system to Galactocentric Cartesian.
 # NOTE: The different definitions of the axis directions.
 
-def heliocentric_galactic_cartesian_to_galactocentric_cartesian(xh,yh,zh,vxh,vyh,vzh,R0=0.00829,VX=-11,V0=-239,VZ=-7):
+def heliocentric_galactic_cartesian_to_galactocentric_cartesian(xh,yh,zh,vxh,vyh,vzh,R0, VX, V0, VZ):
 
     xg = xh - R0
     yg = yh
@@ -108,8 +108,9 @@ def heliocentric_galactic_cartesian_to_galactocentric_cartesian(xh,yh,zh,vxh,vyh
 # Transforms from Heliocentric equatorial spherical coordinates (ra, dec, etc...) to
 # galactocentric cartesian coordinates (x,y,z, etc).
 # NOTE:  Add optional argument to take care of internal rotation.
+#def heliocentric_equatorial_spherical_to_galactocentric_cartesian(ra, dec, d, mu_w, mu_n, v_r, dvrot_w, dvrot_n, R0=0.00829, VX=-11, V0=-239, VZ=-7, halo='M31'):
 
-def heliocentric_equatorial_spherical_to_galactocentric_cartesian(ra, dec, d, mu_w, mu_n, v_r, dvrot_w, dvrot_n, R0=0.00829, VX=-11, V0=-239, VZ=-7, halo='M31'):
+def heliocentric_equatorial_spherical_to_galactocentric_cartesian(ra, dec, d, mu_w, mu_n, v_r, dvrot_w, dvrot_n, R0, VX, V0, VZ, halo='M31'):
     print 'Inside method: heliocentric_equatorial_spherical_to_galactocentric_cartesian'
     l,b = equatorial_to_galactic(ra,dec)
     print 'l = ',l
@@ -118,9 +119,13 @@ def heliocentric_equatorial_spherical_to_galactocentric_cartesian(ra, dec, d, mu
     if halo=='M31':
         mu_l = mu_w
         mu_b = mu_n
+#        mu_l,mu_b = equatorial_to_galactic_proper_motion(-mu_w,mu_n,ra,dec)
+#        mu_l = -mu_l
     elif halo=='M33':
         mu_l = mu_w
         mu_b = mu_n
+#        mu_l,mu_b = equatorial_to_galactic_proper_motion(-mu_w,mu_n,ra,dec)
+#        mu_l = -mu_l
     elif halo=='LMC':
         mu_l,mu_b = equatorial_to_galactic_proper_motion(-mu_w,mu_n,ra,dec)
         mu_l = -mu_l
@@ -133,7 +138,7 @@ def heliocentric_equatorial_spherical_to_galactocentric_cartesian(ra, dec, d, mu
     print 'mu_b = %f +/- %f'%(mean(mu_b), std(mu_b))
     xh,yh,zh,vxh,vyh,vzh = spherical_to_cartesian(l, b, d, mu_l, mu_b, v_r, dvrot_w, dvrot_n, halo)
     print 'xh, yh, zh, vxh, vyh, vzh = ',xh, yh, zh, vxh, vyh, vzh
-    x,y,z,vx,vy,vz = heliocentric_galactic_cartesian_to_galactocentric_cartesian(xh, yh, zh, vxh, vyh, vzh, R0=R0, V0=V0)
+    x,y,z,vx,vy,vz = heliocentric_galactic_cartesian_to_galactocentric_cartesian(xh, yh, zh, vxh, vyh, vzh, R0, VX, V0, VZ)
 
     return x,y,z,vx,vy,vz
 
