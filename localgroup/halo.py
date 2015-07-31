@@ -124,7 +124,6 @@ class Halo(object):
 # ----------------------------------------------------------------------------
 
     def translate_to(self,other):
-        
         self.x -= other.x
         self.y -= other.y
         self.z -= other.z
