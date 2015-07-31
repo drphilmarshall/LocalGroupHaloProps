@@ -78,10 +78,10 @@ def spherical_to_cartesian(RA,DEC,D,mu_west,mu_north,v_r,halo):
 
     # Convert mu to v
     if not halo=='M31':
-        v_west = -mu_west*muaspyrMpc2kmps*D
+        v_west = mu_west*muaspyrMpc2kmps*D
         v_north = mu_north*muaspyrMpc2kmps*D
     else:
-        v_west = -mu_west
+        v_west = mu_west
         v_north = mu_north
     print 'v_west:  %f +/- %f'%(mean(v_west),std(v_west)) 
     print 'v_north: %f +/- %f'%(mean(v_north),std(v_north))
@@ -114,7 +114,7 @@ def get_swn_basis(l, b):
     sys = unit_vec([math.cos(l)*math.cos(b), math.sin(l)*math.cos(b), math.sin(b)]) #los
     west = unit_vec(np.cross(sys, np.array([0,0.0,1.0])))
     north = unit_vec(np.cross(west, sys))
-    return np.vstack([sys, west, north])
+    return np.vstack([sys, -west, north])
 
 def get_cartesians(ra, dec, d, vw, vn, vr, R0, VX, VY, VZ):
     gal_vel_swn = np.array([vr, -vw, vn])
@@ -140,15 +140,15 @@ def heliocentric_equatorial_spherical_to_galactocentric_cartesian(ra, dec, d, mu
         mu_l = mu_w
         mu_b = mu_n
         mu_l,mu_b = equatorial_to_galactic_proper_motion(-mu_w,mu_n,ra,dec)
-        mu_l = -mu_l
+        mu_l = mu_l
     elif halo=='M33':
         mu_l = mu_w
         mu_b = mu_n
         mu_l,mu_b = equatorial_to_galactic_proper_motion(-mu_w,mu_n,ra,dec)
-        mu_l = -mu_l
+        mu_l = mu_l
     elif halo=='LMC':
         mu_l,mu_b = equatorial_to_galactic_proper_motion(-mu_w,mu_n,ra,dec)
-        mu_l = -mu_l
+        mu_l = mu_l
     else:
         raise ValueError('unknown galaxy name')
 
@@ -156,7 +156,7 @@ def heliocentric_equatorial_spherical_to_galactocentric_cartesian(ra, dec, d, mu
     #mu_l,mu_b = equatorial_to_galactic_proper_motion(-mu_w,mu_n,ra,dec)
     print 'mu_l = %f +/- %f'%(mean(mu_l), std(mu_l))
     print 'mu_b = %f +/- %f'%(mean(mu_b), std(mu_b))
-    v_west, v_north = spherical_to_cartesian(l, b, d, mu_l, mu_b, v_r, halo)
+    v_west, v_north = spherical_to_cartesian(l, b, d, -mu_l, mu_b, v_r, halo)
     x = []
     y = []
     z = []
