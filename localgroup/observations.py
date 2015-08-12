@@ -58,8 +58,8 @@ class Observations(object):
         self.data['MW']['vz'] = [-7.25,0.62,'Gaussian'] # vdM++12 based on S++12 and McMillan12
 
         # M31:
-        self.data['M31']['RA'] = [10.6847929,0.0,'Delta'] # deg, NED
-        self.data['M31']['DEC'] = [41.2690650,0.0,'Delta'] # deg, NED
+        self.data['M31']['RA'] = [10.6847929,0.08,'Gaussian'] # deg, NED
+        self.data['M31']['DEC'] = [41.2690650,0.08,'Gaussian'] # deg, NED
         self.data['M31']['l'] = [121.1744050,0.0,'Delta'] # deg, NED
         self.data['M31']['b'] = [-21.5729360,0.0,'Delta'] # deg, NED
         self.data['M31']['D']  = [0.770,0.040,'Gaussian'] # vdM++12, Mpc
@@ -89,8 +89,8 @@ class Observations(object):
         # use more constraints on the proper motion than Sohn ++2012 even.
         
         # M33:
-        self.data['M33']['RA'] = [23.4620417, 0.0,'Delta'] # deg, NED
-        self.data['M33']['DEC'] = [30.6602222, 0.0,'Delta'] # deg, NED
+        self.data['M33']['RA'] = [23.4620417, 0.075,'Gaussian'] # deg, NED
+        self.data['M33']['DEC'] = [30.6602222, 0.075,'Gaussian'] # deg, NED
         self.data['M33']['l'] = [133.6101611,0.0,'Delta'] # deg, NED
         self.data['M33']['b'] = [-31.3305875,0.0,'Delta'] # deg, NED
         self.data['M33']['D']  = [0.794,0.023,'Gaussian'] # M++04, vdMG08, Mpc
