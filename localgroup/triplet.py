@@ -125,9 +125,9 @@ class Triplet(object):
             # First we translate the MW positions from heliocentric
             # cartesian to galactocentric cartesian.
             self.MW.translate_to(self.MW) #NOTE: This must be after heliocentric_equatorial_spherical_to_galactocentric_cartesian calls
-        self.LMC.translate_to(self.MW)
+        if not self.isPair: self.LMC.translate_to(self.MW)
         self.M31.translate_to(self.MW)
-        self.M33.translate_to(self.MW)
+        if not self.isPair: self.M33.translate_to(self.M31)
       # Now we can finally translate to M31 frame
 #        self.MW.translate_to(self.M31)
 #        if not self.isPair:
@@ -245,6 +245,10 @@ class Triplet(object):
             self.M33.Rvir = self.M33.Rvir[condition]
             self.M33.Rs = self.M33.Rs[condition]
             self.M33.Cvir = self.M33.Cvir[condition]
+            self.LMC.Mvir = self.LMC.Mvir[condition]
+            self.LMC.Rvir = self.LMC.Rvir[condition]
+            self.LMC.Rs = self.LMC.Rs[condition]
+            self.LMC.Cvir = self.LMC.Cvir[condition]
             self.sim_samples = self.sim_samples[condition]
             print "sim_sample length after: ", self.sim_samples.shape
             plt.subplot(2,2,3)
@@ -285,8 +289,26 @@ class Triplet(object):
         return
 # ============================================================================
 
-    def GMM_sample(self, N):
-        self.gmm_samples = self.gmm.sample(N)
+    def GMM_sample(self, N, L, reps=1, simple=False):
+        if simple:
+            self.gmm_samples = self.gmm.sample(N)
+            return
+        total_gmm_samples = np.empty((0,0)) 
+        for i in range(reps):
+            self.gmm_samples = self.gmm.sample(N)
+            self.compute_model_weights(L, 'gmm', normalize=True, split=20)
+            count, smallest_weight = self.calculate_N95(level=0.95, filter_samples=False)
+            cond = self.weights[:] > smallest_weight
+            self.gmm_samples = self.gmm_samples[cond]
+            r, c = total_gmm_samples.shape
+            x, y = self.gmm_samples.shape
+            if i==0:
+                total_gmm_samples.resize((x,y))
+            else:
+                total_gmm_samples.resize((r+x, c))
+            total_gmm_samples[r:] = self.gmm_samples
+        self.gmm_samples = total_gmm_samples
+        print "returned gmm_sample size is: ", self.gmm_samples.shape
         return
 # ============================================================================
 
@@ -341,11 +363,12 @@ class Triplet(object):
             all_weights.resize(all_weights_len+weights.shape[0])
             all_weights[all_weights_len:] = weights
         self.weights = all_weights
+        self.non_norm_weights = np.copy(all_weights)
         if normalize: self.normalize_weights()
         return
 
 # ============================================================================
-    def calculate_N95(self, level=0.95):
+    def calculate_N95(self, level=0.95, filter_samples=False):
         weights_copy = np.copy(self.weights)
         weights_copy.sort()
         weights_copy = weights_copy[::-1]
@@ -354,7 +377,10 @@ class Triplet(object):
         while sum < level:
             sum = sum + weights_copy[count]
             count = count + 1
-        return count, weights_copy[count]
+        smallest_weight = weights_copy[count]
+        if filter_samples:
+            self.gmm_samples = self.gmm_samples[self.weights[:] > smallest_weight]
+        return count, smallest_weight
 # ============================================================================
     def preprocess(self, means, stds, mode):
         if mode == 'sim':
@@ -383,7 +409,7 @@ class Triplet(object):
         if mode == 'sim':
             data = self.sim_samples
         elif mode == 'gmm':
-            data = self.gmm_samples[:,0:6]
+            data = self.gmm_samples[:,0:9]
         if self.isPair:
             # labs = ["MW_D", "MW_vr", "MW_vt"]
             labels = ["$D^{\\rm M31} Mpc$", "$v_{\\rm rad}^{\\rm M31} km/s$", "$v_{\\rm tan}^{\\rm M31} km/s$"]
@@ -510,7 +536,9 @@ if __name__ == '__main__':
 
     # What is the space motion of M31? (eq 3 of vdM12)
 
-    print "M31 position: ",np.mean(t.M31.x),np.mean(t.M31.y),np.mean(t.M31.z)
+    print "M31 position: ",np.mean(t.M31.x),'+/-', np.std(t.M31.x), ', ',\
+           np.mean(t.M31.y),'+/-', np.std(t.M31.y), ', ',\
+           np.mean(t.M31.z),'+/-', np.std(t.M31.z)
     print "  cf vdM++12: (-0.379, 0.613, -0.283)"
 
  #   print "M31 proper motion: ",np.mean(t.M31.v_west),'+/-',np.std(t.M31.v_west),', ', \
@@ -529,13 +557,16 @@ if __name__ == '__main__':
     print "M31 speed: ",np.mean(w),'+/-',np.std(w)
     print "  cf vdM++12: (110.6 +/- 7.8) km/s"
 
-
-    print "M33 position: ",np.mean(t.M33.x),np.mean(t.M33.y),np.mean(t.M33.z)
+    print "M33 position: ",np.mean(t.M33.x),'+/-', np.std(t.M33.x), ', ',\
+           np.mean(t.M33.y),'+/-', np.std(t.M33.y), ', ',\
+           np.mean(t.M33.z),'+/-', np.std(t.M33.z)
     print "M33 velocity: ",np.mean(t.M33.vx),'+/-',np.std(t.M33.vx),', ', \
                            np.mean(t.M33.vy),'+/-',np.std(t.M33.vy),', ', \
                            np.mean(t.M33.vz),'+/-',np.std(t.M33.vz)
 
-    print "LMC position: ",np.mean(t.LMC.x),np.mean(t.LMC.y),np.mean(t.LMC.z)
+    print "LMC position: ",np.mean(t.LMC.x),'+/-', np.std(t.LMC.x), ', ',\
+           np.mean(t.LMC.y),'+/-', np.std(t.LMC.y), ', ',\
+           np.mean(t.LMC.z),'+/-', np.std(t.LMC.z)
     print "LMC velocity: ",np.mean(t.LMC.vx),'+/-',np.std(t.LMC.vx),', ', \
                            np.mean(t.LMC.vy),'+/-',np.std(t.LMC.vy),', ', \
                            np.mean(t.LMC.vz),'+/-',np.std(t.LMC.vz)

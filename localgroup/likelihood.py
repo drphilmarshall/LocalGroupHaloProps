@@ -113,8 +113,12 @@ class Likelihood(object):
 # ======================================================================
 
     def evaluate(self, points, mode="GMM"):
+        if self.T.isPair:
+            eval_points = points[:,0:3]
+        else:
+            eval_points = points[:,0:9]
         if (mode == "GMM"):
-            logprobs = self.PDF.score_mem(points)
+            logprobs = self.PDF.score_mem(eval_points)
         else:
             raise ValueError("Unrecognised approximation mode %s" % mode )
 
@@ -127,7 +131,7 @@ class Likelihood(object):
         if (mode == "GMM"):
             drawn_points = self.PDF.sample(n_samples=n_points)*self.samples_stds + self.samples_means
             drawn_points = drawn_points[drawn_points[:,2] > 0]
-            drawn_points = drawn_points[drawn_points[:,8] > 0]
+            if not self.T.isPair: drawn_points = drawn_points[drawn_points[:,8] > 0]
             figure = triangle.corner(drawn_points, labels=self.labels, quantiles=[0.16,0.5,0.84], fig=fig, show_titles=True, title_args={"fontsize": 12}, label_args={"fontsize": 16}, color=color, verbose=False)
         else:
             raise ValueError("Unrecognized approximation mode %s" % mode)
