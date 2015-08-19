@@ -48,7 +48,7 @@ path = '/afs/slac.stanford.edu/u/ki/mwillia1/Thesis/LocalGroupHaloProps/Tr_P_sam
 with open(save_path, 'wb') as f:
     pickle.dump(Tr.gmm_samples, f)
 
-"""
+
 gmm_MW = np.copy(Tr.gmm_samples[:,4])
 gmm_M31 = np.copy(Tr.gmm_samples[:,3])
 gmm_LG = np.log10(np.power(10,gmm_MW) + np.power(10,gmm_M31))
@@ -91,4 +91,4 @@ all_mvir = np.transpose(np.vstack((gmm_MW, gmm_M31, gmm_LG)))
 figure = triangle.corner(all_mvir, labels=labs, quantiles=[0.16,0.5,0.84], fig=None, weights=Tr.weights,                         plot_contours=True, show_titles=True, title_args={"fontsize": 16}, label_args={"fontsize": 16},                         plot_datapoints=False, bins=20, color='c')
 #figure.suptitle("Weighted Mass Posterior PDF, GMM Prior", fontsize=16, horizontalalignment='left')
 figure.savefig(save_path+'P_GMMP_all_Mvir.pdf', dpi=800)
-"""
+

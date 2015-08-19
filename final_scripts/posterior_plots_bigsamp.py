@@ -42,6 +42,7 @@ gmm_LMC = np.copy(Tr.gmm_samples[:,12])
 gmm_MW_C = np.copy(Tr.gmm_samples[:,14])
 gmm_M31_C = np.copy(Tr.gmm_samples[:,13])
 gmm_LG = np.log10(np.power(10,gmm_MW) + np.power(10,gmm_M31))
+f = np.power(10,gmm_LMC)/np.power(10, gmm_MW)
 Tr.gmm_samples = Tr.gmm_samples[:,0:9]
 
 Tr.compute_model_weights(L, 'gmm', normalize=True)
@@ -69,6 +70,16 @@ Tr.compute_model_weights(L, 'gmm', normalize=True)
 
 # end N95 calculation and filtering
 
+
+labs = ["$f_{LMC/MW}$"]
+all_mvir = f
+figure = triangle.corner(all_mvir, labels=labs, quantiles=[0.025,0.5,0.975], fig=None, weights=Tr.weights,                         plot_contours=True, show_titles=True, title_args={"fontsize": 16}, label_args={"fontsize": 16},                         plot_datapoints=False, bins=20, color='g')
+
+
+figure.savefig(save_path+'f_LMC_MW.pdf', dpi=800)
+
+
+"""
 hlist_path = '/lustre/ki/pfs/mwillia1/LG_project/Consuelo_Boxes/4001/4001hlist.npy'
 hlist = np.load(hlist_path)
 hlist=hlist[np.abs(np.log10(hlist['mvir'])-12)<1.0]
@@ -116,3 +127,4 @@ figure = triangle.corner(all_mvir, labels=labs, quantiles=[0.16,0.5,0.84], fig=N
 #figure.suptitle("Weighted Mass Posterior PDF, GMM Prior", fontsize=16, horizontalalignment='left')
 figure.savefig(save_path+'Q_GMMP_all_Mvir.png', dpi=800)
 figure.savefig(save_path+'Q_GMMP_all_Mvir.pdf', dpi=800)
+"""
