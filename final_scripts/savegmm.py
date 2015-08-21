@@ -60,8 +60,8 @@ figure_obs
 
 # In[8]:
 
-figure_obs.savefig(save_path+"LGMM.pdf", dpi=800)
-figure_obs.savefig(save_path+"LGMM.png", dpi=800)
+#figure_obs.savefig(save_path+"LGMM.pdf", dpi=800)
+#figure_obs.savefig(save_path+"LGMM.png", dpi=800)
 
 # # Reading Simulation Points:
 
@@ -69,10 +69,9 @@ figure_obs.savefig(save_path+"LGMM.png", dpi=800)
 
 # In[9]:
 
-path_cut = '/lustre/ki/pfs/mwillia1/LG_project/Consuelo_Boxes/All_Boxes_quad_dat_M31_larger.npy'
-path = '/lustre/ki/pfs/mwillia1/LG_project/Consuelo_Boxes/All_Boxes_quad_dat_M31_larger.npy'
-#path = '/afs/slac.stanford.edu/u/ki/mwillia1/Thesis/data_files/MW_M31_pairs.txt'
-npoints = 200000
+#path = '/lustre/ki/pfs/mwillia1/LG_project/Consuelo_Boxes/All_Boxes_quad_dat_M31_larger.npy'
+path = '/afs/slac.stanford.edu/u/ki/mwillia1/All_Boxes_quad_symmetric_dat.npy'
+npoints = 400000
 halo_props = ['MW_Mvir', 'M31_Mvir', 'M33_Mvir']
 
 
@@ -123,12 +122,14 @@ sim_plot = Tr.plot_kinematics('sim', L.samples_means, L.samples_stds, color='b',
 print Tr.M33.Mvir.shape
 print Tr.LMC.Mvir.shape
 dat = np.transpose(np.vstack((np.transpose(Tr.sim_samples), np.log10(Tr.M31.Mvir), np.log10(Tr.MW.Mvir), np.log10(Tr.M33.Mvir), np.log10(Tr.LMC.Mvir), Tr.M31.Cvir, Tr.MW.Cvir)))
+
+
 #dat = np.transpose(np.vstack((np.transpose(Tr.sim_samples), np.log10(Tr.M31.Mvir), np.log10(Tr.MW.Mvir))))
 Tr.GMM(30, dat)
 
-Tr_save_path = "/afs/slac.stanford.edu/u/ki/mwillia1/Thesis/LocalGroupHaloProps/Tr.pickle"
+Tr_save_path = "/afs/slac.stanford.edu/u/ki/mwillia1/Thesis/LocalGroupHaloProps/Tr_sym_N30_v80_presym.pickle"
 Tr.save(Tr_save_path)
-with open("/afs/slac.stanford.edu/u/ki/mwillia1/Thesis/LocalGroupHaloProps/L.pickle", "wb") as Lfile:
+with open("/afs/slac.stanford.edu/u/ki/mwillia1/Thesis/LocalGroupHaloProps/L_Q_presym.pickle", "wb") as Lfile:
     pickle.dump(L, Lfile)
 
 

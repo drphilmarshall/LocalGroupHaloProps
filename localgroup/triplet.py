@@ -289,6 +289,11 @@ class Triplet(object):
         return
 # ============================================================================
 
+
+# ============================================================================
+
+
+
     def GMM_sample(self, N, L, reps=1, simple=False):
         if simple:
             self.gmm_samples = self.gmm.sample(N)
@@ -310,33 +315,6 @@ class Triplet(object):
         self.gmm_samples = total_gmm_samples
         print "returned gmm_sample size is: ", self.gmm_samples.shape
         return
-# ============================================================================
-
-    def GMM_prior(self, ncomp, sample_size):
-        dat = np.transpose(np.vstack((np.transpose(self.sim_samples), self.M31.Mvir, self.MW.Mvir, self.M33.Mvir)))
-        self.GMM(ncomp, dat)
-        self.GMM_sample(sample_size)
-        self.unprocess(self.gmm_data_means, self.gmm_data_stds, 'gmm_data')
-        self.unprocess(self.gmm_data_means, self.gmm_data_stds, 'gmm')
-        self.MW.Mvir = np.copy(self.gmm_samples[:,7])
-        self.M31.Mvir = np.copy(self.gmm_samples[:,6])
-        self.LG_Mvir = np.copy(self.MW.Mvir) + np.copy(self.M31.Mvir)
-        if not self.isPair:
-            self.M33.Mvir = np.copy(self.gmm_samples[:,8])
-        filter_nan = np.logical_not(np.isnan(self.MW.Mvir))&\
-                     np.logical_not(np.isnan(self.M31.Mvir))&\
-                     np.logical_not(np.isnan(self.LG_Mvir))
-        if not self.isPair:
-            filter_nan = filter_nan&np.logical_not(np.isnan(self.M33.Mvir))
-        self.MW.Mvir = self.MW.Mvir[filter_nan]
-        self.M31.Mvir = self.M31.Mvir[filter_nan]
-        self.LG_Mvir = self.LG_Mvir[filter_nan]
-        if not self.isPair:
-            self.M33.Mvir = self.M33.Mvir[filter_nan]
-        self.gmm_samples = self.gmm_samples[filter_nan]
-        self.gmm_samples = self.gmm_samples[:,0:6]
-        return
-# ============================================================================
 
     def compute_timing_mass(self):
         M, a, x, e = timingargument.mass(self.MW.D, self.MW.v_r, vt=None, approach='radial', t0scatter=False)
