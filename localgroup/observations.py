@@ -111,9 +111,9 @@ class Observations(object):
 
         self.data['LMC']['l'] = [280.4653,0.0,'Delta'] # deg, NED
         self.data['LMC']['b'] = [-32.8883,0.0,'Delta'] # deg, NED
-        self.data['LMC']['D']  = [0.050,4*0.0025,'Gaussian'] # vdM02_LMC Mpc
-        self.data['LMC']['mu_west'] = [-1910.0,4*160.0,'Gaussian'] # Kallavayalil13 muas
-        self.data['LMC']['mu_north'] = [229.0,4*160.0,'Gaussian'] # Kallavayalil13 muas
+        self.data['LMC']['D']  = [0.050,1*0.0025,'Gaussian'] # vdM02_LMC Mpc
+        self.data['LMC']['mu_west'] = [-1910.0,1*160.0,'Gaussian'] # Kallavayalil13 muas
+        self.data['LMC']['mu_north'] = [229.0,1*160.0,'Gaussian'] # Kallavayalil13 muas
         self.data['LMC']['v_r'] = [262.0,3.4,'Gaussian'] # vdMG02_LMC, km/s
         self.data['LMC']['v_west'] = [-399, 40.8, 'Gaussian']
         self.data['LMC']['v_north'] = [80.0, 40.4, 'Gaussian']
