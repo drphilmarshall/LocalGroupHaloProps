@@ -79,7 +79,7 @@ figure = triangle.corner(all_mvir, labels=labs, quantiles=[0.025,0.5,0.975], fig
 figure.savefig(save_path+'f_LMC_MW.pdf', dpi=800)
 
 
-"""
+
 hlist_path = '/lustre/ki/pfs/mwillia1/LG_project/Consuelo_Boxes/4001/4001hlist.npy'
 hlist = np.load(hlist_path)
 hlist=hlist[np.abs(np.log10(hlist['mvir'])-12)<1.0]
@@ -127,4 +127,4 @@ figure = triangle.corner(all_mvir, labels=labs, quantiles=[0.16,0.5,0.84], fig=N
 #figure.suptitle("Weighted Mass Posterior PDF, GMM Prior", fontsize=16, horizontalalignment='left')
 figure.savefig(save_path+'Q_GMMP_all_Mvir.png', dpi=800)
 figure.savefig(save_path+'Q_GMMP_all_Mvir.pdf', dpi=800)
-"""
+

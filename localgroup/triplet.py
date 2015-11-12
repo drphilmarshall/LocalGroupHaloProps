@@ -64,6 +64,27 @@ class Triplet(object):
 
 # ----------------------------------------------------------------------------
 
+    def read_proposal_input_data(self, prop_path):
+        f = open(prop_path, "rb")
+        self.input_prop_data = pickle.load(f)
+        f.close()
+        return
+
+
+    def fit_proposal_input(self, ngauss, L):
+        self.proposal = mixture.GMM(ngauss, covariance_type='full')
+        self.preprocess(L.samples_means, L.samples_stds, mode='prop_input')
+        self.proposal.fit(self.input_prop_data)
+        return
+
+    def sample_proposal(self, n):
+        self.proposal_samples = self.proposal.sample(n)
+        return
+
+    def evaluate_proposal(self, data):
+        logprobs = self.proposal.score_mem(data)
+        return logprobs
+#============================================================================
     def read_halos(self,directory):
 
         # Could be a lot more elegant.
@@ -327,16 +348,22 @@ class Triplet(object):
         self.weights = 1.0/total_weight*self.weights 
         return
 
-    def compute_model_weights(self, L, mode, normalize=True, split=1):
+    def compute_model_weights(self, L, mode, normalize=True, split=1, imp=False):
 
         all_weights = np.empty(0)
         if mode == 'sim':
             split_samples = np.split(self.sim_samples, split)
         elif mode == 'gmm':
             split_samples = np.split(self.gmm_samples, split)
-        
+        elif mode == 'prop':
+            split_samples = np.split(self.proposal_samples[:,0:9], split)
+
         for sample in split_samples:
             weights = np.exp(L.evaluate(sample))
+            if imp:
+                prop_weights = np.exp(self.evaluate_proposal(sample))
+                weights = weights / prop_weights
+            
             all_weights_len = all_weights.shape[0]
             all_weights.resize(all_weights_len+weights.shape[0])
             all_weights[all_weights_len:] = weights
@@ -346,7 +373,7 @@ class Triplet(object):
         return
 
 # ============================================================================
-    def calculate_N95(self, level=0.95, filter_samples=False):
+    def calculate_N95(self, level=0.95, filter_samples=False, imp=False):
         weights_copy = np.copy(self.weights)
         weights_copy.sort()
         weights_copy = weights_copy[::-1]
@@ -357,7 +384,10 @@ class Triplet(object):
             count = count + 1
         smallest_weight = weights_copy[count]
         if filter_samples:
-            self.gmm_samples = self.gmm_samples[self.weights[:] > smallest_weight]
+            if imp:
+                self.proposal_samples = self.proposal_samples[self.weights[:] > smallest_weight]
+            else:
+                self.gmm_samples = self.gmm_samples[self.weights[:] > smallest_weight]
         return count, smallest_weight
 # ============================================================================
     def preprocess(self, means, stds, mode):
@@ -367,6 +397,10 @@ class Triplet(object):
             self.gmm_samples = (self.gmm_samples - means)/stds
         elif mode == 'gmm_data':
             self.gmm_data = (self.gmm_data - means)/stds
+        elif mode == 'prop_input':
+            self.input_prop_data[:,0:9] = (self.input_prop_data[:,0:9]-means)/stds
+        elif mode == 'prop':
+            self.proposal_samples[:,0:9] = (self.proposal_samples[:,0:9]-means)/stds
         return
 
 # ============================================================================
@@ -378,6 +412,10 @@ class Triplet(object):
             self.gmm_samples = self.gmm_samples*stds + means
         elif mode == 'gmm_data':
             self.gmm_data = self.gmm_data*stds + means
+        elif mode == 'prop_input':
+            self.input_prop_data[:,0:9] = self.input_prop_data[:,0:9]*stds + means
+        elif mode == 'prop':
+            self.proposal_samples[:,0:9] = self.proposal_samples[:,0:9]*stds + means
         return
 
 # ============================================================================

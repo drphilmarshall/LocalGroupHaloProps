@@ -9,10 +9,10 @@ import numpy as np
 import pickle
 import matplotlib.patches as mpatches
 
-save_path = "/afs/slac.stanford.edu/u/ki/mwillia1/Thesis/LocalGroupHaloProps/final_scripts/"
-Lfile = '/afs/slac.stanford.edu/u/ki/mwillia1/Thesis/LocalGroupHaloProps/L_Q_presym.pickle'
-Trfile = '/afs/slac.stanford.edu/u/ki/mwillia1/Thesis/LocalGroupHaloProps/Tr_sym_N30_v80_presym.pickle'
-gmm_sample_file = '/afs/slac.stanford.edu/u/ki/mwillia1/Thesis/LocalGroupHaloProps/QGMM_samp1_N30_v80_presym.pickle'
+save_path = "/lustre/ki/pfs/mwillia1/LG_project/plots/"
+Lfile = '/lustre/ki/pfs/mwillia1/LG_project/L_Q_presym_LMCobs.pickle'
+Trfile = '/lustre/ki/pfs/mwillia1/LG_project/Tr_sym_N30_v80_presym.pickle'
+prop_sample_file = '/lustre/ki/pfs/mwillia1/LG_project/proposal_samples.pickle'
 
 
 with open(Lfile, 'rb') as Lf:
@@ -21,47 +21,58 @@ with open(Lfile, 'rb') as Lf:
 with open(Trfile, 'rb') as Trf:
     Tr = pickle.load(Trf)
 
-with open(gmm_sample_file, 'rb') as f:
-    samples = pickle.load(f)
-
-Tr.GMM_sample(1, L, reps=1, simple=True)
-Tr.gmm_samples = samples
+Tr.read_proposal_input_data(prop_sample_file)
+Tr.fit_proposal_input(3, L)
+Tr.sample_proposal(2000000)
 
 
-gmm_MW = np.copy(Tr.gmm_samples[:,10])
-gmm_M31 = np.copy(Tr.gmm_samples[:,9])
-gmm_M33 = np.copy(Tr.gmm_samples[:,11])
-gmm_LMC = np.copy(Tr.gmm_samples[:,12])
+# GOF of gmm fit to proposal distribution
 
-gmm_MW_C = np.copy(Tr.gmm_samples[:,14])
-gmm_M31_C = np.copy(Tr.gmm_samples[:,13])
+Tr.unprocess(L.samples_means, L.samples_stds, 'prop')
+data2 = Tr.proposal_samples
+labs = ["$D^{\\rm M31} Mpc$", "$v_{\\rm rad}^{\\rm M31} km/s$", "$v_{\\rm tan}^{\\rm M31} km/s$", "$D^{\\rm M33} Mpc$", "$v_{\\rm rad}^{\\rm M33} km/s$", "$v_{\\rm tan}^{\\rm M33} km/s$","$D^{\\rm LMC} Mpc$", "$v_{\\rm rad}^{\\rm LMC} km/s$", "$v_{\\rm tan}^{\\rm LMC} km/s$", "$Mvir_{\\rm MW}$", "$Mvir_{\\rm M31}$", "$Mvir_{\\rm M33}$", "$Mvir_{\\rm LMC}$", "$Cvir_{\\rm MW}$", "$Cvir_{\\rm M31}$"]
+pl = triangle.corner(data2, labels=labs, quantiles=[0.16,0.5,0.84], fig=None, weights=None,                         plot_contours=True, show_titles=True, title_args={"fontsize": 16}, label_args={"fontsize": 16},                          plot_datapoints=False, bins=20, color='m')
+Tr.preprocess(L.samples_means, L.samples_stds, mode='prop')
+
+
+Tr.unprocess(L.samples_means, L.samples_stds, mode='prop_input')
+data = Tr.input_prop_data
+labs = ["$D^{\\rm M31} Mpc$", "$v_{\\rm rad}^{\\rm M31} km/s$", "$v_{\\rm tan}^{\\rm M31} km/s$", "$D^{\\rm M33} Mpc$", "$v_{\\rm rad}^{\\rm M33} km/s$", "$v_{\\rm tan}^{\\rm M33} km/s$","$D^{\\rm LMC} Mpc$", "$v_{\\rm rad}^{\\rm LMC} km/s$", "$v_{\\rm tan}^{\\rm LMC} km/s$", "$Mvir_{\\rm MW}$", "$Mvir_{\\rm M31}$", "$Mvir_{\\rm M33}$", "$Mvir_{\\rm LMC}$", "$Cvir_{\\rm MW}$", "$Cvir_{\\rm M31}$"]
+sim_plot = triangle.corner(data, labels=labs, quantiles=[0.16,0.5,0.84], fig=pl, weights=None,                         plot_contours=True, show_titles=True, title_args={"fontsize": 12},                          plot_datapoints=False, bins=20, color='c', label_kwargs={"fontsize": 16})
+magenta_patch = mpatches.Patch(color='m')
+cyan_patch = mpatches.Patch(color='c')
+sim_plot.legend(handles=[cyan_patch, magenta_patch], labels=["Proposal Data", "GMM-fit Proposal"], fontsize=48)
+Tr.preprocess(L.samples_means, L.samples_stds, mode='prop_input')
+
+sim_plot.savefig(save_path+'Prop_vs_GMMProp.pdf', dpi=600)
+
+
+
+# Comparison of prior with proposal
+
+
+
+
+
+
+
+
+"""
+gmm_MW = np.copy(Tr.proposal_samples[:,10])
+gmm_M31 = np.copy(Tr.proposal_samples[:,9])
+gmm_M33 = np.copy(Tr.proposal_samples[:,11])
+gmm_LMC = np.copy(Tr.proposal_samples[:,12])
+
+gmm_MW_C = np.copy(Tr.proposal_samples[:,14])
+gmm_M31_C = np.copy(Tr.proposal_samples[:,13])
 gmm_LG = np.log10(np.power(10,gmm_MW) + np.power(10,gmm_M31))
-Tr.gmm_samples = Tr.gmm_samples[:,0:9]
+#Tr.gmm_samples = Tr.gmm_samples[:,0:9]
 
-Tr.compute_model_weights(L, 'gmm', normalize=True)
+Tr.compute_model_weights(L, 'prop', normalize=True, split=1, imp=True)
+count, w = Tr.calculate_N95(level=0.95, filter_samples=False, imp=True)
 
-#Tr_cut.compute_model_weights(L, 'gmm')
-
-
-# In[ ]:
-
-#count, smallest_weight = Tr.calculate_N95(filter_samples=False)
-#print "N95 ", count
-#print "smallest weight ", smallest_weight
-
-
-#cond = Tr.weights[:] > smallest_weight
-#gmm_MW = gmm_MW[cond]
-#gmm_M31 = gmm_M31[cond]
-#gmm_M33 = gmm_M33[cond]
-#gmm_LMC = gmm_LMC[cond]
-#gmm_LG = gmm_LG[cond]
-
-#gmm_MW_C = gmm_MW_C[cond]
-#gmm_M31_C = gmm_M31_C[cond]
-#Tr.gmm_samples = Tr.gmm_samples[cond]
-#Tr.weights = Tr.weights[cond]
-#print Tr_cut.calculate_N95()
+print "N95 = ", count
+print "smallest weight = ", w
 
 
 
@@ -121,4 +132,4 @@ figure = triangle.corner(all_mvir, labels=labs, quantiles=[0.16,0.5,0.84], fig=N
 #figure.suptitle("Weighted Mass Posterior PDF, GMM Prior", fontsize=16, horizontalalignment='left')
 figure.savefig(save_path+'Q_GMMP_all_Mvir.png', dpi=800)
 figure.savefig(save_path+'Q_GMMP_all_Mvir.pdf', dpi=800)
-
+"""
