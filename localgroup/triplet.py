@@ -356,13 +356,15 @@ class Triplet(object):
         elif mode == 'gmm':
             split_samples = np.split(self.gmm_samples, split)
         elif mode == 'prop':
-            split_samples = np.split(self.proposal_samples[:,0:9], split)
+            split_samples = np.split(self.proposal_samples, split)
 
         for sample in split_samples:
-            weights = np.exp(L.evaluate(sample))
+            weights =  np.exp(L.evaluate(sample))#*self.gmm.score_mem(sample)
             if imp:
                 prop_weights = np.exp(self.evaluate_proposal(sample))
-                weights = weights / prop_weights
+                prop_norm = np.sum(prop_weights)
+                prop_weights = 1.0/prop_norm * prop_weights
+                weights = weights / prop_weights * np.exp(self.gmm.score_mem(sample))
             
             all_weights_len = all_weights.shape[0]
             all_weights.resize(all_weights_len+weights.shape[0])

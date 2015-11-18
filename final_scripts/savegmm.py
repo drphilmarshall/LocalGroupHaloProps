@@ -9,6 +9,9 @@ from sklearn import mixture
 import numpy as np
 import pickle
 import matplotlib.patches as mpatches
+import sys
+
+gmm_N = int(sys.argv[1])
 
 save_path = "/afs/slac.stanford.edu/u/ki/mwillia1/Thesis/LocalGroupHaloProps/testplot/"
 # Inside the Likelihood object is a "triplet" object called T, which contains an array of sample local groups, each with kinematic parameters consistent with the observational data. Let's plot these kinematic parameters in a "triangle" figure, to show all their 1 and 2-D marginal distributions.
@@ -125,12 +128,12 @@ dat = np.transpose(np.vstack((np.transpose(Tr.sim_samples), np.log10(Tr.M31.Mvir
 
 
 #dat = np.transpose(np.vstack((np.transpose(Tr.sim_samples), np.log10(Tr.M31.Mvir), np.log10(Tr.MW.Mvir))))
-Tr.GMM(30, dat)
+Tr.GMM(gmm_N, dat)
 
-Tr_save_path = "/afs/slac.stanford.edu/u/ki/mwillia1/Thesis/LocalGroupHaloProps/Tr_sym_N30_v80_presym.pickle"
+Tr_save_path = "/lustre/ki/pfs/mwillia1/LG_project/Tr_sym_N"+str(gmm_N)+"_v80_presym.pickle"
 Tr.save(Tr_save_path)
-with open("/afs/slac.stanford.edu/u/ki/mwillia1/Thesis/LocalGroupHaloProps/L_Q_presym.pickle", "wb") as Lfile:
-    pickle.dump(L, Lfile)
+#with open("/afs/slac.stanford.edu/u/ki/mwillia1/Thesis/LocalGroupHaloProps/L_Q_presym.pickle", "wb") as Lfile:
+ #   pickle.dump(L, Lfile)
 
 
 #dat = np.transpose(np.vstack((np.transpose(Tr_cut.sim_samples), np.log10(Tr_cut.M31.Mvir), np.log10(Tr_cut.MW.Mvir), np.log10(Tr_cut.M33.Mvir))))

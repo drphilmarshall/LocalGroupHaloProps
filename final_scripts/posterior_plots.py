@@ -9,9 +9,9 @@ import numpy as np
 import pickle
 import matplotlib.patches as mpatches
 
-save_path = "/afs/slac.stanford.edu/u/ki/mwillia1/Thesis/LocalGroupHaloProps/final_scripts/"
-Lfile = '/afs/slac.stanford.edu/u/ki/mwillia1/Thesis/LocalGroupHaloProps/L_Q_presym.pickle'
-Trfile = '/afs/slac.stanford.edu/u/ki/mwillia1/Thesis/LocalGroupHaloProps/Tr_sym_N30_v80_presym.pickle'
+save_path = "/lustre/ki/pfs/mwillia1/LG_project/plots/no_imp/"
+Lfile = '/lustre/ki/pfs/mwillia1/LG_project/L_Q_presym_LMCobs.pickle'
+Trfile = '/lustre/ki/pfs/mwillia1/LG_project/gmm/Tr_sym_N20_v80_presym.pickle'
 gmm_sample_file = '/afs/slac.stanford.edu/u/ki/mwillia1/Thesis/LocalGroupHaloProps/QGMM_samp1_N30_v80_presym.pickle'
 
 
@@ -21,11 +21,11 @@ with open(Lfile, 'rb') as Lf:
 with open(Trfile, 'rb') as Trf:
     Tr = pickle.load(Trf)
 
-with open(gmm_sample_file, 'rb') as f:
-    samples = pickle.load(f)
+#with open(gmm_sample_file, 'rb') as f:
+#    samples = pickle.load(f)
 
-Tr.GMM_sample(1, L, reps=1, simple=True)
-Tr.gmm_samples = samples
+Tr.GMM_sample(200000000, L, reps=1, simple=True)
+#Tr.gmm_samples = samples
 
 
 gmm_MW = np.copy(Tr.gmm_samples[:,10])
@@ -38,8 +38,11 @@ gmm_M31_C = np.copy(Tr.gmm_samples[:,13])
 gmm_LG = np.log10(np.power(10,gmm_MW) + np.power(10,gmm_M31))
 Tr.gmm_samples = Tr.gmm_samples[:,0:9]
 
-Tr.compute_model_weights(L, 'gmm', normalize=True)
-
+Tr.compute_model_weights(L, 'gmm', normalize=True, split=20)
+N95, w = Tr.calculate_N95()
+print
+print "N95 = ", N95
+print
 #Tr_cut.compute_model_weights(L, 'gmm')
 
 

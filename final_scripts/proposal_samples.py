@@ -56,10 +56,10 @@ figure_obs
 L_prop = localgroup.Likelihood(isPair=False)
 L_prop.generate(Nsamples=200000)
 
-L_prop.samples_stds = 3*L_prop.samples_stds
-L_prop.samples_stds[1] = 3*L_prop.samples_stds[1]
-L_prop.samples_stds[6] = 3*L_prop.samples_stds[6]
-L_prop.samples_stds[7] = 3*L_prop.samples_stds[7]
+L_prop.samples_stds = 6*L_prop.samples_stds
+#L_prop.samples_stds[1] = L_prop.samples_stds[1]
+#L_prop.samples_stds[6] = L_prop.samples_stds[6]
+#L_prop.samples_stds[7] = L_prop.samples_stds[7]
 
 
 L_prop.set_PDF(mixture.GMM(n_components=10, covariance_type='full'))
@@ -142,9 +142,9 @@ dat = np.transpose(np.vstack((np.transpose(Tr.sim_samples), np.log10(Tr.M31.Mvir
 #dat = np.transpose(np.vstack((np.transpose(Tr.sim_samples), np.log10(Tr.M31.Mvir), np.log10(Tr.MW.Mvir))))
 Tr.GMM(30, dat)
 
-Tr_save_path = "/afs/slac.stanford.edu/u/ki/mwillia1/Thesis/LocalGroupHaloProps/Tr_sym_N30_v80_proposal.pickle"
+Tr_save_path = "/afs/slac.stanford.edu/u/ki/mwillia1/Thesis/LocalGroupHaloProps/Tr_sym_N30_v80_proposal_2.pickle"
 Tr.save(Tr_save_path)
-with open("/afs/slac.stanford.edu/u/ki/mwillia1/Thesis/LocalGroupHaloProps/L_Q_proposal.pickle", "wb") as Lfile:
+with open("/afs/slac.stanford.edu/u/ki/mwillia1/Thesis/LocalGroupHaloProps/L_Q_proposal_2.pickle", "wb") as Lfile:
     pickle.dump(L_prop, Lfile)
 
 
@@ -153,6 +153,8 @@ Tr.compute_model_weights(L_prop, "gmm")
 N95 = Tr.calculate_N95(filter_samples=True)
 print "prop from gmm N95 = ",N95
 
+
+Tr.gmm_samples[:,0:9] = Tr.gmm_samples[:,0:9]*L_prop.samples_stds + L_prop.samples_means
 
 with open('/afs/slac.stanford.edu/u/ki/mwillia1/Thesis/LocalGroupHaloProps/gmm_prop_samples.pickle', 'wb') as f:
     pickle.dump(Tr.gmm_samples, f)

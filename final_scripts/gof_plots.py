@@ -9,9 +9,12 @@ import numpy as np
 import pickle
 import matplotlib.patches as mpatches
 
-save_path = "/afs/slac.stanford.edu/u/ki/mwillia1/Thesis/LocalGroupHaloProps/final_scripts/"
-Lfile = '/afs/slac.stanford.edu/u/ki/mwillia1/Thesis/LocalGroupHaloProps/L_Q_presym.pickle'
-Trfile = '/afs/slac.stanford.edu/u/ki/mwillia1/Thesis/LocalGroupHaloProps/Tr_sym_N30_v80_presym.pickle'
+save_path = '/lustre/ki/pfs/mwillia1/LG_project/plots/LMC_L/'
+#Lfile = '/afs/slac.stanford.edu/u/ki/mwillia1/Thesis/LocalGroupHaloProps/L_Q_presym.pickle'
+#Trfile = '/afs/slac.stanford.edu/u/ki/mwillia1/Thesis/LocalGroupHaloProps/Tr_sym_N30_v80_presym.pickle'
+
+Lfile = '/lustre/ki/pfs/mwillia1/LG_project/L_Q_presym_LMCobs.pickle'
+Trfile = '/lustre/ki/pfs/mwillia1/LG_project/gmm/Tr_sym_N20_v80_presym.pickle'
 
 with open(Lfile, 'rb') as Lf:
     L = pickle.load(Lf)
