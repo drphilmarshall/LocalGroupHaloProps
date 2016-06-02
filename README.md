@@ -4,13 +4,13 @@ Inferring the total mass, and other properties, of the halos of the most massive
 
 We take the observational constraints on the sky position of, distance to, radial velocity and proper motion of M31, M33, and the LMC, and transform them into constraints on the M31-centric distances, radial velocities and tangential velocities. We do this my drawing samples from the posterior PDFs for the observables, transforming them to the M31 frame, and then approximating the resulting multi-variate PDF with a Gaussian Mixture Model (GMM).
 
-We then compute the value of this PDF for each quadruplet of Consuelo N-body simulation halos, which were pre-selected to be local group-like in their isolation and very approximate mass: this likelihood is ised to weight each quad, as we build up a posterior PDF for the halo properties (principally masses and shapes) based on the Consuelo-sampled, GMM-approximated prior. We also compare our local group mass with some simple timing argument estimates. 
+We then compute the value of this PDF for each quadruplet of Consuelo N-body simulation halos, which were pre-selected to be local group-like in their isolation and very approximate mass: this likelihood is used to weight each quad, as we build up a posterior PDF for the halo properties (principally masses and concentrations) based on the Consuelo-sampled, GMM-approximated prior. We also compare our local group mass with some simple timing argument estimates. 
 
 This work builds on [our (Busha et al's) earlier work on the Milky Way halo](http://adsabs.harvard.edu/abs/2011ApJ...743...40B), and on [Gonzalez,  Kravtsov and Gnedin's initial investigation of the Local Group system](http://adsabs.harvard.edu/abs/2014ApJ...793...91G).
 
 ### Products
 
-* Paper: [Williamson et al in prep.](https://www.overleaf.com/2861135zkjvdv#/7731014/)
+* **Paper: [Williamson et al in prep.](https://www.overleaf.com/2861135zkjvdv#/7731014/)**
 * [Poster](https://www.overleaf.com/read/bkwpxstxpqns)
 * [Williamson 2015, Stanford Senior Undergraduate Thesis](https://www.overleaf.com/read/pxsmhcmkwdmh)
 
