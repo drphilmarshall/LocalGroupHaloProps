@@ -10,17 +10,17 @@ This work builds on [our (Busha et al's) earlier work on the Milky Way halo](htt
 
 ### Products
 
-* **Paper: [Williamson et al in prep.](https://www.overleaf.com/2861135zkjvdv#/7731014/)**
+* **Paper: [Williamson et al in prep.](https://www.overleaf.com/read/sxjdrsbqfwqt)**
 * [Poster](https://www.overleaf.com/read/bkwpxstxpqns)
 * [Williamson 2015, Stanford Senior Undergraduate Thesis](https://www.overleaf.com/read/pxsmhcmkwdmh)
 
 ### Contact
 
-* Marc Williamson (KIPAC)
+* Marc Williamson (KIPAC, NYU)
 * Phil Marshall (KIPAC)
-* Yao-Yuan Mao (KIPAC)
+* Yao-Yuan Mao (KIPAC, U Pitt)
 * Risa Wechsler (KIPAC)
-* Michael Busha (KIPAC)
+* Michael Busha
 
 This is research in progress, and the code is available for re-use under GPL v2. If you make use of any of the ideas or code in this repository in your own research we ask you to cite us, and acknowledge this code repository, please. The current reference is "Williamson 2015, Williamson et al, in prep." Willamson 2015 is Marc Williamson's undergrad senior thesis, which can be obtained at [this link](https://www.overleaf.com/read/pxsmhcmkwdmh). If you have comments or questions about this work, or would like to get involved, [please do get in touch via the issues!](https://github.com/drphilmarshall/LocalGroupHaloProps/issues)
 
